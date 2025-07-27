@@ -29,7 +29,6 @@ const orbitrasi = [
 const Home = () => {
   const [berita, setBerita] = useState([]);
   const [beritaIdx, setBeritaIdx] = useState(0);
-  const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
     try {
@@ -55,23 +54,7 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [berita]);
 
-  useEffect(() => {
-    const checkScrollTop = () => {
-      if (!showScroll && window.pageYOffset > 400) {
-        setShowScroll(true);
-      } else if (showScroll && window.pageYOffset <= 400) {
-        setShowScroll(false);
-      }
-    };
-    window.addEventListener('scroll', checkScrollTop);
-    return () => window.removeEventListener('scroll', checkScrollTop);
-  }, [showScroll]);
-
   if (berita.length === 0) return null;
-
-  const scrollTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-white py-6 px-1 sm:px-2 flex flex-col items-center">
@@ -169,15 +152,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <button
-        onClick={scrollTop}
-        className={`fixed bottom-6 right-6 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-secondary transition-all duration-300 z-30 ${
-          showScroll ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
-        }`}
-        aria-label="Kembali ke atas"
-      >
-        <span className="text-2xl">↑</span>
-      </button>
     </div>
   );
 };

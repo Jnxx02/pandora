@@ -55,6 +55,8 @@ function Header() {
     return null;
   }
 
+  const isTransparent = isTop && isHomePage;
+
   const navLinks = [
     { to: '/', label: 'Beranda' },
     { to: '/profil', label: 'Profil Desa' },
@@ -70,14 +72,14 @@ function Header() {
     },
   ];
   return (
-    <header className={`w-full text-white shadow-md sticky top-0 z-20 transition-all duration-300 ${isTop && isHomePage ? 'bg-primary/70 backdrop-blur' : 'bg-primary'}`}>
+    <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/50 backdrop-blur text-primary' : 'bg-primary text-white'}`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 font-bold text-xl">
           <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-12 h-12 object-contain" />
           <div className="leading-tight">
             <div>Moncongloe Bulu</div>
-            <div className="text-xs md:text-sm opacity-80 font-normal">Kabupaten Maros</div>
+            <div className={`text-xs md:text-sm font-normal ${isTransparent ? 'opacity-100' : 'opacity-80'}`}>Kabupaten Maros</div>
           </div>
         </Link>
         {/* Hamburger (mobile) */}
@@ -98,7 +100,7 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className={`hover:text-accent transition flex items-center gap-1 ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary' : ''}`}>
+                <button className={`transition flex items-center gap-1 ${isTransparent ? 'hover:text-green-700' : 'hover:text-accent'} ${location.pathname.startsWith('/modul') ? `font-bold ${isTransparent ? 'text-secondary' : 'text-accent'}` : ''}`}>
                   {link.label}
                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
                 </button>
@@ -118,7 +120,7 @@ function Header() {
                 )}
               </div>
             ) : (
-              <Link key={link.to} to={link.to} className={`hover:text-accent transition ${location.pathname === link.to ? 'font-bold text-secondary underline underline-offset-4' : ''}`}>
+              <Link key={link.to} to={link.to} className={`transition ${isTransparent ? 'hover:text-green-700' : 'hover:text-accent'} ${location.pathname === link.to ? `font-bold underline underline-offset-4 ${isTransparent ? 'text-secondary' : 'text-accent'}` : ''}`}>
                 {link.label}
               </Link>
             ))}
@@ -159,8 +161,7 @@ function Header() {
                 {navLinks.map(link => link.subLinks ? (
                   <div key={link.label} className="w-full">
                     <button
-                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
-                      className={`w-full text-left hover:text-accent transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary' : ''}`}
+                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-accent transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary' : ''}`}
                     >
                       <span>{link.label}</span>
                       <span className={`text-sm transition-transform duration-300 ${mobileDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
@@ -253,8 +254,8 @@ function SambutanKepalaDesa() {
   const location = useLocation();
   if (location.pathname !== "/") return null;
   return (
-    <section className="w-full bg-secondary py-10 md:py-16 flex flex-col items-center justify-center font-serif">
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl w-full px-4">
+    <section className="w-full bg-secondary py-10 md:py-16 flex justify-center px-4 sm:px-8 lg:px-16 font-serif">
+      <div className="flex flex-col md:flex-row items-center gap-8 w-full">
         <img
           src="https://moncongloebulu.vercel.app/images/team/muhammad%20tahir.jpeg"
           alt="Kepala Desa Muhammad Tahir"
@@ -264,7 +265,9 @@ function SambutanKepalaDesa() {
           <div className="font-bold text-primary text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
           <div className="font-semibold text-primary text-xl md:text-2xl mb-1">MUHAMMAD TAHIR</div>
           <div className="text-primary text-base md:text-lg mb-4">Kepala Desa Moncongloe Bulu</div>
-          <p className="text-primary text-md md:text-lg max-w-2xl mx-auto md:mx-0">Selamat datang di Website resmi Pemerintah Desa Moncongloe Bulu, Kecamatan Moncongloe, Kabupaten Maros. Kami berharap dengan hadirnya website ini dapat menunjang keselarasan program kerja yang berbasis digital Pemerintah Desa Moncongloe Bulu dengan masyarakat. Selain itu website ini juga merupakan wujud dari transparansi Pemerintah Desa Moncongloe Bulu dalam mempublikasikan dan menginformasikan kegiatan Pemerintah Desa.</p>
+          <p className="text-primary text-sm md:text-base text-justify">Selamat datang di PANDORA (Pusat Akses Informasi dan Dokumentasi Resmi Desa), portal berita resmi Pemerintah Desa Moncongloe Bulu. Portal ini kami hadirkan sebagai langkah nyata kami dalam memanfaatkan teknologi digital untuk melayani dan lebih dekat dengan seluruh masyarakat.
+Melalui PANDORA, semua pengumuman, berita kegiatan, dan informasi penting kini dapat diakses dengan cepat dan mudah langsung dari genggaman Anda. Dengan adanya satu sumber informasi terpercaya ini, kami berharap kita dapat bersama-sama melawan berita bohong (hoax) dan membangun komunikasi yang lebih terbuka.
+Mari manfaatkan platform ini sebagai jendela informasi untuk mewujudkan Desa Moncongloe Bulu yang lebih maju dan transparan.</p>
         </div>
       </div>
     </section>
@@ -279,7 +282,7 @@ function FooterInfo() {
 
   const isAdmin = typeof window !== 'undefined' && localStorage.getItem('isAdmin') === 'true';
   return (
-    <footer className="w-full bg-primary text-white pt-10 pb-4 px-4 mt-12">
+    <footer className="w-full bg-primary text-white pt-10 pb-4 px-4">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 border-b border-white/30 pb-6">
         {/* Kolom 1: Logo, nama, kecamatan, kabupaten, deskripsi */}
         <div>
@@ -313,6 +316,37 @@ function FooterInfo() {
         <div className="w-full text-center">Powered by KKN-T 114 Moncongloe Bulu Universitas Hasanuddin</div>
       </div>
     </footer>
+  );
+}
+
+function ScrollToTopButton() {
+  const [showScroll, setShowScroll] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkScrollTop = () => {
+      if (!showScroll && window.pageYOffset > 400) {
+        setShowScroll(true);
+      } else if (showScroll && window.pageYOffset <= 400) {
+        setShowScroll(false);
+      }
+    };
+    window.addEventListener('scroll', checkScrollTop);
+    return () => window.removeEventListener('scroll', checkScrollTop);
+  }, [showScroll]);
+
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (location.pathname.startsWith('/pengaduan')) {
+    return null;
+  }
+
+  return (
+    <button onClick={scrollTop} className={`fixed bottom-6 right-6 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-secondary transition-all duration-300 z-30 ${showScroll ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`} aria-label="Kembali ke atas">
+      <span className="text-2xl">↑</span>
+    </button>
   );
 }
 
@@ -364,6 +398,7 @@ function App() {
           </Routes>
         </main>
         <FooterInfo />
+        <ScrollToTopButton />
       </div>
     </DesaProvider>
   )
