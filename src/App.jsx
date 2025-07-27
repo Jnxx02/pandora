@@ -39,6 +39,7 @@ function Header() {
   const [isTop, setIsTop] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     setIsAdmin(localStorage.getItem('isAdmin') === 'true');
@@ -56,7 +57,7 @@ function Header() {
 
   const navLinks = [
     { to: '/', label: 'Beranda' },
-    { to: '/profil', label: 'Profil' },
+    { to: '/profil', label: 'Profil Desa' },
     { to: '/sejarah', label: 'Sejarah' },
     { to: '/berita', label: 'Berita' },
     { to: '/pengaduan', label: 'Pengaduan' },
@@ -69,13 +70,13 @@ function Header() {
     },
   ];
   return (
-    <header className={`w-full text-white shadow-md sticky top-0 z-20 transition-all duration-300 ${isTop ? 'bg-primary/70 backdrop-blur' : 'bg-primary'}`}>
+    <header className={`w-full text-white shadow-md sticky top-0 z-20 transition-all duration-300 ${isTop && isHomePage ? 'bg-primary/70 backdrop-blur' : 'bg-primary'}`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 font-bold text-xl">
-          <span className="text-3xl">🏡</span>
+          <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-12 h-12 object-contain" />
           <div className="leading-tight">
-            <div>Desa Moncongloe Bulu</div>
+            <div>Moncongloe Bulu</div>
             <div className="text-xs md:text-sm opacity-80 font-normal">Kabupaten Maros</div>
           </div>
         </Link>
@@ -255,7 +256,7 @@ function SambutanKepalaDesa() {
     <section className="w-full bg-secondary py-10 md:py-16 flex flex-col items-center justify-center font-serif">
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl w-full px-4">
         <img
-          src="https://ui-avatars.com/api/?name=Muhammad+Tahir&background=607274&color=fff&size=180"
+          src="https://moncongloebulu.vercel.app/images/team/muhammad%20tahir.jpeg"
           alt="Kepala Desa Muhammad Tahir"
           className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-accent mb-6 md:mb-0 shadow-none"
         />
@@ -263,7 +264,7 @@ function SambutanKepalaDesa() {
           <div className="font-bold text-primary text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
           <div className="font-semibold text-primary text-xl md:text-2xl mb-1">MUHAMMAD TAHIR</div>
           <div className="text-primary text-base md:text-lg mb-4">Kepala Desa Moncongloe Bulu</div>
-          <p className="text-primary text-md md:text-lg max-w-2xl mx-auto md:mx-0">Kata sambutan dari Kepala Desa Moncongloe Bulu</p>
+          <p className="text-primary text-md md:text-lg max-w-2xl mx-auto md:mx-0">Selamat datang di Website resmi Pemerintah Desa Moncongloe Bulu, Kecamatan Moncongloe, Kabupaten Maros. Kami berharap dengan hadirnya website ini dapat menunjang keselarasan program kerja yang berbasis digital Pemerintah Desa Moncongloe Bulu dengan masyarakat. Selain itu website ini juga merupakan wujud dari transparansi Pemerintah Desa Moncongloe Bulu dalam mempublikasikan dan menginformasikan kegiatan Pemerintah Desa.</p>
         </div>
       </div>
     </section>
