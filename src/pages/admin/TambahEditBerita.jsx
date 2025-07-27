@@ -1,29 +1,81 @@
-import React, { useState } from 'react';
-import { useDesa } from '../../context/DesaContext';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const TambahEditBerita = () => {
-  const { berita, addBerita, deleteBerita } = useDesa();
+  const [berita, setBerita] = useState([]);
   const [form, setForm] = useState({ judul: '', gambar: '', tanggal: '', ringkasan: '', isi: '' });
   const [editId, setEditId] = useState(null);
   const navigate = useNavigate();
+
+  const fetchBerita = () => {
+    try {
+      const storedBerita = localStorage.getItem('berita');
+      const dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
+      // Urutkan berita dari yang terbaru
+      dataBerita.sort((a, b) => {
+        const dateA = new Date(a.tanggalDibuat || 0);
+        const dateB = new Date(b.tanggalDibuat || 0);
+        return dateB - dateA;
+      });
+      setBerita(dataBerita);
+    } catch (error) {
+      console.error("Gagal memuat berita dari localStorage:", error);
+      setBerita([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchBerita();
+  }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = e => {
     e.preventDefault();
     if (!form.judul || !form.gambar || !form.tanggal || !form.ringkasan || !form.isi) return;
-    if (editId) {
-      deleteBerita(editId);
+
+    try {
+      const storedBerita = localStorage.getItem('berita');
+      let dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
+
+      if (editId) {
+        // Edit berita yang ada
+        const originalBerita = dataBerita.find(b => b.id === editId);
+        dataBerita = dataBerita.map(b => b.id === editId ? { ...originalBerita, ...form, id: editId } : b);
+      } else {
+        // Tambah berita baru
+        const newBerita = { ...form, id: Date.now(), tanggalDibuat: new Date().toISOString() };
+        dataBerita.push(newBerita);
+      }
+      localStorage.setItem('berita', JSON.stringify(dataBerita));
+      fetchBerita();
+    } catch (error) {
+      console.error("Gagal menyimpan berita:", error);
+      alert("Gagal menyimpan berita.");
     }
-    addBerita(form);
+
     setForm({ judul: '', gambar: '', tanggal: '', ringkasan: '', isi: '' });
     setEditId(null);
   };
 
   const handleEdit = b => {
-    setForm({ judul: b.judul, gambar: b.gambar, tanggal: b.tanggal, ringkasan: b.ringkasan, isi: b.isi || '' });
+    setForm({ judul: b.judul, gambar: b.gambar, tanggal: b.tanggal, ringkasan: b.ringkasan, isi: b.isi || '' }); // isi bisa jadi undefined
     setEditId(b.id);
+    window.scrollTo(0, 0); // Scroll ke atas untuk edit
+  };
+
+  const handleDelete = id => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
+    try {
+      const storedBerita = localStorage.getItem('berita');
+      let dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
+      const updatedBerita = dataBerita.filter(b => b.id !== id);
+      localStorage.setItem('berita', JSON.stringify(updatedBerita));
+      fetchBerita();
+    } catch (error) {
+      console.error("Gagal menghapus berita:", error);
+      alert("Gagal menghapus berita.");
+    }
   };
 
   return (
@@ -43,7 +95,7 @@ const TambahEditBerita = () => {
           </div>
           <div>
             <label className="text-secondary">Tanggal</label>
-            <input name="tanggal" value={form.tanggal} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" placeholder="Tanggal (misal: 10 Juli 2024)" />
+            <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
           </div>
           <div>
             <label className="text-secondary">Isi Berita</label>
@@ -72,10 +124,14 @@ const TambahEditBerita = () => {
               {berita.map(b => (
                 <tr key={b.id} className="border-b border-accent">
                   <td className="px-4 py-2 text-primary">{b.judul}</td>
-                  <td className="px-4 py-2 text-primary">{b.tanggal}</td>
+                  <td className="px-4 py-2 text-primary">
+                    {b.tanggal ? new Date(b.tanggal).toLocaleDateString('id-ID', {
+                      day: 'numeric', month: 'long', year: 'numeric'
+                    }) : '-'}
+                  </td>
                   <td className="px-4 py-2 flex gap-2">
                     <button className="text-sm text-secondary hover:text-primary" onClick={() => handleEdit(b)}>Edit</button>
-                    <button className="text-sm text-red-600 hover:text-primary" onClick={() => deleteBerita(b.id)}>Hapus</button>
+                    <button className="text-sm text-red-600 hover:text-primary" onClick={() => handleDelete(b.id)}>Hapus</button>
                     <Link to={`/berita/${b.id}`} className="text-sm text-primary hover:text-secondary underline">Lihat Detail</Link>
                   </td>
                 </tr>

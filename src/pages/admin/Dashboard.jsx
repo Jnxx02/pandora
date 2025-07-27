@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDesa } from '../../context/DesaContext';
 
 const Dashboard = () => {
-  const { berita } = useDesa();
+  const [berita, setBerita] = useState([]);
+  const [jumlahLaporan, setJumlahLaporan] = useState(0);
+
+  useEffect(() => {
+    try {
+      // Ambil data berita
+      const storedBerita = localStorage.getItem('berita');
+      const dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
+      
+      dataBerita.sort((a, b) => {
+        const dateA = new Date(a.tanggalDibuat || a.tanggalLaporan || 0);
+        const dateB = new Date(b.tanggalDibuat || b.tanggalLaporan || 0);
+        return dateB - dateA;
+      });
+      setBerita(dataBerita);
+
+      // Ambil data laporan
+      const storedLaporan = localStorage.getItem('pengaduan');
+      const dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
+      setJumlahLaporan(dataLaporan.length);
+
+    } catch (error) {
+      console.error("Gagal memuat data dari localStorage:", error);
+      setBerita([]);
+      setJumlahLaporan(0);
+    }
+  }, []);
+
   const beritaTerbaru = berita.slice(0, 3);
   const navigate = useNavigate();
 
@@ -26,10 +52,10 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-lg border-none">
-            <span className="text-3xl">👁️</span>
+            <span className="text-3xl">📢</span>
             <div>
-              <div className="text-primary font-bold text-lg">-</div>
-              <div className="text-secondary text-sm">Total Pengunjung</div>
+              <div className="text-primary font-bold text-lg">{jumlahLaporan}</div>
+              <div className="text-secondary text-sm">Total Laporan</div>
             </div>
           </div>
         </section>
@@ -47,7 +73,11 @@ const Dashboard = () => {
                 <div key={b.id} className="group flex flex-col bg-white rounded-xl p-3 shadow-lg border-none h-full hover:bg-primary transition">
                   <img src={b.gambar} alt={b.judul} className="w-full h-28 object-cover rounded mb-2" />
                   <div className="font-bold text-primary text-base mb-1 line-clamp-1 group-hover:text-white transition">{b.judul}</div>
-                  <div className="text-xs font-bold text-secondary mb-1 bg-gray-100 px-2 py-1 rounded w-fit shadow group-hover:bg-gray-200 transition">{b.tanggal}</div>
+                  <div className="text-xs font-bold text-secondary mb-1 bg-gray-100 px-2 py-1 rounded w-fit shadow group-hover:bg-gray-200 transition">
+                    {b.tanggal ? new Date(b.tanggal).toLocaleDateString('id-ID', {
+                      day: 'numeric', month: 'long', year: 'numeric'
+                    }) : ''}
+                  </div>
                   <Link to={`/berita/${b.id}`} className="text-sm text-primary hover:text-secondary underline group-hover:text-accent transition mt-auto pt-1">Lihat Detail</Link>
                 </div>
               ))}

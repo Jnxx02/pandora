@@ -32,8 +32,7 @@ const DetailModal = ({ laporan, onClose }) => {
 
 // Komponen Tabel Laporan yang sudah dimodifikasi
 const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
-  <div className="mb-10">
-    <h2 className="text-2xl font-semibold text-gray-800 mb-4">{title}</h2>
+  <div>
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white">
         <thead className="bg-gray-100">
@@ -107,25 +106,44 @@ function LaporanPengaduan() {
   const [laporanAspirasi, setLaporanAspirasi] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('pengaduan'); // State untuk tab aktif
 
   // State untuk mengelola modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLaporan, setSelectedLaporan] = useState(null);
 
-  const fetchLaporan = () => { /* ... (fungsi fetchLaporan tidak berubah) ... */
+  const fetchLaporan = () => {
     setLoading(true);
     try {
       const storedLaporan = localStorage.getItem('pengaduan');
       const dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
+      
+      // Urutkan berdasarkan tanggal laporan dibuat
       dataLaporan.sort((a, b) => new Date(b.tanggalLaporan) - new Date(a.tanggalLaporan));
-      const formatLaporan = (l) => ({
-        ...l,
-        tanggal: new Date(l.tanggalLaporan).toLocaleDateString('id-ID', {
-          year: 'numeric', month: 'long', day: 'numeric'
-        })
-      });
-      const pengaduan = dataLaporan.filter(l => l.klasifikasi === 'Pengaduan').map(formatLaporan);
-      const aspirasi = dataLaporan.filter(l => l.klasifikasi === 'Aspirasi').map(formatLaporan);
+
+      // Filter untuk 'pengaduan' dan format tanggal yang benar
+      const pengaduan = dataLaporan
+        .filter(l => l.klasifikasi === 'pengaduan') // FIX: Menggunakan huruf kecil
+        .map(l => ({
+          ...l,
+          // Gunakan tanggalKejadian untuk pengaduan, beri fallback jika kosong
+          tanggal: l.tanggalKejadian 
+            ? new Date(l.tanggalKejadian).toLocaleDateString('id-ID', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              }) 
+            : '-'
+        }));
+
+      // Filter untuk 'aspirasi' dan format tanggal laporan
+      const aspirasi = dataLaporan
+        .filter(l => l.klasifikasi === 'aspirasi') // FIX: Menggunakan huruf kecil
+        .map(l => ({
+          ...l,
+          tanggal: new Date(l.tanggalLaporan).toLocaleDateString('id-ID', {
+            year: 'numeric', month: 'long', day: 'numeric'
+          })
+        }));
+
       setLaporanPengaduan(pengaduan);
       setLaporanAspirasi(aspirasi);
     } catch (err) {
@@ -176,27 +194,42 @@ function LaporanPengaduan() {
             <span>←</span> Kembali ke Dashboard
           </Link>
         </div>
-        
+
+        {/* Navigasi Tab */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab('pengaduan')}
+              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'pengaduan'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Pengaduan ({laporanPengaduan.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('aspirasi')}
+              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'aspirasi'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Aspirasi ({laporanAspirasi.length})
+            </button>
+          </nav>
+        </div>
+
         {loading ? (
           <div className="text-center py-4 text-gray-500">Memuat data...</div>
         ) : error ? (
           <div className="text-center py-4 text-red-500">Error: {error.message}</div>
         ) : (
-          <>
-            <LaporanTable 
-              title="Pengaduan" 
-              data={laporanPengaduan} 
-              onShowDetail={handleShowDetail}
-              onDelete={handleDelete}
-            />
-            
-            <LaporanTable 
-              title="Aspirasi" 
-              data={laporanAspirasi} 
-              onShowDetail={handleShowDetail}
-              onDelete={handleDelete}
-            />
-          </>
+          <div className="mt-6">
+            {activeTab === 'pengaduan' && <LaporanTable title="Pengaduan" data={laporanPengaduan} onShowDetail={handleShowDetail} onDelete={handleDelete} />}
+            {activeTab === 'aspirasi' && <LaporanTable title="Aspirasi" data={laporanAspirasi} onShowDetail={handleShowDetail} onDelete={handleDelete} />}
+          </div>
         )}
       </div>
 

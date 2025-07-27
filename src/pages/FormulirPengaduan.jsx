@@ -149,7 +149,7 @@
                     type="text"
                     name="judul"
                     id="judul"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 px-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                     placeholder="Ketikkan judul laporan Anda"
                     required
                     />
@@ -166,7 +166,7 @@
                     id="isi"
                     name="isi"
                     rows={5}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                     placeholder="Uraikan laporan Anda secara detail"
                     required
                     />
@@ -184,7 +184,7 @@
                         type="date"
                         name="tanggal"
                         id="tanggal"
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        className="block w-full rounded-md border-gray-300 px-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                     />
                     </div>
                 </div>
@@ -268,7 +268,7 @@
                         type="text"
                         name="nama"
                         id="nama"
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        className="block w-full rounded-md border-gray-300 px-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                         placeholder="Masukkan nama lengkap Anda"
                         required={!isAnonim}
                     />
