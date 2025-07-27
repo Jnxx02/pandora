@@ -310,7 +310,7 @@ function FooterInfo() {
       </div>
       <div className="max-w-7xl mx-auto flex flex-col items-center gap-1 pt-4 text-sm text-white/80">
         <div className="w-full text-center">© {new Date().getFullYear()} Desa Moncongloe Bulu. All rights reserved.</div>
-        <div className="w-full text-center">Powered by KKNT 114 Moncongloe Bulu Universitas Hasanuddin</div>
+        <div className="w-full text-center">Powered by KKN-T 114 Moncongloe Bulu Universitas Hasanuddin</div>
       </div>
     </footer>
   );
