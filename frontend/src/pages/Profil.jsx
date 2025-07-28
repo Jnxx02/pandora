@@ -332,7 +332,7 @@ const Profil = () => {
             <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-gray-200">
               <h3 className="font-bold text-lg text-secondary mb-4 text-center">Berdasarkan Jenis Kelamin</h3>
               <div className="space-y-3">
-                {statistik.filter(s => s.label === 'Laki-laki' || s.label === 'Perempuan').map(item => (
+                {statistik.filter(s => s.label === 'Laki-Laki' || s.label === 'Perempuan').map(item => (
                   <div key={item.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
