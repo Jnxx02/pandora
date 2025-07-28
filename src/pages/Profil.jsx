@@ -28,11 +28,11 @@ const orbitrasi = [
 ];
 
 const wilayahAdministrasi = [
+  { nama: 'Diccekang' },
   { nama: 'Tamalate' },
   { nama: 'Tammu-Tammu' },
-  { nama: 'Moncongloe Bulu' },
-  { nama: 'Diccekang' },
   { nama: 'Tompo Balang' },
+  { nama: 'Moncongloe Bulu' },
 ];
 
 const initialPrasarana = [
