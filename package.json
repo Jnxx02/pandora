@@ -4,5 +4,8 @@
   "private": true,
   "scripts": {
     "vercel-build": "cd frontend && npm install && npm run build"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
   }
 }

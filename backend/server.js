@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+// Load environment variables from .env file for local development
+require('dotenv').config();
+
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -15,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // API endpoint untuk MENGAMBIL (GET) statistik
-app.get('/api/statistik', (req, res) => {
+app.get('/api/statistik', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('statistik')
