@@ -34,6 +34,13 @@ const EditStatistik = () => {
   };
 
   const handleSave = async () => {
+    // Validasi: Pastikan tidak ada label yang kosong, karena itu adalah Primary Key.
+    const hasEmptyLabel = statistik.some(item => !item.label || item.label.trim() === '');
+    if (hasEmptyLabel) {
+      alert('Setiap item statistik harus memiliki "Label". Kolom label tidak boleh kosong.');
+      return;
+    }
+
     try {
       const response = await fetch('/api/statistik', {
         method: 'POST',
