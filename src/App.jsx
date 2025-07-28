@@ -72,7 +72,7 @@ function Header() {
     },
   ];
   return (
-    <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/50 backdrop-blur text-primary' : 'bg-primary text-white'}`}>
+    <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/50 backdrop-blur text-white' : 'bg-primary text-white'}`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 font-bold text-xl">
@@ -100,7 +100,7 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className={`transition flex items-center gap-1 ${isTransparent ? 'hover:text-green-700' : 'hover:text-accent'} ${location.pathname.startsWith('/modul') ? `font-bold ${isTransparent ? 'text-secondary' : 'text-accent'}` : ''}`}>
+                <button className={`transition flex items-center gap-1 hover:text-accent ${location.pathname.startsWith('/modul') ? `font-bold text-accent` : ''}`}>
                   {link.label}
                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
                 </button>
@@ -120,7 +120,7 @@ function Header() {
                 )}
               </div>
             ) : (
-              <Link key={link.to} to={link.to} className={`transition ${isTransparent ? 'hover:text-green-700' : 'hover:text-accent'} ${location.pathname === link.to ? `font-bold underline underline-offset-4 ${isTransparent ? 'text-secondary' : 'text-accent'}` : ''}`}>
+              <Link key={link.to} to={link.to} className={`transition hover:text-accent ${location.pathname === link.to ? `font-bold underline underline-offset-4 text-accent` : ''}`}>
                 {link.label}
               </Link>
             ))}

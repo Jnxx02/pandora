@@ -173,7 +173,7 @@ const Profil = () => {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </span>
                 </button>
-                <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isMisiOpen ? 'max-h-96 mt-3' : 'max-h-0'}`}>
+                <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isMisiOpen ? 'max-h-[32rem] mt-3' : 'max-h-0'}`}>
                   <ul className="list-decimal list-inside space-y-2 text-primary pt-2">
                     {misi.map((item, index) => (
                       <li key={index}>{item}</li>
@@ -258,7 +258,7 @@ const Profil = () => {
                 <span>Batas Wilayah</span>
                 <span className={`transform transition-transform duration-300 ${isBatasOpen ? 'rotate-180' : ''}`}><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></span>
               </button>
-              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isBatasOpen ? 'max-h-96 mt-3' : 'max-h-0'}`}>
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isBatasOpen ? 'max-h-[32rem] mt-3' : 'max-h-0'}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   {batasWilayah.map((item) => (
                     <div key={item.arah} className="bg-green-50/50 rounded-lg p-4 border border-green-200">
