@@ -39,6 +39,10 @@ app.get('/api/statistik', async (req, res) => {
 app.post('/api/statistik', async (req, res) => {
   try {
     const statistikData = req.body;
+    // Validasi sederhana untuk memastikan data yang diterima adalah array
+    if (!Array.isArray(statistikData)) {
+      return res.status(400).json({ message: 'Data yang dikirim harus berupa array.' });
+    }
 
     // Strategi Sinkronisasi: Hapus semua, lalu masukkan semua.
     // Ini memastikan data di database sama persis dengan yang dikirim dari UI, termasuk penghapusan.
