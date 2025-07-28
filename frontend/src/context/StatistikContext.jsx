@@ -21,7 +21,7 @@ export const StatistikProvider = ({ children }) => {
   const fetchStatistik = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/statistik');
+      const response = await fetch('/api/statistik');
       if (!response.ok) {
         throw new Error('Gagal memuat data statistik dari server');
       }

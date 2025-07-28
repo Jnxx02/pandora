@@ -35,7 +35,7 @@ const EditStatistik = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/statistik', {
+      const response = await fetch('/api/statistik', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
