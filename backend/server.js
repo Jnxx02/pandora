@@ -1,31 +1,42 @@
 const express = require('express');
 const cors = require('cors');
-// const fs = require('fs');
-// const path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = 3001;
-// const STATISTIK_FILE_PATH = path.join(__dirname, 'data', 'statistik.json');
+
+// Menggunakan path.join(__dirname, ...) adalah cara paling andal untuk
+// mereferensikan file yang di-deploy bersama kode Anda di lingkungan serverless.
+const STATISTIK_FILE_PATH = path.join(__dirname, 'data', 'statistik.json');
 
 app.use(cors());
 app.use(express.json());
 
-// API endpoint untuk statistik (VERSI DEBUGGING)
+// API endpoint untuk MENGAMBIL (GET) statistik
 app.get('/api/statistik', (req, res) => {
-  // Mengembalikan data statis tanpa membaca file
-  console.log("GET /api/statistik endpoint was hit");
-  res.status(200).json([{ icon: '✔️', label: 'Test', value: 'Berhasil' }]);
+  fs.readFile(STATISTIK_FILE_PATH, 'utf8', (err, data) => {
+    if (err) {
+      // Log error ini akan muncul di Vercel Function Logs
+      console.error('Error reading statistik.json:', err);
+      return res.status(500).json({ message: 'Internal Server Error: Gagal membaca data.' });
+    }
+    try {
+      res.status(200).json(JSON.parse(data));
+    } catch (parseErr) {
+      console.error('Error parsing statistik.json:', parseErr);
+      res.status(500).json({ message: 'Internal Server Error: Gagal memproses data.' });
+    }
+  });
 });
 
-// API endpoint untuk memperbarui statistik (VERSI DEBUGGING)
+// API endpoint untuk MENYIMPAN (POST) statistik
 app.post('/api/statistik', (req, res) => {
-  const newStatistik = req.body;
-  if (!Array.isArray(newStatistik)) {
-    return res.status(400).json({ message: 'Data yang dikirim harus berupa array' });
-  }
-  // Hanya merespons tanpa menulis ke file
-  console.log("POST /api/statistik endpoint was hit with body:", newStatistik);
-  res.status(200).json({ message: 'Data statistik berhasil diperbarui (mode debug)' });
+  // PENTING: Filesystem Vercel bersifat read-only (hanya bisa dibaca).
+  // fs.writeFile tidak akan menyimpan data secara permanen.
+  // Untuk saat ini, kita hanya akan merespons seolah-olah berhasil.
+  console.log("POST /api/statistik diterima. Perubahan tidak disimpan permanen di Vercel.");
+  res.status(200).json({ message: 'Data diterima. Perubahan tidak disimpan permanen.' });
 });
 
 // Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
