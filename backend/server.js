@@ -39,16 +39,29 @@ app.get('/api/statistik', async (req, res) => {
 app.post('/api/statistik', async (req, res) => {
   try {
     const statistikData = req.body;
-    // 'upsert' akan meng-update baris jika ada, atau membuat baris baru jika tidak ada.
-    const { error } = await supabase.from('statistik').upsert(statistikData);
 
-    if (error) {
-      throw error;
+    // Strategi Sinkronisasi: Hapus semua, lalu masukkan semua.
+    // Ini memastikan data di database sama persis dengan yang dikirim dari UI, termasuk penghapusan.
+
+    // 1. Hapus semua data statistik yang ada.
+    const { error: deleteError } = await supabase
+      .from('statistik')
+      .delete()
+      .neq('label', 'this-is-a-dummy-value-that-will-never-exist'); // Trik untuk menargetkan semua baris
+
+    if (deleteError) throw deleteError;
+
+    // 2. Masukkan semua data baru yang dikirim dari frontend.
+    // Kita hanya insert jika ada data untuk menghindari error.
+    if (statistikData && statistikData.length > 0) {
+      const { error: insertError } = await supabase.from('statistik').insert(statistikData);
+      if (insertError) throw insertError;
     }
-    res.status(200).json({ message: 'Data statistik berhasil disimpan permanen.' });
+
+    res.status(200).json({ message: 'Data statistik berhasil disinkronkan.' });
   } catch (error) {
-    console.error('Error saving statistik to Supabase:', error);
-    res.status(500).json({ message: 'Gagal menyimpan data ke database.' });
+    console.error('Error syncing statistik to Supabase:', error);
+    res.status(500).json({ message: 'Gagal menyinkronkan data ke database.' });
   }
 });
 
