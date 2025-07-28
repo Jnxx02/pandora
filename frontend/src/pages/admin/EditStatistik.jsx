@@ -47,10 +47,11 @@ const EditStatistik = () => {
         throw new Error('Gagal menyimpan data ke server');
       }
 
-      // Panggil refetch untuk memperbarui data di context
+      // Panggil refetch untuk mengambil data terbaru dari database
+      // setelah berhasil menyimpan.
       await refetchStatistik();
 
-      alert('Data statistik berhasil diperbarui di server!');
+      alert('Data statistik berhasil disimpan permanen!');
       navigate('/admin/dashboard'); // Arahkan kembali setelah berhasil
     } catch (error) {
       console.error("Gagal menyimpan statistik:", error);

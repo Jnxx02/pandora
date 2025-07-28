@@ -1,57 +1,59 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+const express = require('express');
+const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 
-const initialStatistik = [
-  { icon: '👥', label: 'Penduduk', value: '0' },
-  { icon: '👨', label: 'Laki-laki', value: '0' },
-  { icon: '👩', label: 'Perempuan', value: '0' },
-  { icon: '🏠', label: 'Kepala Keluarga', value: '0' },
-  { icon: '📍', label: 'Diccekang', value: '0' },
-  { icon: '📍', label: 'Tamalate', value: '0' },
-  { icon: '📍', label: 'Tammu-Tammu', value: '0' },
-  { icon: '📍', label: 'Tompo Balang', value: '0' },
-  { icon: '📍', label: 'Moncongloe Bulu', value: '0' },
-];
+const app = express();
+const PORT = 3001;
 
-const StatistikContext = createContext();
+// Inisialisasi Supabase Client
+// Pastikan Anda sudah mengatur environment variables ini di Vercel
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const StatistikProvider = ({ children }) => {
-  const [statistik, setStatistik] = useState(initialStatistik);
-  const [loading, setLoading] = useState(true);
+app.use(cors());
+app.use(express.json());
 
-  const fetchStatistik = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/statistik');
-      if (!response.ok) {
-        throw new Error('Gagal memuat data statistik dari server');
-      }
-      const data = await response.json();
-      setStatistik(data);
-    } catch (error) {
-      console.error("Gagal mengambil statistik dari backend:", error);
-      setStatistik(initialStatistik); // Fallback jika gagal
-    } finally {
-      setLoading(false);
+// API endpoint untuk MENGAMBIL (GET) statistik
+app.get('/api/statistik', (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('statistik')
+      .select('icon, label, value');
+
+    if (error) {
+      throw error;
     }
-  }, []);
 
-  useEffect(() => {
-    fetchStatistik();
-  }, [fetchStatistik]);
-
-  const value = { statistik, loading, refetchStatistik: fetchStatistik };
-
-  return (
-    <StatistikContext.Provider value={value}>
-      {children}
-    </StatistikContext.Provider>
-  );
-};
-
-export const useStatistik = () => {
-  const context = useContext(StatistikContext);
-  if (context === undefined) {
-    throw new Error('useStatistik must be used within a StatistikProvider');
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching statistik from Supabase:', error);
+    res.status(500).json({ message: 'Gagal mengambil data dari database.' });
   }
-  return context;
-};
+});
+
+// API endpoint untuk MENYIMPAN (POST) statistik ke Supabase
+app.post('/api/statistik', async (req, res) => {
+  try {
+    const statistikData = req.body;
+    // 'upsert' akan meng-update baris jika ada, atau membuat baris baru jika tidak ada.
+    const { error } = await supabase.from('statistik').upsert(statistikData);
+
+    if (error) {
+      throw error;
+    }
+    res.status(200).json({ message: 'Data statistik berhasil disimpan permanen.' });
+  } catch (error) {
+    console.error('Error saving statistik to Supabase:', error);
+    res.status(500).json({ message: 'Gagal menyimpan data ke database.' });
+  }
+});
+
+// Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
