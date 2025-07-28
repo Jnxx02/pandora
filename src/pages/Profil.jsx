@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDesa } from '../context/DesaContext';
 
 // Data ini bisa dipindahkan ke context atau file data terpusat jika diperlukan di halaman lain
 const batasWilayah = [
-  { arah: 'Utara', wilayah: 'Desa Bonto Bunga' },
+  { arah: 'Utara', wilayah: 'Desa Bonto Bunga (Kec. Mongcongloe, Kab. Maros)' },
   { arah: 'Selatan', wilayah: 'Desa Paccellekang (Kec. Pattallassang, Kab. Gowa)' },
-  { arah: 'Barat', wilayah: 'Desa Paccellekang, Desa Moncongloe Lappara, dan Desa Moncongloe' },
-  { arah: 'Timur', wilayah: 'Desa Paccellekang (Kab. Gowa) dan Desa Purnakarya (Kec. Tanralili)' },
+  { arah: 'Barat', wilayah: 'Desa Moncongloe Lappara dan Desa Moncongloe (Kec. Moncongloe, Kab. Maros)' },
+  { arah: 'Timur', wilayah: 'Desa Purnakarya (Kec. Tanralili, Kab. Maros)' },
 ];
 
-const statistik = [
+const initialStatistik = [
   { icon: '👥', label: 'Penduduk', value: '6.564' },
   { icon: '👨', label: 'Laki-laki', value: '3.323' },
   { icon: '👩', label: 'Perempuan', value: '3.241' },
   { icon: '🏠', label: 'Kepala Keluarga', value: '2.022' },
-  { icon: '🕌', label: 'Islam', value: '6.126' },
-  { icon: '✝️', label: 'Kristen', value: '305' },
-  { icon: '🕉️', label: 'Hindu', value: '603' },
-  { icon: '📖', label: 'Katolik', value: '107' },
-  { icon: '🌸', label: 'Buddha', value: '301' },
+  { icon: '📍', label: 'Diccekang', value: '0' },
+  { icon: '📍', label: 'Tamalate', value: '0' },
+  { icon: '📍', label: 'Tammu-Tammu', value: '0' },
+  { icon: '📍', label: 'Tompo Balang', value: '0' },
+  { icon: '📍', label: 'Moncongloe Bulu', value: '0' },
 ];
 
 const orbitrasi = [
-  { nama: 'Pusat Pemerintahan Kecamatan (Moncongloe)', jarak: '0,7 km' },
-  { nama: 'Pusat Pemerintahan Kabupaten (Turikale)', jarak: '26,5 km' },
-  { nama: 'Pusat Pemerintahan Provinsi (Makassar)', jarak: '3,5 km' },
+  { nama: 'Pusat Pemerintahan Kecamatan (Moncongloe)', jarak: '0,5 km' },
+  { nama: 'Pusat Pemerintahan Kabupaten (Turikale)', jarak: '27 km' },
+  { nama: 'Pusat Pemerintahan Provinsi (Makassar)', jarak: '19 km' },
 ];
 
 const wilayahAdministrasi = [
@@ -35,7 +35,7 @@ const wilayahAdministrasi = [
   { nama: 'Tompo Balang' },
 ];
 
-const prasarana = [
+const initialPrasarana = [
   {
     kategori: 'Pendidikan',
     icon: '🎓',
@@ -60,9 +60,24 @@ const prasarana = [
 
 const organisasi = [
   {
+    nama: 'LPM (Lembaga Pemberdayaan Masyarakat)',
+    icon: '🏘️',
+    deskripsi: 'Lembaga yang menjadi mitra pemerintah desa dalam menampung dan mewujudkan aspirasi masyarakat di bidang pembangunan.',
+  },
+  {
+    nama: 'Lembaga Adat',
+    icon: '📜',
+    deskripsi: 'Organisasi yang menjaga dan melestarikan nilai-nilai adat serta budaya lokal di tengah masyarakat.',
+  },
+  {
     nama: 'PKK (Pemberdayaan Kesejahteraan Keluarga)',
     icon: '👩‍👩‍👧‍👦',
     deskripsi: 'Organisasi yang berfokus pada pemberdayaan perempuan dan peningkatan kesejahteraan keluarga di tingkat desa.',
+  },
+  {
+    nama: 'BUMDES (Badan Usaha Milik Desa)',
+    icon: '📈',
+    deskripsi: 'Badan usaha yang dikelola oleh pemerintah desa dan masyarakat untuk memperkuat perekonomian desa.',
   },
   {
     nama: 'Karang Taruna',
@@ -70,14 +85,9 @@ const organisasi = [
     deskripsi: 'Wadah pengembangan generasi muda yang tumbuh dan berkembang atas dasar kesadaran dan tanggung jawab sosial.',
   },
   {
-    nama: 'LPM (Lembaga Pemberdayaan Masyarakat)',
-    icon: '🏘️',
-    deskripsi: 'Lembaga yang menjadi mitra pemerintah desa dalam menampung dan mewujudkan aspirasi masyarakat di bidang pembangunan.',
-  },
-  {
-    nama: 'Majelis Taklim',
-    icon: '📖',
-    deskripsi: 'Kelompok pengajian dan kegiatan keagamaan Islam yang aktif di berbagai dusun untuk mempererat silaturahmi.',
+    nama: 'Kopdes (Koperasi Merah Putih)',
+    icon: '🤝',
+    deskripsi: 'Koperasi desa yang bertujuan untuk meningkatkan kesejahteraan anggota dan masyarakat melalui usaha bersama.',
   },
 ];
 
@@ -107,6 +117,54 @@ const Profil = () => {
   const [isOrbitrasiOpen, setOrbitrasiOpen] = useState(false);
   const [isBatasOpen, setBatasOpen] = useState(false);
   const [openOrganisasi, setOpenOrganisasi] = useState({});
+
+  const [statistik, setStatistik] = useState(initialStatistik);
+  const [prasarana, setPrasarana] = useState(initialPrasarana);
+
+  useEffect(() => {
+    const loadStatistik = () => {
+      try {
+        const storedStatistik = localStorage.getItem('statistik');
+        if (storedStatistik) {
+          setStatistik(JSON.parse(storedStatistik));
+        } else {
+          // Jika tidak ada di localStorage, gunakan data awal dan simpan
+          localStorage.setItem('statistik', JSON.stringify(initialStatistik));
+          setStatistik(initialStatistik);
+        }
+      } catch (error) {
+        console.error("Gagal memuat statistik dari localStorage:", error);
+        setStatistik(initialStatistik); // Fallback ke data awal jika ada error
+      }
+    };
+
+    loadStatistik(); // Panggil saat komponen mount
+    window.addEventListener('storage', loadStatistik); // Panggil saat ada perubahan di localStorage
+
+    return () => window.removeEventListener('storage', loadStatistik);
+  }, []);
+
+  useEffect(() => {
+    const loadPrasarana = () => {
+      try {
+        const storedPrasarana = localStorage.getItem('prasarana');
+        if (storedPrasarana) {
+          setPrasarana(JSON.parse(storedPrasarana));
+        } else {
+          // Jika tidak ada di localStorage, gunakan data awal dan simpan
+          localStorage.setItem('prasarana', JSON.stringify(initialPrasarana));
+          setPrasarana(initialPrasarana);
+        }
+      } catch (error) {
+        console.error("Gagal memuat prasarana dari localStorage:", error);
+        setPrasarana(initialPrasarana); // Fallback ke data awal jika ada error
+      }
+    };
+
+    loadPrasarana();
+    window.addEventListener('storage', loadPrasarana);
+    return () => window.removeEventListener('storage', loadPrasarana);
+  }, []);
 
   const toggleOrganisasi = (nama) => {
     setOpenOrganisasi(prev => ({ ...prev, [nama]: !prev[nama] }));
@@ -320,11 +378,11 @@ const Profil = () => {
               </div>
             </div>
 
-            {/* Berdasarkan Agama */}
+            {/* Berdasarkan Dusun */}
             <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-gray-200">
-              <h3 className="font-bold text-lg text-secondary mb-4 text-center">Berdasarkan Agama</h3>
+              <h3 className="font-bold text-lg text-secondary mb-4 text-center">Berdasarkan Dusun</h3>
               <div className="space-y-3">
-                {statistik.filter(s => ['Islam', 'Kristen', 'Hindu', 'Katolik', 'Buddha'].includes(s.label)).map(item => (
+                {statistik.filter(s => ['Diccekang', 'Tompo Balang', 'Tamalate', 'Tammu-Tammu', 'Moncongloe Bulu'].includes(s.label)).map(item => (
                   <div key={item.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>

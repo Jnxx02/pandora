@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const statistik = [
+const initialStatistik = [
   { icon: '👥', label: 'Penduduk', value: '6.564' },
   { icon: '👨', label: 'Laki-laki', value: '3.323' },
   { icon: '👩', label: 'Perempuan', value: '3.241' },
   { icon: '🏠', label: 'Kepala Keluarga', value: '2.022' },
-  { icon: '🕌', label: 'Islam', value: '6.126' },
-  { icon: '✝️', label: 'Kristen', value: '305' },
-  { icon: '🕉️', label: 'Hindu', value: '603' },
-  { icon: '📖', label: 'Katolik', value: '107' },
-  { icon: '🌸', label: 'Buddha', value: '301' },
+  { icon: '📍', label: 'Diccekang', value: '0' },
+  { icon: '📍', label: 'Tamalate', value: '0' },
+  { icon: '📍', label: 'Tammu-Tammu', value: '0' },
+  { icon: '📍', label: 'Tompo Balang', value: '0' },
+  { icon: '📍', label: 'Moncongloe Bulu', value: '0' },
 ];
 
 const batasWilayah = [
-  { arah: 'Utara', wilayah: 'Desa Bonto Bunga' },
+  { arah: 'Utara', wilayah: 'Desa Bonto Bunga (Kec. Mongcongloe, Kab. Maros)' },
   { arah: 'Selatan', wilayah: 'Desa Paccellekang (Kec. Pattallassang, Kab. Gowa)' },
-  { arah: 'Barat', wilayah: 'Desa Paccellekang, Desa Moncongloe Lappara, dan Desa Moncongloe' },
-  { arah: 'Timur', wilayah: 'Desa Paccellekang (Kab. Gowa) dan Desa Purnakarya (Kec. Tanralili)' },
+  { arah: 'Barat', wilayah: 'Desa Moncongloe Lappara dan Desa Moncongloe (Kec. Moncongloe, Kab. Maros)' },
+  { arah: 'Timur', wilayah: 'Desa Purnakarya (Kec. Tanralili, Kab. Maros)' },
 ];
 
 const orbitrasi = [
-  { nama: 'Pusat Pemerintahan Kecamatan (Moncongloe)', jarak: '0,7 km' },
-  { nama: 'Pusat Pemerintahan Kabupaten (Turikale)', jarak: '26,5 km' },
-  { nama: 'Pusat Pemerintahan Provinsi (Makassar)', jarak: '3,5 km' },
+  { nama: 'Pusat Pemerintahan Kecamatan (Moncongloe)', jarak: '0,5 km' },
+  { nama: 'Pusat Pemerintahan Kabupaten (Turikale)', jarak: '27 km' },
+  { nama: 'Pusat Pemerintahan Provinsi (Makassar)', jarak: '19 km' },
 ];
 
 const Home = () => {
   const [berita, setBerita] = useState([]);
   const [beritaIdx, setBeritaIdx] = useState(0);
+  const [statistik, setStatistik] = useState(initialStatistik);
 
   useEffect(() => {
     try {
@@ -44,6 +45,29 @@ const Home = () => {
       console.error("Gagal memuat berita dari localStorage:", error);
       setBerita([]);
     }
+  }, []);
+
+  useEffect(() => {
+    const loadStatistik = () => {
+      try {
+        const storedStatistik = localStorage.getItem('statistik');
+        if (storedStatistik) {
+          setStatistik(JSON.parse(storedStatistik));
+        } else {
+          // Jika tidak ada di localStorage, gunakan data awal dan simpan
+          localStorage.setItem('statistik', JSON.stringify(initialStatistik));
+          setStatistik(initialStatistik);
+        }
+      } catch (error) {
+        console.error("Gagal memuat statistik dari localStorage:", error);
+        setStatistik(initialStatistik); // Fallback ke data awal jika ada error
+      }
+    };
+
+    loadStatistik(); // Panggil saat komponen mount
+    window.addEventListener('storage', loadStatistik); // Panggil saat ada perubahan di localStorage
+
+    return () => window.removeEventListener('storage', loadStatistik);
   }, []);
 
   useEffect(() => {

@@ -10,6 +10,8 @@ import React, { useState, useEffect } from 'react';
 import Dashboard from './pages/admin/Dashboard'
 import LaporanPengaduan from './pages/admin/LaporanPengaduan'
 import TambahEditBerita from './pages/admin/TambahEditBerita'
+import EditStatistik from './pages/admin/EditStatistik'
+import EditPrasarana from './pages/admin/EditPrasarana'
 import DetailBerita from './pages/DetailBerita'
 import { DesaProvider } from './context/DesaContext';
 
@@ -390,6 +392,16 @@ function App() {
             <Route path="/admin/laporan-pengaduan" element={
               <RequireAdmin>
                 <LaporanPengaduan />
+              </RequireAdmin>
+            } />
+            <Route path="/admin/edit-statistik" element={
+              <RequireAdmin>
+                <EditStatistik />
+              </RequireAdmin>
+            } />
+            <Route path="/admin/edit-prasarana" element={
+              <RequireAdmin>
+                <EditPrasarana />
               </RequireAdmin>
             } />
             <Route path="/berita/:id" element={<DetailBerita />} />
