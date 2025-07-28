@@ -10,7 +10,7 @@ const STATISTIK_FILE_PATH = path.join(__dirname, 'data', 'statistik.json');
 app.use(cors());
 app.use(express.json());
 
-// API endpoint untuk MENGAMBIL (GET) statistik
+// API endpoint untuk statistik
 app.get('/api/statistik', (req, res) => {
   fs.readFile(STATISTIK_FILE_PATH, 'utf8', (err, data) => {
     if (err) {
@@ -21,7 +21,7 @@ app.get('/api/statistik', (req, res) => {
   });
 });
 
-// API endpoint untuk MENYIMPAN (POST) statistik
+// API endpoint untuk memperbarui statistik
 app.post('/api/statistik', (req, res) => {
   const newStatistik = req.body;
 
@@ -38,6 +38,11 @@ app.post('/api/statistik', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
