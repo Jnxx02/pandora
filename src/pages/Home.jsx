@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const initialStatistik = [
-  { icon: '👥', label: 'Penduduk', value: '6.564' },
-  { icon: '👨', label: 'Laki-laki', value: '3.323' },
-  { icon: '👩', label: 'Perempuan', value: '3.241' },
-  { icon: '🏠', label: 'Kepala Keluarga', value: '2.022' },
+  { icon: '👥', label: 'Penduduk', value: '0' },
+  { icon: '👨', label: 'Laki-laki', value: '0' },
+  { icon: '👩', label: 'Perempuan', value: '0' },
+  { icon: '🏠', label: 'Kepala Keluarga', value: '0' },
   { icon: '📍', label: 'Diccekang', value: '0' },
   { icon: '📍', label: 'Tamalate', value: '0' },
   { icon: '📍', label: 'Tammu-Tammu', value: '0' },
