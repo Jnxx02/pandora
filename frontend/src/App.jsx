@@ -14,6 +14,7 @@ import EditStatistik from './pages/admin/EditStatistik'
 import EditPrasarana from './pages/admin/EditPrasarana'
 import DetailBerita from './pages/DetailBerita'
 import { DesaProvider } from './context/DesaContext';
+import { StatistikProvider } from './context/StatistikContext';
 
 // Komponen placeholder untuk halaman modul
 const ModulPage = ({ title }) => (
@@ -366,7 +367,8 @@ function App() {
   }, []);
   return (
     <DesaProvider>
-      <div className="flex flex-col min-h-screen bg-background font-sans">
+      <StatistikProvider>
+        <div className="flex flex-col min-h-screen bg-background font-sans">
         <Header />
         <HeroSection />
         <SambutanKepalaDesa />
@@ -412,6 +414,7 @@ function App() {
         <FooterInfo />
         <ScrollToTopButton />
       </div>
+      </StatistikProvider>
     </DesaProvider>
   )
 }

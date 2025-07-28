@@ -1,0 +1,47 @@
+[
+  {
+    "icon": "👥",
+    "label": "Penduduk",
+    "value": "4.073"
+  },
+  {
+    "icon": "👨",
+    "label": "Laki-laki",
+    "value": "1915"
+  },
+  {
+    "icon": "👩",
+    "label": "Perempuan",
+    "value": "1905"
+  },
+  {
+    "icon": "🏠",
+    "label": "Kepala Keluarga",
+    "value": "1011"
+  },
+  {
+    "icon": "📍",
+    "label": "Diccekang",
+    "value": "800"
+  },
+  {
+    "icon": "📍",
+    "label": "Tamalate",
+    "value": "750"
+  },
+  {
+    "icon": "📍",
+    "label": "Tammu-Tammu",
+    "value": "780"
+  },
+  {
+    "icon": "📍",
+    "label": "Tompo Balang",
+    "value": "740"
+  },
+  {
+    "icon": "📍",
+    "label": "Moncongloe Bulu",
+    "value": "724"
+  }
+]

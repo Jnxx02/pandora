@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-const initialStatistik = [
-  { icon: '👥', label: 'Penduduk', value: '0' },
-  { icon: '👨', label: 'Laki-laki', value: '0' },
-  { icon: '👩', label: 'Perempuan', value: '0' },
-  { icon: '🏠', label: 'Kepala Keluarga', value: '0' },
-  { icon: '📍', label: 'Diccekang', value: '0' },
-  { icon: '📍', label: 'Tamalate', value: '0' },
-  { icon: '📍', label: 'Tammu-Tammu', value: '0' },
-  { icon: '📍', label: 'Tompo Balang', value: '0' },
-  { icon: '📍', label: 'Moncongloe Bulu', value: '0' },
-];
+import { useStatistik } from '../context/StatistikContext';
 
 const batasWilayah = [
   { arah: 'Utara', wilayah: 'Desa Bonto Bunga (Kec. Mongcongloe, Kab. Maros)' },
@@ -29,7 +18,7 @@ const orbitrasi = [
 const Home = () => {
   const [berita, setBerita] = useState([]);
   const [beritaIdx, setBeritaIdx] = useState(0);
-  const [statistik, setStatistik] = useState(initialStatistik);
+  const { statistik } = useStatistik();
 
   useEffect(() => {
     try {
@@ -45,29 +34,6 @@ const Home = () => {
       console.error("Gagal memuat berita dari localStorage:", error);
       setBerita([]);
     }
-  }, []);
-
-  useEffect(() => {
-    const loadStatistik = () => {
-      try {
-        const storedStatistik = localStorage.getItem('statistik');
-        if (storedStatistik) {
-          setStatistik(JSON.parse(storedStatistik));
-        } else {
-          // Jika tidak ada di localStorage, gunakan data awal dan simpan
-          localStorage.setItem('statistik', JSON.stringify(initialStatistik));
-          setStatistik(initialStatistik);
-        }
-      } catch (error) {
-        console.error("Gagal memuat statistik dari localStorage:", error);
-        setStatistik(initialStatistik); // Fallback ke data awal jika ada error
-      }
-    };
-
-    loadStatistik(); // Panggil saat komponen mount
-    window.addEventListener('storage', loadStatistik); // Panggil saat ada perubahan di localStorage
-
-    return () => window.removeEventListener('storage', loadStatistik);
   }, []);
 
   useEffect(() => {

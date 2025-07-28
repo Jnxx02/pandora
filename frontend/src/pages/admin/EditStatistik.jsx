@@ -1,36 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const initialStatistik = [
-  { icon: '👥', label: 'Penduduk', value: '0' },
-  { icon: '👨', label: 'Laki-laki', value: '0' },
-  { icon: '👩', label: 'Perempuan', value: '0' },
-  { icon: '🏠', label: 'Kepala Keluarga', value: '0' },
-  { icon: '📍', label: 'Diccekang', value: '0' },
-  { icon: '📍', label: 'Tamalate', value: '0' },
-  { icon: '📍', label: 'Tammu-Tammu', value: '0' },
-  { icon: '📍', label: 'Tompo Balang', value: '0' },
-  { icon: '📍', label: 'Moncongloe Bulu', value: '0' },
-];
+import { useStatistik } from '../../context/StatistikContext';
 
 const EditStatistik = () => {
+  // State lokal untuk form, diinisialisasi dari context
   const [statistik, setStatistik] = useState([]);
   const navigate = useNavigate();
+  const { statistik: contextStatistik, refetchStatistik } = useStatistik();
 
   useEffect(() => {
-    try {
-      const storedStatistik = localStorage.getItem('statistik');
-      if (storedStatistik) {
-        setStatistik(JSON.parse(storedStatistik));
-      } else {
-        setStatistik(initialStatistik);
-        localStorage.setItem('statistik', JSON.stringify(initialStatistik));
-      }
-    } catch (error) {
-      console.error("Gagal memuat statistik dari localStorage:", error);
-      setStatistik(initialStatistik);
+    // Ketika data dari context berubah (misalnya setelah fetch awal),
+    // perbarui state lokal untuk form.
+    if (contextStatistik && contextStatistik.length > 0) {
+      setStatistik(contextStatistik);
     }
-  }, []);
+  }, [contextStatistik]);
 
   const handleChange = (index, field, value) => {
     const updatedStatistik = [...statistik];
@@ -49,15 +33,28 @@ const EditStatistik = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
-      localStorage.setItem('statistik', JSON.stringify(statistik));
-      window.dispatchEvent(new Event('storage')); // Memicu event agar halaman lain update
-      alert('Data statistik berhasil disimpan!');
-      navigate('/admin/dashboard');
+      const response = await fetch('http://localhost:3001/api/statistik', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(statistik),
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal menyimpan data ke server');
+      }
+
+      // Panggil refetch untuk memperbarui data di context
+      await refetchStatistik();
+
+      alert('Data statistik berhasil diperbarui di server!');
+      navigate('/admin/dashboard'); // Arahkan kembali setelah berhasil
     } catch (error) {
-      console.error("Gagal menyimpan statistik ke localStorage:", error);
-      alert('Gagal menyimpan data statistik.');
+      console.error("Gagal menyimpan statistik:", error);
+      alert('Terjadi kesalahan saat menyimpan data statistik.');
     }
   };
 
