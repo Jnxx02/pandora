@@ -51,7 +51,7 @@
         };
 
         try {
-        const response = await fetch('http://localhost:3001/api/pengaduan', {
+        const response = await fetch('http://localhost:3001/api/laporan', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
