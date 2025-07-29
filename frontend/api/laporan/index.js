@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Inisialisasi Supabase Client di dalam serverless function.
-// Vercel akan menyediakan environment variables melalui process.env.
-// Pastikan Anda sudah mengatur Environment Variables di dashboard Vercel nanti.
+// Gunakan nama variabel TANPA awalan VITE_
 const supabase = createClient(
-  process.env.VITE_SUPABASE_URL, 
+  process.env.SUPABASE_URL, 
   process.env.SUPABASE_SERVICE_KEY, // Gunakan Service Key untuk akses backend yang aman
   {
     auth: {
