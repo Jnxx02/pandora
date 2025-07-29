@@ -39,7 +39,55 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   }
 
-  // Method lain (seperti POST dan DELETE) akan ditambahkan di langkah berikutnya
-  res.setHeader('Allow', ['GET']);
+  if (req.method === 'POST') {
+    try {
+      const {
+        klasifikasi,
+        judul,
+        isi,
+        tanggalKejadian,
+        kategori,
+        lampiranInfo,
+        lampiranDataUrl,
+        nama,
+      } = req.body;
+
+      const { data, error } = await supabase
+        .from('laporan')
+        .insert([{
+          klasifikasi,
+          judul,
+          isi,
+          tanggalKejadian: tanggalKejadian || null,
+          kategori,
+          lampiranInfo,
+          lampiranDataUrl,
+          nama,
+        }])
+        .select();
+
+      if (error) throw error;
+
+      return res.status(201).json({ message: 'Laporan berhasil dibuat', data: data[0] });
+    } catch (error) {
+      return res.status(500).json({ message: 'Gagal menyimpan laporan.', error: error.message });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    try {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ message: 'ID laporan diperlukan.' });
+
+      const { error } = await supabase.from('laporan').delete().eq('id', id);
+      if (error) throw error;
+
+      return res.status(200).json({ message: 'Laporan berhasil dihapus.' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Gagal menghapus laporan.', error: error.message });
+    }
+  }
+
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
