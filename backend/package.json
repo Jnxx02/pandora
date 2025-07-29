@@ -1,11 +1,13 @@
 {
   "name": "pandora-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend server for Pandora website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "npm install --prefix ../frontend && npm run build --prefix ../frontend"
   },
   "keywords": [],
   "author": "",

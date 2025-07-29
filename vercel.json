@@ -4,16 +4,9 @@
     {
       "src": "backend/server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
-      }
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/server.js" }
+    { "source": "/(.*)", "destination": "/backend/server.js" }
   ]
 }
