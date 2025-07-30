@@ -297,8 +297,8 @@ function FooterInfo() {
         {/* Kolom 2: Kontak */}
         <div>
           <div className="font-bold text-lg mb-2">Kontak</div>
-          <div className="flex items-center gap-2 mb-2"><span>✉️</span> <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:text-accent transition">moncongloebulu16@gmail.com</a></div>
-          <div className="flex items-center gap-2 mb-2"><span>👩‍💻</span> <Link to="/admin/dashboard" className="underline hover:text-accent transition">Developer Desa</Link></div>
+          <div className="flex items-center gap-2 mb-2"><span>✉️</span> <a href="mailto:moncongloebulu16@gmail.com" className="underline">moncongloebulu16@gmail.com</a></div>
+          <div className="flex items-center gap-2 mb-2"><span>👩‍💻</span> <a href="/admin/dashboard" className="underline">Developer Desa</a></div>
         </div>
         {/* Kolom 3: Telepon Penting */}
         <div>
