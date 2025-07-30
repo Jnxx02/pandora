@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 // Load environment variables from .env file for local development
-const path = require('path');
 require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
@@ -17,13 +16,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(cors());
 app.use(express.json());
-
-// --- MULAI PERUBAHAN ---
-
-// 1. Sajikan file statis dari direktori build frontend (Vite)
-const frontendDistPath = path.resolve(__dirname, '..', 'frontend', 'dist');
-app.use(express.static(frontendDistPath));
-
 
 // API endpoint untuk MENGAMBIL (GET) statistik
 app.get('/api/statistik', async (req, res) => {
@@ -76,14 +68,6 @@ app.post('/api/statistik', async (req, res) => {
     res.status(500).json({ message: 'Gagal menyinkronkan data ke database.' });
   }
 });
-
-// 2. Catch-all route untuk menyajikan index.html (Penting untuk React Router)
-// Rute ini harus berada SETELAH semua rute API Anda.
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(frontendDistPath, 'index.html'));
-});
-
-// --- SELESAI PERUBAHAN ---
 
 // Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
 if (process.env.NODE_ENV !== 'production') {
