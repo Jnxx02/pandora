@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useStatistik } from '../../context/StatistikContext';
 
 const EditStatistik = () => {
+  // State lokal untuk form, diinisialisasi dari context
   const [statistik, setStatistik] = useState([]);
   const navigate = useNavigate();
   const { statistik: contextStatistik, refetchStatistik } = useStatistik();
 
   useEffect(() => {
+    // Ketika data dari context berubah (misalnya setelah fetch awal),
+    // perbarui state lokal untuk form.
     if (contextStatistik && contextStatistik.length > 0) {
       setStatistik(contextStatistik);
     }
@@ -31,6 +34,7 @@ const EditStatistik = () => {
   };
 
   const handleSave = async () => {
+    // Validasi: Pastikan tidak ada label yang kosong, karena itu adalah Primary Key.
     const hasEmptyLabel = statistik.some(item => !item.label || item.label.trim() === '');
     if (hasEmptyLabel) {
       alert('Setiap item statistik harus memiliki "Label". Kolom label tidak boleh kosong.');
@@ -38,13 +42,24 @@ const EditStatistik = () => {
     }
 
     try {
-      // Simulasi penyimpanan ke localStorage karena tidak ada API endpoint
-      localStorage.setItem('statistik', JSON.stringify(statistik));
-      
+      const response = await fetch('/api/statistik', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(statistik),
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal menyimpan data ke server');
+      }
+
+      // Panggil refetch untuk mengambil data terbaru dari database
+      // setelah berhasil menyimpan.
       await refetchStatistik();
 
-      alert('Data statistik berhasil disimpan!');
-      navigate('/admin/dashboard');
+      alert('Data statistik berhasil disimpan permanen!');
+      navigate('/admin/dashboard'); // Arahkan kembali setelah berhasil
     } catch (error) {
       console.error("Gagal menyimpan statistik:", error);
       alert('Terjadi kesalahan saat menyimpan data statistik.');
@@ -52,52 +67,45 @@ const EditStatistik = () => {
   };
 
   return (
-    // GANTI: Menggunakan bg-neutral untuk latar belakang admin
-    <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
+    <div className="py-10 max-w-4xl mx-auto bg-background min-h-screen px-4">
       <div className="flex justify-between items-center mb-6">
-        {/* GANTI: Judul menggunakan warna secondary agar konsisten */}
-        <h2 className="text-2xl font-bold text-secondary">Edit Statistik Penduduk</h2>
-        {/* GANTI: Tombol kembali dengan gaya yang konsisten */}
+        <h2 className="text-2xl font-bold text-primary">Edit Statistik Penduduk</h2>
         <button
           onClick={() => navigate('/admin/dashboard')}
-          className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral"
+          className="bg-gray-200 text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors"
         >
           ← Kembali ke Dashboard
         </button>
       </div>
 
-      {/* GANTI: Card utama dengan border neutral */}
-      <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
+      <div className="bg-white rounded-xl shadow p-6 border border-accent">
         <div className="space-y-4">
           {statistik.map((item, index) => (
-            // GANTI: Latar baris item menggunakan bg-neutral/50
-            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-3 bg-neutral/50 rounded-lg">
-              {/* GANTI: Input field dengan gaya yang diseragamkan */}
+            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-3 bg-gray-50 rounded-lg">
               <input
                 type="text"
                 placeholder="Ikon (emoji)"
                 value={item.icon}
                 onChange={(e) => handleChange(index, 'icon', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
+                className="w-full px-3 py-2 border border-accent rounded bg-white text-primary"
               />
               <input
                 type="text"
                 placeholder="Label (e.g., Penduduk)"
                 value={item.label}
                 onChange={(e) => handleChange(index, 'label', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
+                className="w-full px-3 py-2 border border-accent rounded bg-white text-primary"
               />
               <input
                 type="text"
                 placeholder="Value (e.g., 6.564)"
                 value={item.value}
                 onChange={(e) => handleChange(index, 'value', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
+                className="w-full px-3 py-2 border border-accent rounded bg-white text-primary"
               />
-              {/* GANTI: Tombol hapus dengan warna dari palet */}
               <button
                 onClick={() => handleRemoveItem(index)}
-                className="bg-primary text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-secondary transition-colors"
+                className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-red-600 transition-colors"
               >
                 Hapus
               </button>
@@ -106,14 +114,12 @@ const EditStatistik = () => {
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row gap-4">
-          {/* GANTI: Tombol tambah item dengan gaya outline */}
           <button
             onClick={handleAddItem}
-            className="bg-white text-primary border-2 border-primary px-4 py-2 rounded-md w-full md:w-auto hover:bg-primary hover:text-white transition font-semibold"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md w-full md:w-auto hover:bg-blue-600 transition font-semibold"
           >
             Tambah Item
           </button>
-          {/* GANTI: Tombol simpan dengan warna secondary dan primary */}
           <button
             onClick={handleSave}
             className="bg-secondary text-white px-6 py-2 rounded-md w-full md:w-auto hover:bg-primary transition font-semibold"

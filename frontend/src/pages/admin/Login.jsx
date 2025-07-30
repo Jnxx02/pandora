@@ -24,49 +24,25 @@ const Login = () => {
   };
 
   return (
-    // GANTI: Latar menggunakan 'bg-neutral' yang konsisten untuk admin
-    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral px-1 sm:px-4 py-6">
-      {/* GANTI: Kartu login dengan border neutral */}
-      <div className="w-full max-w-sm bg-white rounded-xl shadow-lg p-4 sm:p-8 text-center border border-neutral">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-1 sm:px-4 py-6">
+      <div className="w-full max-w-sm bg-white rounded-xl shadow p-4 sm:p-8 text-center border border-accent">
         <span className="text-3xl sm:text-4xl mb-4 inline-block">🔑</span>
-        {/* GANTI: Judul dengan warna 'secondary' yang lebih tegas */}
-        <h1 className="text-lg sm:text-xl font-bold mb-6 text-secondary">Login Admin</h1>
+        <h1 className="text-lg sm:text-xl font-bold mb-6 text-primary">Login Admin</h1>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
           <div>
-            {/* GANTI: Label dengan warna 'text-main' */}
-            <label className="block text-left text-xs sm:text-sm font-medium text-text-main mb-1">Username</label>
-            {/* GANTI: Input field dengan gaya baru */}
-            <input 
-              type="text" 
-              name="username" 
-              value={form.username} 
-              onChange={handleChange} 
-              className="w-full px-2 sm:px-3 py-2 border border-neutral rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-main text-xs sm:text-base transition" 
-            />
+            <label className="block text-left text-xs sm:text-sm font-medium text-secondary mb-1">Username</label>
+            <input type="text" name="username" value={form.username} onChange={handleChange} className="w-full px-2 sm:px-3 py-2 border border-accent rounded focus:outline-none focus:ring-2 focus:ring-secondary text-xs sm:text-base" />
           </div>
           <div>
-            <label className="block text-left text-xs sm:text-sm font-medium text-text-main mb-1">Password</label>
-            <input 
-              type="password" 
-              name="password" 
-              value={form.password} 
-              onChange={handleChange} 
-              className="w-full px-2 sm:px-3 py-2 border border-neutral rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-text-main text-xs sm:text-base transition"
-            />
+            <label className="block text-left text-xs sm:text-sm font-medium text-secondary mb-1">Password</label>
+            <input type="password" name="password" value={form.password} onChange={handleChange} className="w-full px-2 sm:px-3 py-2 border border-accent rounded focus:outline-none focus:ring-2 focus:ring-secondary text-xs sm:text-base" />
           </div>
-          {/* GANTI: Pesan error dengan warna 'primary' */}
-          {error && <div className="text-primary text-sm font-semibold">{error}</div>}
-          {/* Tombol login sudah menggunakan warna yang sesuai */}
-          <button 
-            type="submit" 
-            className="w-full bg-secondary text-white py-2 rounded-lg hover:bg-primary transition text-sm sm:text-base font-semibold"
-          >
-            Login
-          </button>
+          {error && <div className="text-red-600 text-sm font-semibold">{error}</div>}
+          <button type="submit" className="w-full bg-secondary text-white py-2 rounded hover:bg-primary transition text-xs sm:text-base">Login</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login; 

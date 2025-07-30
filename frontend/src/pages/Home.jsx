@@ -25,8 +25,10 @@ const Home = () => {
       const storedBerita = localStorage.getItem('berita');
       const dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
       
+      // Urutkan berita dari yang terbaru
       dataBerita.sort((a, b) => new Date(b.tanggalDibuat || 0) - new Date(a.tanggalDibuat || 0));
 
+      // Ambil 5 berita terbaru saja untuk ditampilkan di beranda
       setBerita(dataBerita.slice(0, 5));
     } catch (error) {
       console.error("Gagal memuat berita dari localStorage:", error);
@@ -43,15 +45,13 @@ const Home = () => {
   }, [berita]);
 
   return (
-    // GANTI: Latar belakang menggunakan warna solid 'background' untuk konsistensi
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-background py-8 px-4 sm:px-6 flex flex-col items-center">
       {/* Info Singkat Desa */}
       <section className="w-full max-w-4xl flex flex-col my-8 sm:my-12">
         <div className="w-full max-w-4xl mx-auto">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-primary mb-2">DESA MONCONGLOE BULU</h1>
           <div className="text-base sm:text-lg text-secondary mb-3">Kec. Moncongloe, Kab. Maros</div>
-          {/* GANTI: Menggunakan warna 'text-text-main' untuk paragraf */}
-          <p className="text-text-main text-sm sm:text-base leading-relaxed text-justify">
+          <p className="text-gray-700 text-sm sm:text-base leading-relaxed text-justify">
             Moncongloe Bulu (Ejaan Van Ophuijsen: Montjongloe Boeloe; Lontara Bugis: ᨆᨚᨉᨚᨂᨒᨚᨅᨘᨒᨘ ; Lontara Makassar: ᨆᨚᨉᨚᨂᨒᨚᨅᨘᨒᨘ ) adalah salah satu dari 5 desa di Kecamatan Moncongloe, Kabupaten Maros, Provinsi Sulawesi Selatan, Indonesia. Desa ini berstatus sebagai desa definitif dan tergolong pula sebagai desa swasembada. Desa ini memiliki luas wilayah 12,76 km² dan jumlah penduduk sebanyak 3.820 jiwa dengan tingkat kepadatan penduduk sebanyak 299,37 jiwa/km² pada tahun 2017. Pusat pemerintahan desa ini berada di Dusun Tamalate.
           </p>
         </div>
@@ -62,15 +62,13 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div>
             <h2 className="font-bold text-lg text-secondary mb-2">Topografi</h2>
-            {/* GANTI: Menggunakan warna 'text-text-main' untuk isi */}
-            <p className="text-text-main">
+            <p className="text-primary">
               Wilayah Desa Moncongloe Bulu masuk dalam kategori dataran rendah dengan ketinggian rata-rata <strong>50 meter</strong> di atas permukaan laut.
             </p>
           </div>
           <div>
             <h2 className="font-bold text-lg text-secondary mb-2">Jarak Orbitrasi</h2>
-             {/* GANTI: Menggunakan warna 'text-text-main' untuk list */}
-            <ul className="list-disc list-inside text-text-main space-y-1">
+            <ul className="list-disc list-inside text-primary space-y-1">
               {orbitrasi.map(o => (
                 <li key={o.nama}>
                   <span>{o.nama}: </span>
@@ -83,8 +81,7 @@ const Home = () => {
         <div className="w-full mb-8">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31787.95859943921!2d119.5353578991339!3d-5.101038111959704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dbe33251033253b%3A0x5030bfbcaf775d0!2sMoncongloe%20Bulu%2C%2C%2C%20Kec.%20Moncongloe%2C%20Kabupaten%20Maros%2C%20Sulawesi%20Selatan!5e0!3m2!1sid!2sid!4v1693928994523!5m2!1sid!2sid"
-            // GANTI: Border menggunakan warna neutral
-            className="w-full h-64 rounded-xl shadow-lg border-2 border-neutral"
+            className="w-full h-64 rounded-xl shadow-lg border-2 border-white"
             allowFullScreen=""
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -92,10 +89,9 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {batasWilayah.map((item) => (
-             // GANTI: Card dengan warna dari palet
-            <div key={item.arah} className="bg-white rounded-xl p-4 shadow-md border border-neutral">
+            <div key={item.arah} className="bg-white rounded-xl p-4 shadow-md border border-red-100/80">
               <div className="font-bold text-lg text-secondary mb-1">Batas {item.arah}</div>
-              <p className="text-text-main">{item.wilayah}</p>
+              <p className="text-primary">{item.wilayah}</p>
             </div>
           ))}
         </div>
@@ -105,13 +101,12 @@ const Home = () => {
         <h1 className="text-2xl sm:text-3xl font-extrabold text-primary mb-4">STATISTIK PENDUDUK</h1>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 justify-center">
           {statistik.map((item) => (
-             // GANTI: Card statistik dengan warna dari palet
-            <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-neutral">
+            <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-red-100/80">
               <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
-              <span className="font-bold text-base sm:text-lg text-secondary">
+              <span className="font-bold text-base sm:text-lg text-red-800">
                 {item.value}
               </span>
-              <span className="text-xs text-primary mt-0.5">{item.label}</span>
+              <span className="text-xs text-red-700 mt-0.5">{item.label}</span>
             </div>
           ))}
         </div>
@@ -125,34 +120,28 @@ const Home = () => {
               <img src={berita[beritaIdx].gambar} alt={berita[beritaIdx].judul} className="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" />
             </Link>
             <Link to={`/berita/${berita[beritaIdx].id}`}>
-               {/* GANTI: Menggunakan warna secondary untuk judul berita */}
-              <h3 className="text-lg sm:text-xl font-semibold text-secondary mb-1 hover:underline">{berita[beritaIdx].judul}</h3>
+              <h3 className="text-lg sm:text-xl font-semibold text-red-900 mb-1 hover:underline">{berita[beritaIdx].judul}</h3>
             </Link>
-             {/* GANTI: Menggunakan warna primary untuk tanggal */}
-            <div className="text-xs text-primary mb-2">
+            <div className="text-xs text-red-600 mb-2">
               {new Date(berita[beritaIdx].tanggal).toLocaleDateString('id-ID', {
                 day: 'numeric', month: 'long', year: 'numeric'
               })}
             </div>
-             {/* GANTI: Menggunakan warna text-text-secondary untuk ringkasan */}
-            <p className="text-text-secondary mb-4 text-left text-sm sm:text-base">{berita[beritaIdx].ringkasan}</p>
-             {/* GANTI: Tombol menggunakan warna primary dan secondary */}
-            <Link to="/berita" className="inline-block bg-primary text-white px-3 sm:px-4 py-2 rounded hover:bg-secondary transition text-xs sm:text-sm self-start">Lihat Seluruh Berita</Link>
+            <p className="text-gray-700 mb-4 text-left text-sm sm:text-base">{berita[beritaIdx].ringkasan}</p>
+            <Link to="/berita" className="inline-block bg-red-600 text-white px-3 sm:px-4 py-2 rounded hover:bg-red-700 transition text-xs sm:text-sm self-start">Lihat Seluruh Berita</Link>
             <div className="flex gap-2 mt-4 self-center">
               {berita.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setBeritaIdx(i)}
-                  // GANTI: Tombol navigasi slider dengan warna palet
-                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 transition ${i === beritaIdx ? 'bg-primary border-primary' : 'bg-transparent border-secondary'}`}
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 ${i === beritaIdx ? 'bg-red-600 border-red-600' : 'bg-red-200 border-red-400'}`}
                   aria-label={`Pilih berita ${i + 1}`}
                 />
               ))}
             </div>
           </div>
         ) : (
-          // GANTI: Menggunakan warna text-text-secondary
-          <div className="text-center text-text-secondary py-8">
+          <div className="text-center text-gray-500 py-8">
             <p>Belum ada berita untuk ditampilkan.</p>
           </div>
         )}
@@ -161,4 +150,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home; 

@@ -47,8 +47,7 @@ const DetailBerita = () => {
     <>
       {data ? (
         <div className="min-h-screen bg-background py-0">
-          {/* GANTI: Border menggunakan warna neutral */}
-          <div className="w-full bg-white shadow-lg border-b border-neutral">
+          <div className="w-full bg-white shadow-lg border-b border-accent">
             <img src={data.gambar} alt={data.judul} className="w-full h-72 sm:h-96 object-cover object-center" />
           </div>
           <div className="max-w-3xl mx-auto px-4 sm:px-8 py-8">
@@ -58,18 +57,15 @@ const DetailBerita = () => {
                 day: 'numeric', month: 'long', year: 'numeric'
               }) : ''}
             </div>
-            {/* GANTI: Ringkasan menggunakan text-text-secondary */}
-            <div className="text-text-secondary text-lg mb-4 italic">{data.ringkasan}</div>
-            {/* GANTI: Isi berita menggunakan text-text-main untuk keterbacaan */}
-            <div className="text-text-main text-justify text-base leading-relaxed whitespace-pre-line">{data.isi || 'Tidak ada isi berita.'}</div>
+            <div className="text-primary text-lg mb-4">{data.ringkasan}</div>
+            <div className="text-primary text-justify text-base leading-relaxed whitespace-pre-line">{data.isi || 'Tidak ada isi berita.'}</div>
           </div>
         </div>
       ) : (
         <div className="py-10 min-h-screen flex flex-col items-center justify-center bg-background">
-          {/* GANTI: Card menggunakan border neutral */}
-          <div className="bg-white rounded-xl shadow p-6 border border-neutral text-center">
+          <div className="bg-white rounded-xl shadow p-6 border border-accent text-center">
             <h1 className="text-xl font-bold text-primary mb-2">Berita Tidak Ditemukan</h1>
-            <p className="text-text-secondary mb-4">Berita dengan ID tersebut tidak tersedia atau sudah dihapus.</p>
+            <p className="text-secondary mb-4">Berita dengan ID tersebut tidak tersedia atau sudah dihapus.</p>
           </div>
         </div>
       )}
@@ -86,4 +82,4 @@ const DetailBerita = () => {
   );
 };
 
-export default DetailBerita;
+export default DetailBerita; 
