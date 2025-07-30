@@ -137,7 +137,7 @@ const Profil = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-primary mb-2">PROFIL DESA MONCONGLOE BULU</h1>
