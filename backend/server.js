@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-// Load environment variables from .env file for local development
 const path = require('path');
 require('dotenv').config();
 
@@ -10,7 +9,6 @@ const app = express();
 const PORT = 3001;
 
 // Inisialisasi Supabase Client
-// Pastikan Anda sudah mengatur environment variables ini di Vercel
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -18,24 +16,26 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.use(cors());
 app.use(express.json());
 
-// --- MULAI PERUBAHAN ---
+// --- BAGIAN PENTING UNTUK MENYAJIKAN FRONTEND ---
 
-// 1. Sajikan file statis dari direktori build frontend (Vite)
+// 1. Tentukan path absolut ke folder build frontend.
+// `__dirname` adalah path ke folder tempat server.js berada (`/var/task/backend` di Vercel).
+// `path.resolve` akan menavigasi ke atas (`..`) lalu ke `frontend/dist`.
 const frontendDistPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+
+// 2. Middleware untuk menyajikan file statis (CSS, JS, gambar) dari `frontend/dist`.
+// Ketika browser meminta `/assets/index-xxxx.js`, Express akan mencarinya di sini.
 app.use(express.static(frontendDistPath));
 
+// --- API ENDPOINTS ---
+// Semua rute API harus didefinisikan SEBELUM rute catch-all.
 
-// API endpoint untuk MENGAMBIL (GET) statistik
 app.get('/api/statistik', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('statistik')
       .select('icon, label, value');
-
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
     res.status(200).json(data);
   } catch (error) {
     console.error('Error fetching statistik from Supabase:', error);
@@ -43,33 +43,19 @@ app.get('/api/statistik', async (req, res) => {
   }
 });
 
-// API endpoint untuk MENYIMPAN (POST) statistik ke Supabase
 app.post('/api/statistik', async (req, res) => {
   try {
     const statistikData = req.body;
-    // Validasi sederhana untuk memastikan data yang diterima adalah array
     if (!Array.isArray(statistikData)) {
       return res.status(400).json({ message: 'Data yang dikirim harus berupa array.' });
     }
-
-    // Strategi Sinkronisasi: Hapus semua, lalu masukkan semua.
-    // Ini memastikan data di database sama persis dengan yang dikirim dari UI, termasuk penghapusan.
-
-    // 1. Hapus semua data statistik yang ada.
-    const { error: deleteError } = await supabase
-      .from('statistik')
-      .delete()
-      .neq('label', 'this-is-a-dummy-value-that-will-never-exist'); // Trik untuk menargetkan semua baris
-
+    const { error: deleteError } = await supabase.from('statistik').delete().neq('id', -1); // Hapus semua baris
     if (deleteError) throw deleteError;
 
-    // 2. Masukkan semua data baru yang dikirim dari frontend.
-    // Kita hanya insert jika ada data untuk menghindari error.
-    if (statistikData && statistikData.length > 0) {
+    if (statistikData.length > 0) {
       const { error: insertError } = await supabase.from('statistik').insert(statistikData);
       if (insertError) throw insertError;
     }
-
     res.status(200).json({ message: 'Data statistik berhasil disinkronkan.' });
   } catch (error) {
     console.error('Error syncing statistik to Supabase:', error);
@@ -77,13 +63,17 @@ app.post('/api/statistik', async (req, res) => {
   }
 });
 
-// 2. Catch-all route untuk menyajikan index.html (Penting untuk React Router)
-// Rute ini harus berada SETELAH semua rute API Anda.
+
+// --- BAGIAN PENTING UNTUK SINGLE PAGE APP (SPA) ---
+
+// 3. Rute Catch-All. Ini harus menjadi rute TERAKHIR.
+// Untuk semua permintaan GET yang tidak cocok di atas (misalnya `/profil`, `/kontak`),
+// kirimkan file `index.html` dari frontend.
+// Ini memungkinkan React Router mengambil alih routing di sisi klien.
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(frontendDistPath, 'index.html'));
 });
 
-// --- SELESAI PERUBAHAN ---
 
 // Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
 if (process.env.NODE_ENV !== 'production') {
@@ -92,4 +82,5 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Ekspor 'app' agar Vercel dapat menggunakannya sebagai Serverless Function
 module.exports = app;
