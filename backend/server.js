@@ -1,14 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 dotenv.config();
-
-// __dirname tidak tersedia di ES Modules, ini adalah cara penggantinya.
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
  
 const app = express();
 const PORT = 3001;
@@ -26,17 +20,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(cors());
 app.use(express.json());
-
-// --- BAGIAN PENTING UNTUK MENYAJIKAN FRONTEND ---
-
-// 1. Tentukan path absolut ke folder build frontend.
-// `__dirname` adalah path ke folder tempat server.js berada (`/var/task/backend` di Vercel).
-// `path.resolve` akan menavigasi ke atas (`..`) lalu ke `frontend/dist`.
-const frontendDistPath = path.resolve(__dirname, '..', 'frontend', 'dist');
-
-// 2. Middleware untuk menyajikan file statis (CSS, JS, gambar) dari `frontend/dist`.
-// Ketika browser meminta `/assets/index-xxxx.js`, Express akan mencarinya di sini.
-app.use(express.static(frontendDistPath));
 
 // --- API ENDPOINTS ---
 // Semua rute API harus didefinisikan SEBELUM rute catch-all.
@@ -74,16 +57,6 @@ app.post('/api/statistik', async (req, res) => {
   }
 });
 
-
-// --- BAGIAN PENTING UNTUK SINGLE PAGE APP (SPA) ---
-
-// 3. Rute Catch-All. Ini harus menjadi rute TERAKHIR.
-// Untuk semua permintaan GET yang tidak cocok di atas (misalnya `/profil`, `/kontak`),
-// kirimkan file `index.html` dari frontend.
-// Ini memungkinkan React Router mengambil alih routing di sisi klien.
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(frontendDistPath, 'index.html'));
-});
 
 
 // Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
