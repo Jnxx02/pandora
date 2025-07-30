@@ -7,11 +7,9 @@
       "config": { "distDir": "dist" }
     },
     {
-      "src": "backend/server.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/backend/server.js" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.js" }]
 }
