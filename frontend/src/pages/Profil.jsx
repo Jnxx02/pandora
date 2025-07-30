@@ -224,7 +224,7 @@ const Profil = () => {
               download="Struktur Organisasi Desa Moncongloe Bulu.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition"
+              className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition"
             >
               <span>📄</span> Unduh Struktur (PDF)
             </a>
@@ -285,7 +285,7 @@ const Profil = () => {
               <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isBatasOpen ? 'max-h-[32rem] mt-3' : 'max-h-0'}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   {batasWilayah.map((item) => (
-                    <div key={item.arah} className="bg-green-50/50 rounded-lg p-4 border border-green-200">
+                    <div key={item.arah} className="bg-red-50/50 rounded-lg p-4 border border-red-200">
                       <div className="font-bold text-secondary mb-1">Batas {item.arah}</div>
                       <p className="text-primary text-sm">{item.wilayah}</p>
                     </div>
@@ -338,7 +338,7 @@ const Profil = () => {
                       <span className="text-2xl">{item.icon}</span>
                       <span className="font-medium text-primary">{item.label}</span>
                     </div>
-                    <span className="font-bold text-lg text-green-800">{item.value}</span>
+                    <span className="font-bold text-lg text-red-800">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -354,7 +354,7 @@ const Profil = () => {
                       <span className="text-2xl">{item.icon}</span>
                       <span className="font-medium text-primary">{item.label}</span>
                     </div>
-                    <span className="font-bold text-lg text-green-800">{item.value}</span>
+                    <span className="font-bold text-lg text-red-800">{item.value}</span>
                   </div>
                 ))}
               </div>
