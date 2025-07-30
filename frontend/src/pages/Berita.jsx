@@ -30,24 +30,31 @@ const Berita = () => {
         <div className="text-center mb-10">
           <span className="text-4xl sm:text-5xl mb-3 inline-block">📰</span>
           <h1 className="text-3xl sm:text-4xl font-bold text-primary">Berita Desa</h1>
-          <p className="text-gray-600 mt-2 text-base">Kumpulan berita dan informasi terbaru seputar Desa Moncongloe Bulu.</p>
+          {/* GANTI: Menggunakan warna 'text-text-secondary' */}
+          <p className="text-text-secondary mt-2 text-base">Kumpulan berita dan informasi terbaru seputar Desa Moncongloe Bulu.</p>
         </div>
 
         {berita.length === 0 ? (
-          <div className="text-center text-gray-500 text-base py-16">Belum ada berita yang dipublikasikan.</div>
+          // GANTI: Menggunakan warna 'text-text-secondary'
+          <div className="text-center text-text-secondary text-base py-16">Belum ada berita yang dipublikasikan.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {berita.map(b => (
-              <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-accent rounded-xl p-4 shadow hover:bg-secondary hover:text-white transition text-left border-none">
-                <img src={b.gambar} alt={b.judul} className="w-full h-40 object-cover rounded mb-2" />
-                <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">{b.judul}</div>
-                <div className="text-xs font-bold text-secondary mb-2 bg-white/80 px-2 py-1 rounded w-fit shadow">
+              // GANTI: Kartu menggunakan bg-white dengan border, dan hover ke bg-secondary
+              <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-white rounded-xl p-4 shadow hover:bg-secondary transition text-left border border-neutral hover:border-secondary">
+                <img src={b.gambar} alt={b.judul} className="w-full h-40 object-cover rounded-lg mb-4" />
+                {/* GANTI: Judul menggunakan warna secondary */}
+                <div className="font-bold text-secondary text-lg mb-2 group-hover:text-white transition">{b.judul}</div>
+                {/* GANTI: Tanggal menggunakan warna primary dengan background neutral */}
+                <div className="text-xs font-bold text-primary mb-3 bg-neutral px-2 py-1 rounded-full w-fit">
                   {b.tanggal ? new Date(b.tanggal).toLocaleDateString('id-ID', {
                     day: 'numeric', month: 'long', year: 'numeric'
                   }) : ''}
                 </div>
-                <div className="text-primary text-sm mb-2 line-clamp-3 group-hover:text-white transition">{b.ringkasan}</div>
-                <span className="text-sm underline text-primary group-hover:text-white mt-auto">Lihat Detail</span>
+                {/* GANTI: Ringkasan menggunakan warna 'text-text-secondary' */}
+                <div className="text-text-secondary text-sm mb-4 line-clamp-3 group-hover:text-white/90 transition">{b.ringkasan}</div>
+                {/* GANTI: Link detail menggunakan warna primary */}
+                <span className="text-sm font-semibold underline text-primary group-hover:text-white mt-auto">Lihat Detail</span>
               </Link>
             ))}
           </div>
@@ -57,4 +64,4 @@ const Berita = () => {
   );
 };
 
-export default Berita; 
+export default Berita;

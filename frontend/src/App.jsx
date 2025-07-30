@@ -19,8 +19,8 @@ import { StatistikProvider } from './context/StatistikContext';
 // Komponen placeholder untuk halaman modul
 const ModulPage = ({ title }) => (
   <div className="container mx-auto p-8 pt-12">
-    <h1 className="text-4xl font-bold text-primary mb-4">{title}</h1>
-    <p className="text-lg text-gray-700">Konten untuk modul ini akan segera ditambahkan oleh tim KKNT 114 Moncongloe Bulu.</p>
+    <h1 className="text-4xl font-bold text-secondary mb-4">{title}</h1>
+    <p className="text-lg text-text-secondary">Konten untuk modul ini akan segera ditambahkan oleh tim KKNT 114 Moncongloe Bulu.</p>
   </div>
 );
 
@@ -103,7 +103,7 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className={`transition flex items-center gap-1 hover:text-accent ${location.pathname.startsWith('/modul') ? `font-bold text-accent` : ''}`}>
+                <button className={`transition flex items-center gap-1 hover:text-white/80 ${location.pathname.startsWith('/modul') ? `font-bold text-white underline underline-offset-4` : ''}`}>
                   {link.label}
                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
                 </button>
@@ -114,7 +114,7 @@ function Header() {
                         key={subLink.to}
                         to={subLink.to}
                         onClick={() => setDropdownOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-text-main hover:bg-neutral"
                       >
                         {subLink.label}
                       </Link>
@@ -123,7 +123,7 @@ function Header() {
                 )}
               </div>
             ) : (
-              <Link key={link.to} to={link.to} className={`transition hover:text-accent ${location.pathname === link.to ? `font-bold underline underline-offset-4 text-accent` : ''}`}>
+              <Link key={link.to} to={link.to} className={`transition hover:text-white/80 ${location.pathname === link.to ? `font-bold underline underline-offset-4` : ''}`}>
                 {link.label}
               </Link>
             ))}
@@ -135,14 +135,14 @@ function Header() {
                 setIsAdmin(false);
                 navigate('/');
               }}
-              className="ml-2 bg-red-600 text-white px-3 py-1 rounded font-semibold shadow hover:bg-red-700 transition text-sm"
+              className="ml-2 bg-secondary text-white px-3 py-1 rounded font-semibold shadow hover:bg-opacity-80 transition text-sm"
             >
               <span className="inline-block align-middle mr-1">🚪</span> Logout
             </button>
           ) : (
             <Link
               to="/admin/login"
-              className="ml-2 bg-white text-primary px-3 py-1 rounded font-semibold shadow hover:bg-accent transition text-sm"
+              className="ml-2 bg-white text-primary px-3 py-1 rounded font-semibold shadow hover:bg-neutral transition text-sm"
             >
               <span className="inline-block align-middle mr-1">🔑</span> Login
             </Link>
@@ -257,18 +257,18 @@ function SambutanKepalaDesa() {
   const location = useLocation();
   if (location.pathname !== "/") return null;
   return (
-    <section className="w-full bg-secondary py-10 md:py-16 flex justify-center px-4 sm:px-8 lg:px-16 font-serif">
+    <section className="w-full bg-neutral py-10 md:py-16 flex justify-center px-4 sm:px-8 lg:px-16 font-serif">
       <div className="flex flex-col md:flex-row items-center gap-8 w-full">
         <img
           src="https://moncongloebulu.vercel.app/images/team/muhammad%20tahir.jpeg"
           alt="Kepala Desa Muhammad Tahir"
-          className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-accent mb-6 md:mb-0 shadow-none"
+          className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-secondary mb-6 md:mb-0 shadow-lg"
         />
         <div className="flex-1 text-center md:text-left">
-          <div className="font-bold text-accent text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
-          <div className="font-semibold text-accent text-xl md:text-2xl mb-1">MUHAMMAD TAHIR</div>
-          <div className="text-accent text-base md:text-lg mb-4">Kepala Desa Moncongloe Bulu</div>
-          <p className="text-accent text-sm md:text-base text-justify">Selamat datang di PANDORA (Pusat Akses Informasi dan Dokumentasi Resmi Desa), portal berita resmi Pemerintah Desa Moncongloe Bulu. Portal ini kami hadirkan sebagai langkah nyata kami dalam memanfaatkan teknologi digital untuk melayani dan lebih dekat dengan seluruh masyarakat.
+          <div className="font-bold text-secondary text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
+          <div className="font-semibold text-text-main text-xl md:text-2xl mb-1">MUHAMMAD TAHIR</div>
+          <div className="text-text-secondary text-base md:text-lg mb-4">Kepala Desa Moncongloe Bulu</div>
+          <p className="text-text-secondary text-sm md:text-base text-justify">Selamat datang di PANDORA (Pusat Akses Informasi dan Dokumentasi Resmi Desa), portal berita resmi Pemerintah Desa Moncongloe Bulu. Portal ini kami hadirkan sebagai langkah nyata kami dalam memanfaatkan teknologi digital untuk melayani dan lebih dekat dengan seluruh masyarakat.
 Melalui PANDORA, semua pengumuman, berita kegiatan, dan informasi penting kini dapat diakses dengan cepat dan mudah langsung dari genggaman Anda. Dengan adanya satu sumber informasi terpercaya ini, kami berharap kita dapat bersama-sama melawan berita bohong (hoax) dan membangun komunikasi yang lebih terbuka.
 Mari manfaatkan platform ini sebagai jendela informasi untuk mewujudkan Desa Moncongloe Bulu yang lebih maju dan transparan.</p>
         </div>
@@ -297,8 +297,8 @@ function FooterInfo() {
         {/* Kolom 2: Kontak */}
         <div>
           <div className="font-bold text-lg mb-2">Kontak</div>
-          <div className="flex items-center gap-2 mb-2"><span>✉️</span> <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:text-accent transition">moncongloebulu16@gmail.com</a></div>
-          <div className="flex items-center gap-2 mb-2"><span>👩‍💻</span> <Link to="/admin/dashboard" className="underline hover:text-accent transition">Developer Desa</Link></div>
+          <div className="flex items-center gap-2 mb-2"><span>✉️</span> <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:opacity-80 transition">moncongloebulu16@gmail.com</a></div>
+          <div className="flex items-center gap-2 mb-2"><span>👩‍💻</span> <Link to="/admin/dashboard" className="underline hover:opacity-80 transition">Developer Desa</Link></div>
         </div>
         {/* Kolom 3: Telepon Penting */}
         <div>
@@ -369,51 +369,51 @@ function App() {
     <DesaProvider>
       <StatistikProvider>
         <div className="flex flex-col min-h-screen bg-background font-sans">
-        <Header />
-        <HeroSection />
-        <SambutanKepalaDesa />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/berita" element={<Berita />} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/pengaduan" element={<Pengaduan />} />
-            <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
-            <Route path="/sejarah" element={<Sejarah />} />
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/dashboard" element={
-              <RequireAdmin>
-                <Dashboard />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/tambah-edit-berita" element={
-              <RequireAdmin>
-                <TambahEditBerita />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/laporan-pengaduan" element={
-              <RequireAdmin>
-                <LaporanPengaduan />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/edit-statistik" element={
-              <RequireAdmin>
-                <EditStatistik />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/edit-prasarana" element={
-              <RequireAdmin>
-                <EditPrasarana />
-              </RequireAdmin>
-            } />
-            <Route path="/berita/:id" element={<DetailBerita />} />
-            <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
-            <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
-          </Routes>
-        </main>
-        <FooterInfo />
-        <ScrollToTopButton />
-      </div>
+          <Header />
+          <HeroSection />
+          <SambutanKepalaDesa />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/berita" element={<Berita />} />
+              <Route path="/profil" element={<Profil />} />
+              <Route path="/pengaduan" element={<Pengaduan />} />
+              <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
+              <Route path="/sejarah" element={<Sejarah />} />
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/dashboard" element={
+                <RequireAdmin>
+                  <Dashboard />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/tambah-edit-berita" element={
+                <RequireAdmin>
+                  <TambahEditBerita />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/laporan-pengaduan" element={
+                <RequireAdmin>
+                  <LaporanPengaduan />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/edit-statistik" element={
+                <RequireAdmin>
+                  <EditStatistik />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/edit-prasarana" element={
+                <RequireAdmin>
+                  <EditPrasarana />
+                </RequireAdmin>
+              } />
+              <Route path="/berita/:id" element={<DetailBerita />} />
+              <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
+              <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
+            </Routes>
+          </main>
+          <FooterInfo />
+          <ScrollToTopButton />
+        </div>
       </StatistikProvider>
     </DesaProvider>
   )
