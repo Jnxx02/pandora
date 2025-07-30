@@ -8,21 +8,21 @@ const DetailModal = ({ laporan, onClose }) => {
   return (
     // Backdrop / Overlay
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
+      className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4"
       onClick={onClose} // Menutup modal saat backdrop diklik
     >
-      {/* Konten Modal */}
+      {/* GANTI: Konten Modal dengan gaya baru */}
       <div 
-        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-1/2 lg:w-1/3 relative"
+        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-1/2 lg:w-1/3 relative animate-slide-in"
         onClick={e => e.stopPropagation()} // Mencegah modal tertutup saat kontennya diklik
       >
-        <h3 className="text-xl font-bold text-primary mb-4">{laporan.judul}</h3>
-        <p className="text-gray-700 whitespace-pre-wrap">{laporan.isi}</p>
+        <h3 className="text-xl font-bold text-secondary mb-4 border-b border-neutral pb-3">{laporan.judul}</h3>
+        <p className="text-text-main whitespace-pre-wrap max-h-[60vh] overflow-y-auto">{laporan.isi}</p>
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-text-secondary hover:text-primary transition"
         >
-          ✕
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
     </div>
@@ -32,70 +32,71 @@ const DetailModal = ({ laporan, onClose }) => {
 
 // Komponen Tabel Laporan yang sudah dimodifikasi
 const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
-  <div>
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-            {/* PERUBAHAN 1: Header tanggal kondisional */}
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-              {title === 'Pengaduan' ? 'Tanggal Kejadian' : 'Tanggal'}
-            </th>
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Judul</th>
-            {/* PERUBAHAN 2: Kolom 'Isi' diubah menjadi 'Detail' */}
-            <th className="py-3 px-4 border-b text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Detail</th>
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Pelapor</th>
-            <th className="py-3 px-4 border-b text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Lampiran</th>
-            <th className="py-3 px-4 border-b text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((laporan) => (
-              <tr key={laporan.id} className="hover:bg-gray-50">
-                <td className="py-3 px-4 border-b text-gray-700">{laporan.id}</td>
-                <td className="py-3 px-4 border-b text-gray-700">{laporan.tanggal}</td>
-                <td className="py-3 px-4 border-b text-gray-700">{laporan.kategori}</td>
-                <td className="py-3 px-4 border-b text-gray-700 font-semibold">{laporan.judul}</td>
-                {/* PERUBAHAN 2: Tombol untuk menampilkan detail */}
-                <td className="py-3 px-4 border-b text-gray-700 text-center">
-                  <button
-                    onClick={() => onShowDetail(laporan)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition-colors"
-                  >
-                    Lihat
-                  </button>
-                </td>
-                <td className="py-3 px-4 border-b text-gray-700">{laporan.nama}</td>
-                <td className="py-3 px-4 border-b text-gray-700">
-                  {laporan.lampiranDataUrl ? (
-                    <a href={laporan.lampiranDataUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                      Lihat Gambar
-                    </a>
-                  ) : (laporan.lampiranInfo || '-')}
-                </td>
-                <td className="py-3 px-4 border-b text-gray-700 text-center">
-                  <button
-                    onClick={() => onDelete(laporan.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-semibold hover:bg-red-600 transition-colors"
-                  >
-                    Hapus
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center py-4 text-gray-500">
-                Belum ada data untuk kategori ini.
+  <div className="overflow-x-auto rounded-lg border border-neutral">
+    <table className="min-w-full bg-white">
+      {/* GANTI: Header tabel dengan warna neutral dan teks secondary */}
+      <thead className="bg-neutral/60">
+        <tr>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">ID</th>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+            {title === 'Pengaduan' ? 'Tanggal Kejadian' : 'Tanggal'}
+          </th>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Kategori</th>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Judul</th>
+          <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Detail</th>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Pelapor</th>
+          <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Lampiran</th>
+          <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.length > 0 ? (
+          data.map((laporan) => (
+            // GANTI: Baris tabel dengan warna teks yang sesuai
+            <tr key={laporan.id} className="hover:bg-neutral/40 transition-colors">
+              <td className="py-3 px-4 border-b border-neutral text-text-secondary">{laporan.id}</td>
+              <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.tanggal}</td>
+              <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.kategori}</td>
+              <td className="py-3 px-4 border-b border-neutral text-text-main font-semibold">{laporan.judul}</td>
+              <td className="py-3 px-4 border-b border-neutral text-center">
+                {/* GANTI: Tombol "Lihat" dengan gaya baru */}
+                <button
+                  onClick={() => onShowDetail(laporan)}
+                  className="bg-white text-primary border-2 border-primary px-3 py-1 rounded-md text-sm hover:bg-primary hover:text-white transition-colors"
+                >
+                  Lihat
+                </button>
+              </td>
+              <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.nama}</td>
+              <td className="py-3 px-4 border-b border-neutral text-text-main">
+                {laporan.lampiranDataUrl ? (
+                  // GANTI: Link dengan warna primary
+                  <a href={laporan.lampiranDataUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    Lihat Gambar
+                  </a>
+                ) : (laporan.lampiranInfo || '-')}
+              </td>
+              <td className="py-3 px-4 border-b border-neutral text-center">
+                {/* GANTI: Tombol "Hapus" dengan warna dari palet */}
+                <button
+                  onClick={() => onDelete(laporan.id)}
+                  className="bg-primary text-white px-3 py-1 rounded-md text-sm font-semibold hover:bg-secondary transition-colors"
+                >
+                  Hapus
+                </button>
               </td>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          ))
+        ) : (
+          <tr>
+            {/* GANTI: Teks menggunakan warna 'text-text-secondary' */}
+            <td colSpan="8" className="text-center py-4 text-text-secondary">
+              Belum ada data untuk kategori ini.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
   </div>
 );
 
@@ -106,28 +107,23 @@ function LaporanPengaduan() {
   const [laporanAspirasi, setLaporanAspirasi] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('pengaduan'); // State untuk tab aktif
+  const [activeTab, setActiveTab] = useState('pengaduan');
 
-  // State untuk mengelola modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLaporan, setSelectedLaporan] = useState(null);
 
-  const fetchLaporan = async () => {
+  const fetchLaporan = () => {
     setLoading(true);
-    setError(null);
     try {
-      const response = await fetch('http://localhost:3001/api/pengaduan');
-      if (!response.ok) throw new Error('Gagal memuat data laporan');
-      const dataLaporan = await response.json();
+      const storedLaporan = localStorage.getItem('pengaduan');
+      const dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
       
-      // Pengurutan sekarang dilakukan di server, jadi baris ini bisa dihapus
+      dataLaporan.sort((a, b) => new Date(b.tanggalLaporan) - new Date(a.tanggalLaporan));
 
-      // Filter untuk 'pengaduan' dan format tanggal yang benar
       const pengaduan = dataLaporan
-        .filter(l => l.klasifikasi === 'pengaduan') // FIX: Menggunakan huruf kecil
+        .filter(l => l.klasifikasi === 'pengaduan')
         .map(l => ({
           ...l,
-          // Gunakan tanggalKejadian untuk pengaduan, beri fallback jika kosong
           tanggal: l.tanggalKejadian 
             ? new Date(l.tanggalKejadian).toLocaleDateString('id-ID', {
                 year: 'numeric', month: 'long', day: 'numeric'
@@ -135,9 +131,8 @@ function LaporanPengaduan() {
             : '-'
         }));
 
-      // Filter untuk 'aspirasi' dan format tanggal laporan
       const aspirasi = dataLaporan
-        .filter(l => l.klasifikasi === 'aspirasi') // FIX: Menggunakan huruf kecil
+        .filter(l => l.klasifikasi === 'aspirasi')
         .map(l => ({
           ...l,
           tanggal: new Date(l.tanggalLaporan).toLocaleDateString('id-ID', {
@@ -148,7 +143,7 @@ function LaporanPengaduan() {
       setLaporanPengaduan(pengaduan);
       setLaporanAspirasi(aspirasi);
     } catch (err) {
-      console.error("Error fetching from API: ", err);
+      console.error("Error fetching from localStorage: ", err);
       setError(err);
     } finally {
       setLoading(false);
@@ -159,17 +154,14 @@ function LaporanPengaduan() {
     fetchLaporan();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
       try {
-        const response = await fetch(`http://localhost:3001/api/pengaduan/${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          throw new Error('Gagal menghapus laporan dari server.');
-        }
+        const storedLaporan = localStorage.getItem('pengaduan');
+        let dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
+        const updatedLaporan = dataLaporan.filter(l => l.id !== id);
+        localStorage.setItem('pengaduan', JSON.stringify(updatedLaporan));
         fetchLaporan();
-        alert('Laporan berhasil dihapus.');
       } catch (err) {
         console.error("Error deleting from localStorage: ", err);
         alert('Gagal menghapus laporan.');
@@ -177,47 +169,47 @@ function LaporanPengaduan() {
     }
   };
 
-  // Handler untuk membuka modal
   const handleShowDetail = (laporan) => {
     setSelectedLaporan(laporan);
     setIsModalOpen(true);
   };
 
-  // Handler untuk menutup modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedLaporan(null);
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
+    // GANTI: Latar belakang menggunakan 'bg-neutral'
+    <div className="container mx-auto p-4 md:p-8 bg-neutral min-h-screen">
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h1 className="text-3xl font-bold text-primary">Laporan Warga</h1>
-          <Link to="/admin/dashboard" className="bg-gray-200 text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2">
+        <div className="flex justify-between items-center mb-6 border-b border-neutral pb-4">
+          <h1 className="text-3xl font-bold text-secondary">Laporan Warga</h1>
+          {/* GANTI: Tombol kembali dengan gaya konsisten */}
+          <Link to="/admin/dashboard" className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral flex items-center gap-2">
             <span>←</span> Kembali ke Dashboard
           </Link>
         </div>
 
-        {/* Navigasi Tab */}
-        <div className="border-b border-gray-200">
+        {/* GANTI: Navigasi Tab dengan gaya baru */}
+        <div className="border-b border-neutral">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
             <button
               onClick={() => setActiveTab('pengaduan')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'pengaduan'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
               }`}
             >
               Pengaduan ({laporanPengaduan.length})
             </button>
             <button
               onClick={() => setActiveTab('aspirasi')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'aspirasi'
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
               }`}
             >
               Aspirasi ({laporanAspirasi.length})
@@ -226,9 +218,9 @@ function LaporanPengaduan() {
         </div>
 
         {loading ? (
-          <div className="text-center py-4 text-gray-500">Memuat data...</div>
+          <div className="text-center py-4 text-text-secondary">Memuat data...</div>
         ) : error ? (
-          <div className="text-center py-4 text-red-500">Error: {error.message}</div>
+          <div className="text-center py-4 text-primary">Error: {error.message}</div>
         ) : (
           <div className="mt-6">
             {activeTab === 'pengaduan' && <LaporanTable title="Pengaduan" data={laporanPengaduan} onShowDetail={handleShowDetail} onDelete={handleDelete} />}
@@ -237,7 +229,6 @@ function LaporanPengaduan() {
         )}
       </div>
 
-      {/* Render komponen modal jika isModalOpen bernilai true */}
       {isModalOpen && <DetailModal laporan={selectedLaporan} onClose={handleCloseModal} />}
     </div>
   );
