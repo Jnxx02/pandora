@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { createClient } from '@sup  abase/supabase-js';
 dotenv.config();
  
@@ -20,18 +18,8 @@ if (!supabaseUrl || !supabaseKey) {
 }
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Dapatkan __dirname dalam ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 app.use(cors());
 app.use(express.json());
-
-// --- PENYAJIAN FILE STATIS (FRONTEND) ---
-// 1. Prioritaskan penyajian file statis dari folder 'dist' yang ada di root proyek.
-// Path-nya adalah '../dist' karena file server.js ada di dalam folder 'backend'.
-app.use(express.static(path.join(__dirname, '..', 'dist')));
-
 
 // --- API ENDPOINTS ---
 // Semua rute API harus didefinisikan SEBELUM rute catch-all.
@@ -69,12 +57,7 @@ app.post('/api/statistik', async (req, res) => {
   }
 });
 
-// --- SPA FALLBACK ---
-// 2. Rute "catch-all" ini harus menjadi yang TERAKHIR.
-// Ini akan mengirimkan index.html untuk setiap permintaan yang tidak cocok dengan file statis atau rute API di atas.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-});
+
 
 // Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
 if (process.env.NODE_ENV !== 'production') {
