@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // Inisialisasi Supabase Client
 // Pastikan Anda sudah mengatur Environment Variables ini di Vercel
 const supabase = createClient(
-  process.env.SUPABASE_URL,
+  process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY, // Gunakan Service Key untuk akses backend
   {
     auth: {
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json(data);
     } catch (error) {
-      return res.status(500).json({ message: 'Gagal mengambil data statistik.', error: error.message });
+      return res.status(500).json({ message: 'Gagal mengambil data statistik.' });
     }
   }
 
