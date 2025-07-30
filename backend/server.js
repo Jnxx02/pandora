@@ -1,10 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import { createClient } from '@supabase/supabase-js';
+dotenv.config();
 
-const { createClient } = require('@supabase/supabase-js');
-
+// __dirname tidak tersedia di ES Modules, ini adalah cara penggantinya.
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+ 
 const app = express();
 const PORT = 3001;
 
@@ -89,4 +94,4 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Ekspor 'app' agar Vercel dapat menggunakannya sebagai Serverless Function
-module.exports = app;
+export default app;
