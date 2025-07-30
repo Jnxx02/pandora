@@ -265,7 +265,7 @@ function SambutanKepalaDesa() {
           className="w-36 h-36 md:w-48 md:h-48 rounded-full object-cover border-4 border-accent mb-6 md:mb-0 shadow-none"
         />
         <div className="flex-1 text-center md:text-left">
-          <div className="font-bold text-primary text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
+          <div className="font-bold text-accent text-2xl md:text-3xl mb-2">Sambutan Kepala Desa</div>
           <div className="font-semibold text-primary text-xl md:text-2xl mb-1">MUHAMMAD TAHIR</div>
           <div className="text-primary text-base md:text-lg mb-4">Kepala Desa Moncongloe Bulu</div>
           <p className="text-primary text-sm md:text-base text-justify">Selamat datang di PANDORA (Pusat Akses Informasi dan Dokumentasi Resmi Desa), portal berita resmi Pemerintah Desa Moncongloe Bulu. Portal ini kami hadirkan sebagai langkah nyata kami dalam memanfaatkan teknologi digital untuk melayani dan lebih dekat dengan seluruh masyarakat.

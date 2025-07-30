@@ -45,7 +45,7 @@ const Home = () => {
   }, [berita]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 to-white py-8 px-4 sm:px-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-b from-accent to-white py-8 px-4 sm:px-6 flex flex-col items-center">
       {/* Info Singkat Desa */}
       <section className="w-full max-w-4xl flex flex-col my-8 sm:my-12">
         <div className="w-full max-w-4xl mx-auto">
