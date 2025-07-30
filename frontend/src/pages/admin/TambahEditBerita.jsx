@@ -11,7 +11,6 @@ const TambahEditBerita = () => {
     try {
       const storedBerita = localStorage.getItem('berita');
       const dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
-      // Urutkan berita dari yang terbaru
       dataBerita.sort((a, b) => {
         const dateA = new Date(a.tanggalDibuat || 0);
         const dateB = new Date(b.tanggalDibuat || 0);
@@ -32,18 +31,19 @@ const TambahEditBerita = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (!form.judul || !form.gambar || !form.tanggal || !form.ringkasan || !form.isi) return;
+    if (!form.judul || !form.gambar || !form.tanggal || !form.ringkasan || !form.isi) {
+        alert("Semua kolom harus diisi!");
+        return;
+    };
 
     try {
       const storedBerita = localStorage.getItem('berita');
       let dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
 
       if (editId) {
-        // Edit berita yang ada
         const originalBerita = dataBerita.find(b => b.id === editId);
         dataBerita = dataBerita.map(b => b.id === editId ? { ...originalBerita, ...form, id: editId } : b);
       } else {
-        // Tambah berita baru
         const newBerita = { ...form, id: Date.now(), tanggalDibuat: new Date().toISOString() };
         dataBerita.push(newBerita);
       }
@@ -59,9 +59,9 @@ const TambahEditBerita = () => {
   };
 
   const handleEdit = b => {
-    setForm({ judul: b.judul, gambar: b.gambar, tanggal: b.tanggal, ringkasan: b.ringkasan, isi: b.isi || '' }); // isi bisa jadi undefined
+    setForm({ judul: b.judul, gambar: b.gambar, tanggal: b.tanggal, ringkasan: b.ringkasan, isi: b.isi || '' });
     setEditId(b.id);
-    window.scrollTo(0, 0); // Scroll ke atas untuk edit
+    window.scrollTo(0, 0);
   };
 
   const handleDelete = id => {
@@ -79,69 +79,82 @@ const TambahEditBerita = () => {
   };
 
   return (
-    <div className="py-10 max-w-2xl mx-auto bg-background min-h-screen">
+    // GANTI: Latar belakang menggunakan 'bg-neutral'
+    <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
       <div className="flex flex-col space-y-6">
-        {/* Tombol kembali ke dashboard */}
-        <button onClick={() => navigate('/admin/dashboard')} className="mb-2 w-fit bg-accent text-primary px-4 py-2 rounded hover:bg-secondary hover:text-white transition font-semibold border border-accent">&larr; Kembali ke Dashboard</button>
-        <h2 className="text-2xl font-bold text-primary mb-2 text-center">Tambah / Edit Berita</h2>
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-4 border border-accent flex flex-col gap-4">
-          <div>
-            <label className="text-secondary">Judul</label>
-            <input name="judul" value={form.judul} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
-          </div>
-          <div>
-            <label className="text-secondary">Ringkasan</label>
-            <textarea name="ringkasan" value={form.ringkasan} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
-          </div>
-          <div>
-            <label className="text-secondary">Tanggal</label>
-            <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
-          </div>
-          <div>
-            <label className="text-secondary">Isi Berita</label>
-            <textarea name="isi" value={form.isi} onChange={handleChange} rows={6} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
-          </div>
-          <div>
-            <label className="text-secondary">Gambar Utama (URL)</label>
-            <input name="gambar" value={form.gambar} onChange={handleChange} className="w-full px-3 py-2 border border-accent rounded bg-background text-primary" />
-          </div>
-          <button type="submit" className="bg-secondary text-white px-4 py-2 rounded-md w-full hover:bg-primary transition font-semibold">{editId ? 'Simpan Perubahan' : 'Publikasikan'}</button>
-          {editId && (
-            <button type="button" onClick={() => { setEditId(null); setForm({ judul: '', gambar: '', tanggal: '', ringkasan: '', isi: '' }); }} className="bg-accent text-primary px-4 py-2 rounded-md w-full hover:bg-secondary hover:text-white transition font-semibold mt-2">Batal Edit</button>
-          )}
-        </form>
-        <div className="bg-white rounded-xl shadow p-4 border border-accent">
-          <h3 className="text-lg font-bold text-primary mb-4">Daftar Berita</h3>
-          <table className="w-full text-sm text-left mb-4">
-            <thead className="bg-accent">
-              <tr>
-                <th className="px-4 py-2 text-primary">Judul</th>
-                <th className="px-4 py-2 text-primary">Tanggal</th>
-                <th className="px-4 py-2 text-primary">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {berita.map(b => (
-                <tr key={b.id} className="border-b border-accent">
-                  <td className="px-4 py-2 text-primary">{b.judul}</td>
-                  <td className="px-4 py-2 text-primary">
-                    {b.tanggal ? new Date(b.tanggal).toLocaleDateString('id-ID', {
-                      day: 'numeric', month: 'long', year: 'numeric'
-                    }) : '-'}
-                  </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button className="text-sm text-secondary hover:text-primary" onClick={() => handleEdit(b)}>Edit</button>
-                    <button className="text-sm text-red-600 hover:text-primary" onClick={() => handleDelete(b.id)}>Hapus</button>
-                    <Link to={`/berita/${b.id}`} className="text-sm text-primary hover:text-secondary underline">Lihat Detail</Link>
-                  </td>
+        {/* GANTI: Tombol kembali dengan gaya konsisten */}
+        <button onClick={() => navigate('/admin/dashboard')} className="mb-2 w-fit bg-white text-primary px-4 py-2 rounded-lg hover:bg-background transition font-semibold border border-neutral flex items-center gap-2">
+          &larr; Kembali ke Dashboard
+        </button>
+        
+        {/* Form Section */}
+        <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
+          <h2 className="text-2xl font-bold text-secondary mb-6 text-center">{editId ? 'Edit Berita' : 'Tambah Berita Baru'}</h2>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Judul</label>
+              <input name="judul" value={form.judul} onChange={handleChange} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Ringkasan</label>
+              <textarea name="ringkasan" value={form.ringkasan} onChange={handleChange} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Tanggal</label>
+              <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Isi Berita</label>
+              <textarea name="isi" value={form.isi} onChange={handleChange} rows={6} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Gambar Utama (URL)</label>
+              <input name="gambar" value={form.gambar} onChange={handleChange} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+            </div>
+            <div className="flex gap-4 mt-2">
+                <button type="submit" className="flex-1 bg-secondary text-white px-4 py-2 rounded-md hover:bg-primary transition font-semibold">{editId ? 'Simpan Perubahan' : 'Publikasikan'}</button>
+                {editId && (
+                    <button type="button" onClick={() => { setEditId(null); setForm({ judul: '', gambar: '', tanggal: '', ringkasan: '', isi: '' }); }} className="flex-1 bg-white text-primary border-2 border-primary px-4 py-2 rounded-md hover:bg-primary hover:text-white transition font-semibold">Batal Edit</button>
+                )}
+            </div>
+          </form>
+        </div>
+        
+        {/* Table Section */}
+        <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
+          <h3 className="text-lg font-bold text-secondary mb-4">Daftar Berita</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left mb-4">
+              <thead className="bg-neutral/60">
+                <tr>
+                  <th className="px-4 py-2 text-secondary font-semibold">Judul</th>
+                  <th className="px-4 py-2 text-secondary font-semibold">Tanggal</th>
+                  <th className="px-4 py-2 text-secondary font-semibold text-center">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {berita.map(b => (
+                  <tr key={b.id} className="border-b border-neutral">
+                    <td className="px-4 py-2 text-text-main font-medium">{b.judul}</td>
+                    <td className="px-4 py-2 text-text-secondary">
+                      {b.tanggal ? new Date(b.tanggal).toLocaleDateString('id-ID', {
+                        day: 'numeric', month: 'long', year: 'numeric'
+                      }) : '-'}
+                    </td>
+                    <td className="px-4 py-2 flex gap-3 justify-center">
+                      <button className="text-sm text-primary font-semibold hover:underline" onClick={() => handleEdit(b)}>Edit</button>
+                      <button className="text-sm text-secondary font-semibold hover:underline" onClick={() => handleDelete(b.id)}>Hapus</button>
+                      <Link to={`/berita/${b.id}`} className="text-sm text-blue-600 font-semibold hover:underline">Lihat</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default TambahEditBerita; 
+export default TambahEditBerita;

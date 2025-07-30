@@ -5,12 +5,16 @@ const Sejarah = () => (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <span className="text-4xl sm:text-5xl mb-4 inline-block">📜</span>
+        {/* Judul utama menggunakan warna primary (merah terang) */}
         <h1 className="text-3xl sm:text-4xl font-extrabold text-primary mb-2">Sejarah Desa Moncongloe Bulu</h1>
-        <p className="text-secondary text-base sm:text-lg">Narasi tentang asal-usul dan perkembangan desa.</p>
+        {/* Subjudul menggunakan warna text-secondary (abu-abu tua) */}
+        <p className="text-text-secondary text-base sm:text-lg">Narasi tentang asal-usul dan perkembangan desa.</p>
       </div>
 
-      <div className="space-y-8 text-primary text-justify leading-relaxed text-base">
+      {/* Konten utama menggunakan warna text-main (hitam pekat) untuk keterbacaan */}
+      <div className="space-y-8 text-text-main text-justify leading-relaxed text-base">
         <section>
+          {/* Judul seksi menggunakan warna secondary (merah tua) */}
           <h2 className="text-xl font-bold text-secondary mb-3">Asal-Usul Nama</h2>
           <p>
             Setiap nama membawa cerita, begitu pula dengan Desa Moncongloe Bulu. Nama ini berakar dari Bahasa Makassar, di mana "Moncong" berarti bukit atau dataran tinggi, "Loe" berarti luas, dan "Bulu" berarti gunung. Secara harfiah, Moncongloe Bulu adalah gambaran sebuah dataran tinggi yang luas di mana terdapat gunung, sesuai dengan kondisi geografis wilayahnya yang subur dan berbukit.
@@ -69,7 +73,8 @@ const Sejarah = () => (
         </section>
 
         <section>
-          <p className="mt-6 italic text-center text-secondary">
+          {/* Teks kutipan menggunakan warna text-secondary (abu-abu tua) */}
+          <p className="mt-6 italic text-center text-text-secondary">
             Kini, Desa Moncongloe Bulu terus bergerak maju, membangun, dan berbenah untuk menjadi desa yang mandiri, transparan, dan sejahtera bagi seluruh warganya.
           </p>
         </section>
@@ -78,4 +83,4 @@ const Sejarah = () => (
   </div>
 );
 
-export default Sejarah; 
+export default Sejarah;
