@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStatistik } from '../context/StatistikContext';
 
@@ -18,7 +18,7 @@ const orbitrasi = [
 const Home = () => {
   const [berita, setBerita] = useState([]);
   const [beritaIdx, setBeritaIdx] = useState(0);
-  const { statistik, loading, error } = useStatistik();
+  const { statistik } = useStatistik();
 
   useEffect(() => {
     try {
@@ -100,19 +100,15 @@ const Home = () => {
       <section className="w-full max-w-4xl flex flex-col my-8 sm:my-12">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-primary mb-4">STATISTIK PENDUDUK</h1>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 justify-center">
-          {loading ? (
-            <p className="col-span-full text-center text-gray-500">Memuat statistik...</p>
-          ) : error ? (
-            <p className="col-span-full text-center text-red-500">{error}</p>
-          ) : (
-            statistik.map((item) => (
-              <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-green-100/80">
-                <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
-                <span className="font-bold text-base sm:text-lg text-green-800">{item.value}</span>
-                <span className="text-xs text-green-700 mt-0.5">{item.label}</span>
-              </div>
-            ))
-          )}
+          {statistik.map((item) => (
+            <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-green-100/80">
+              <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
+              <span className="font-bold text-base sm:text-lg text-green-800">
+                {item.value}
+              </span>
+              <span className="text-xs text-green-700 mt-0.5">{item.label}</span>
+            </div>
+          ))}
         </div>
       </section>
       {/* Preview Berita Terbaru */}

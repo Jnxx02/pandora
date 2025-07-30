@@ -154,7 +154,7 @@ function LaporanPengaduan() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL);
+      const response = await fetch('http://localhost:3001/api/laporan');
       if (!response.ok) throw new Error('Gagal memuat data laporan');
       const dataLaporan = await response.json();
       
@@ -198,7 +198,7 @@ function LaporanPengaduan() {
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}?id=${id}`, {
+        const response = await fetch(`http://localhost:3001/api/laporan/${id}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
