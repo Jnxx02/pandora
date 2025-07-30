@@ -5,7 +5,7 @@ const Sejarah = () => (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <span className="text-4xl sm:text-5xl mb-4 inline-block">📜</span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-primary mb-2">Sejarah Desa Moncongloe Bulu</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-accent mb-2">Sejarah Desa Moncongloe Bulu</h1>
         <p className="text-secondary text-base sm:text-lg">Narasi tentang asal-usul dan perkembangan desa.</p>
       </div>
 
