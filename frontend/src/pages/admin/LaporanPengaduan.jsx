@@ -112,15 +112,14 @@ function LaporanPengaduan() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLaporan, setSelectedLaporan] = useState(null);
 
-  const fetchLaporan = async () => {
+  const fetchLaporan = () => {
     setLoading(true);
-    setError(null);
     try {
-      const response = await fetch('http://localhost:3001/api/pengaduan');
-      if (!response.ok) throw new Error('Gagal memuat data laporan');
-      const dataLaporan = await response.json();
+      const storedLaporan = localStorage.getItem('pengaduan');
+      const dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
       
-      // Pengurutan sekarang dilakukan di server, jadi baris ini bisa dihapus
+      // Urutkan berdasarkan tanggal laporan dibuat
+      dataLaporan.sort((a, b) => new Date(b.tanggalLaporan) - new Date(a.tanggalLaporan));
 
       // Filter untuk 'pengaduan' dan format tanggal yang benar
       const pengaduan = dataLaporan
@@ -148,7 +147,7 @@ function LaporanPengaduan() {
       setLaporanPengaduan(pengaduan);
       setLaporanAspirasi(aspirasi);
     } catch (err) {
-      console.error("Error fetching from API: ", err);
+      console.error("Error fetching from localStorage: ", err);
       setError(err);
     } finally {
       setLoading(false);
@@ -159,17 +158,14 @@ function LaporanPengaduan() {
     fetchLaporan();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => { /* ... (fungsi handleDelete tidak berubah) ... */
     if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
       try {
-        const response = await fetch(`http://localhost:3001/api/pengaduan/${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          throw new Error('Gagal menghapus laporan dari server.');
-        }
+        const storedLaporan = localStorage.getItem('pengaduan');
+        let dataLaporan = storedLaporan ? JSON.parse(storedLaporan) : [];
+        const updatedLaporan = dataLaporan.filter(l => l.id !== id);
+        localStorage.setItem('pengaduan', JSON.stringify(updatedLaporan));
         fetchLaporan();
-        alert('Laporan berhasil dihapus.');
       } catch (err) {
         console.error("Error deleting from localStorage: ", err);
         alert('Gagal menghapus laporan.');

@@ -38,8 +38,12 @@
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
-        // Data yang akan dikirim ke backend
+        try {
+        // Karena tidak ada database, kita akan menyimpan data ke localStorage
+        // sebagai contoh. Ini hanya akan tersimpan di browser pengguna.
+
         const laporanData = {
+            id: Date.now(), // Gunakan timestamp sebagai ID unik sederhana
             klasifikasi: data.klasifikasi,
             judul: data.judul,
             isi: data.isi,
@@ -48,27 +52,21 @@
             lampiranInfo: lampiran ? lampiran.name : '', // Simpan nama file untuk info
             lampiranDataUrl, // Simpan data URL gambar
             nama: isAnonim ? 'Anonim' : data.nama,
+            tanggalLaporan: new Date().toISOString(), // Simpan tanggal sebagai string ISO
         };
 
-        try {
-        const response = await fetch('http://localhost:3001/api/pengaduan', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(laporanData),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal mengirim laporan ke server.');
-        }
+        // Ambil data lama dari localStorage, atau mulai dengan array kosong
+        const existingLaporan = JSON.parse(localStorage.getItem('pengaduan')) || [];
+        // Tambahkan laporan baru
+        const updatedLaporan = [...existingLaporan, laporanData];
+        // Simpan kembali ke localStorage
+        localStorage.setItem('pengaduan', JSON.stringify(updatedLaporan));
 
         alert('Laporan berhasil dikirim!');
         navigate('/pengaduan');
 
         } catch (error) {
-        console.error("Error submitting report:", error);
+        console.error("Error saving report to localStorage: ", error);
         alert('Terjadi kesalahan saat menyimpan laporan. Silakan coba lagi.');
         } finally {
         setIsSubmitting(false);
