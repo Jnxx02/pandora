@@ -11,6 +11,12 @@ const PORT = 3001;
 // Inisialisasi Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+// Pengecekan Environment Variables (PENTING UNTUK DEPLOYMENT)
+if (!supabaseUrl || !supabaseKey) {
+  console.error('FATAL ERROR: SUPABASE_URL and SUPABASE_ANON_KEY must be defined in environment variables.');
+  process.exit(1); // Keluar dari proses jika variabel tidak ada, mencegah crash yang tidak jelas
+}
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(cors());
