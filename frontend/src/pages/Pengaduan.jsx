@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 // Komponen banner tidak perlu diubah karena sudah menggunakan warna primary.
 const SuarakuBanner = () => (
   <div className="w-full bg-primary text-white p-4 shadow-lg sticky top-0 z-10">
-    <div className="relative max-w-xl mx-auto flex items-center justify-center h-16">
-      {/* Tombol kembali ke Beranda */}
-      <div className="absolute inset-y-0 left-0 flex items-center">
+    <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16">
+      {/* Tombol back di kiri, Logo SUARAKU di kanan */}
+      <div className="flex items-center gap-4">
         <Link
           to="/"
           className="p-2 rounded-full text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -16,9 +16,19 @@ const SuarakuBanner = () => (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
-        <h1 className="text-xl font-bold">Suaraku</h1>
+        
+        <img 
+          src="/images/logos/suaraku.png" 
+          alt="Logo SUARAKU" 
+          className="h-80 object-contain" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.style.display = 'none';
+            // Fallback ke teks jika gambar tidak ada
+            e.target.nextSibling.style.display = 'block';
+          }}
+        />
+        <h1 className="text-xl font-bold" style={{display: 'none'}}>Suaraku</h1>
       </div>
     </div>
   </div>
@@ -29,39 +39,46 @@ const Pengaduan = () => (
   <div className="min-h-screen bg-neutral">
     <SuarakuBanner />
 
-    <main className="py-12 px-4 sm:px-6">
-      {/* Penjelasan dan Regulasi Section */}
-      <section className="w-full max-w-xl mx-auto mb-16 text-center">
-        <h2 className="text-3xl font-bold text-primary mb-4">Penjelasan dan Regulasi</h2>
-        {/* GANTI: Menggunakan warna 'text-text-secondary' */}
-        <p className="text-text-secondary mb-8">
-          Layanan "Suaraku" adalah platform bagi masyarakat Desa Moncongloe Bulu untuk menyampaikan pengaduan, aspirasi, dan permintaan informasi secara online. Kami berkomitmen untuk memberikan respon yang cepat dan transparan.
-        </p>
+    <main className="py-6 px-4 sm:px-6">
+      {/* Container untuk layout side-by-side */}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          
+          {/* Penjelasan dan Regulasi Section - SEBELAH KIRI */}
+          <section className="p-4">
+            <h2 className="text-2xl font-bold text-primary mb-3">Penjelasan dan Regulasi</h2>
+            {/* GANTI: Menggunakan warna 'text-text-secondary' */}
+            <p className="text-text-secondary mb-6">
+              Setiap warga berhak menyampaikan saran, keluhan, atau pendapat terhadap pelayanan publik. Hak ini dijamin oleh UU No. 25 Tahun 2009 tentang Pelayanan Publik dan UU No. 6 Tahun 2014 tentang Desa, yang menegaskan bahwa aspirasi masyarakat harus difasilitasi.
+              Didukung oleh Permendagri No. 3 Tahun 2007 dan sistem nasional SP4N-LAPOR!, pemerintah desa wajib membuka saluran pengaduan yang mudah diakses.
+              Melalui program “Suaraku Desa”, warga Desa Moncongloe Bulu kini bisa menyampaikan aspirasi secara mudah, cepat, dan terdokumentasi melalui formulir digital berbasis QR code.
+            </p>
 
-        <h3 className="font-semibold text-xl text-secondary mb-4">Regulasi Layanan</h3>
-        {/* GANTI: Menggunakan warna 'text-text-main' */}
-        <ul className="list-disc list-outside pl-5 space-y-2 max-w-md mx-auto text-left text-text-main">
-          <li>Setiap pengaduan akan diverifikasi oleh admin desa.</li>
-          <li>Pengaduan harus menggunakan bahasa yang sopan dan tidak mengandung unsur SARA.</li>
-          <li>Identitas pelapor akan dirahasiakan (opsional saat mengisi formulir).</li>
-          <li>Waktu respon maksimal adalah 3x24 jam pada hari kerja.</li>
-        </ul>
-      </section>
+            <h3 className="font-semibold text-lg text-secondary mb-3">Regulasi Layanan</h3>
+            {/* GANTI: Menggunakan warna 'text-text-main' */}
+            <ul className="list-disc list-outside pl-5 space-y-2 text-text-main text-sm">
+              <li>Setiap pengaduan akan diverifikasi oleh admin desa.</li>
+              <li>Pengaduan harus menggunakan bahasa yang sopan dan tidak mengandung unsur SARA.</li>
+              <li>Identitas pelapor akan dirahasiakan (opsional saat mengisi formulir).</li>
+              <li>Waktu respon maksimal adalah 3x24 jam pada hari kerja.</li>
+            </ul>
+          </section>
 
-      {/* Poster Section */}
-      <section className="w-full max-w-xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-neutral/50">
-          <h2 className="text-3xl font-bold text-primary mb-4 text-center">Alur Pengaduan</h2>
-          {/* GANTI: Latar placeholder menggunakan 'bg-neutral' */}
-          <div className="bg-neutral rounded-lg flex items-center justify-center aspect-w-4 aspect-h-3">
-            <img
-              src="https://placehold.co/800x600/F1F1F1/C50000?text=Poster+Alur+Layanan"
-              alt="Poster Alur Layanan Pengaduan"
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+          {/* Poster Section - SEBELAH KANAN */}
+          <section className="p-4">
+          
+            {/* GANTI: Latar placeholder menggunakan 'bg-neutral' */}
+            <div className="flex items-center justify-center overflow-hidden">
+                              <img
+                  src="/images/posters/PHOTO-2025-07-31-20-17-09.jpg"
+                  alt="Poster Alur Layanan Pengaduan"
+                  className="w-full h-auto max-h-[600px] object-contain rounded-lg"
+                />
+            </div>
+          </section>
+          
         </div>
-      </section>
+      </div>
     </main>
 
     {/* Floating Action Button */}
