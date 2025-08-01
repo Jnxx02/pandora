@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 // Header component for the form page
 const FormulirHeader = () => (
-    // Header sudah menggunakan 'bg-primary' yang sesuai dengan palet
-    <header className="w-full bg-primary text-white p-4 shadow-lg sticky top-0 z-20">
-        <div className="relative max-w-xl mx-auto flex items-center justify-center h-16">
-            <div className="absolute inset-y-0 left-0 flex items-center">
+    <div className="w-full bg-primary text-white p-4 shadow-lg sticky top-0 z-10">
+        <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16">
+            {/* Tombol back di kiri, Logo SUARAKU di kanan */}
+            <div className="flex items-center gap-4">
                 <Link
                     to="/pengaduan"
                     className="p-2 rounded-full text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -16,12 +16,22 @@ const FormulirHeader = () => (
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </Link>
-            </div>
-            <div className="flex-1 flex items-center justify-center">
-                <h1 className="text-xl font-bold">Suaraku</h1>
+                
+                <img 
+                    src="/images/logos/suaraku.png" 
+                    alt="Logo SUARAKU" 
+                    className="h-80 object-contain" 
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        // Fallback ke teks jika gambar tidak ada
+                        e.target.nextSibling.style.display = 'block';
+                    }}
+                />
+                <h1 className="text-xl font-bold" style={{display: 'none'}}>Suaraku</h1>
             </div>
         </div>
-    </header>
+    </div>
 );
 
 const FormulirPengaduan = () => {
@@ -93,7 +103,8 @@ const FormulirPengaduan = () => {
         // GANTI: Menggunakan latar 'bg-neutral' yang bersih
         <div className="min-h-screen bg-neutral">
             <FormulirHeader />
-            <main className="max-w-xl mx-auto p-4 sm:p-6 pb-24">
+            <main className="py-6 px-4 sm:px-6 pb-24">
+                <div className="max-w-xl mx-auto">
                 {/* GANTI: Kartu form dengan border neutral */}
                 <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-neutral/50">
                     <h2 className="text-2xl sm:text-3xl font-bold text-secondary mb-6 text-center">
@@ -283,6 +294,7 @@ const FormulirPengaduan = () => {
                             </button>
                         </div>
                     </form>
+                </div>
                 </div>
             </main>
         </div>
