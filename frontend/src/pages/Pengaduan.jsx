@@ -54,14 +54,6 @@ const Pengaduan = () => (
               Melalui program “Suaraku Desa”, warga Desa Moncongloe Bulu kini bisa menyampaikan aspirasi secara mudah, cepat, dan terdokumentasi melalui formulir digital berbasis QR code.
             </p>
 
-            <h3 className="font-semibold text-lg text-secondary mb-3">Regulasi Layanan</h3>
-            {/* GANTI: Menggunakan warna 'text-text-main' */}
-            <ul className="list-disc list-outside pl-5 space-y-2 text-text-main text-sm">
-              <li>Setiap pengaduan akan diverifikasi oleh admin desa.</li>
-              <li>Pengaduan harus menggunakan bahasa yang sopan dan tidak mengandung unsur SARA.</li>
-              <li>Identitas pelapor akan dirahasiakan (opsional saat mengisi formulir).</li>
-              <li>Waktu respon maksimal adalah 3x24 jam pada hari kerja.</li>
-            </ul>
           </section>
 
           {/* Poster Section - SEBELAH KANAN */}
