@@ -20,7 +20,7 @@ const EditStatistik = () => {
   };
 
   const handleAddItem = () => {
-    setStatistik([...statistik, { icon: '', label: '', value: '' }]);
+    setStatistik([...statistik, { label: '', value: '' }]);
   };
 
   const handleRemoveItem = (index) => {
@@ -71,18 +71,8 @@ const EditStatistik = () => {
         <div className="space-y-4">
           {statistik.map((item, index) => (
             // GANTI: Latar baris item menggunakan bg-neutral/50
-            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start p-3 bg-neutral/50 rounded-lg">
+            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start p-3 bg-neutral/50 rounded-lg">
               {/* GANTI: Input field dengan gaya yang diseragamkan */}
-              <input
-                type="text"
-                placeholder="Nama icon (opsional, e.g., graduation-cap)"
-                value={item.icon}
-                onChange={(e) => handleChange(index, 'icon', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
-              />
-              <div className="md:col-span-4 text-xs text-gray-500">
-                * Icon bersifat opsional. Jika dikosongkan, tidak akan ada icon yang ditampilkan.
-              </div>
               <input
                 type="text"
                 placeholder="Label (e.g., Penduduk)"

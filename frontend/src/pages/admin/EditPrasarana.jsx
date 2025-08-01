@@ -84,7 +84,7 @@ const EditPrasarana = () => {
   };
 
   const handleAddItem = () => {
-    setPrasarana([...prasarana, { kategori: '', icon: null, list: [] }]);
+    setPrasarana([...prasarana, { kategori: '', list: [] }]);
   };
 
   const handleRemoveItem = (index) => {
@@ -126,12 +126,8 @@ const EditPrasarana = () => {
         <div className="space-y-6">
           {prasarana.map((item, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border">
-              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input type="text" placeholder="SVG icon (opsional)" value={item.icon} onChange={(e) => handleChange(index, 'icon', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary" />
-                <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary sm:col-span-2" />
-              </div>
-              <div className="md:col-span-2 text-xs text-gray-500">
-                * Icon bersifat opsional. Jika dikosongkan, tidak akan ada icon yang ditampilkan.
+              <div className="md:col-span-2">
+                <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Daftar Fasilitas (satu per baris)</label>
