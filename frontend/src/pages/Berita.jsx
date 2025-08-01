@@ -38,7 +38,7 @@ const Berita = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {berita.map(b => (
-              <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-accent rounded-xl p-4 shadow hover:bg-secondary hover:text-white transition text-left border-none">
+              <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-secondary rounded-xl p-4 shadow hover:bg-primary hover:text-white transition text-left border-none">
                 <img src={b.gambar} alt={b.judul} className="w-full h-40 object-cover rounded mb-2" />
                 <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">{b.judul}</div>
                 <div className="text-xs font-bold text-secondary mb-2 bg-white/80 px-2 py-1 rounded w-fit shadow">
