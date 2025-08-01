@@ -75,7 +75,7 @@ const EditStatistik = () => {
               {/* GANTI: Input field dengan gaya yang diseragamkan */}
               <input
                 type="text"
-                placeholder="Ikon (emoji)"
+                placeholder="Nama icon (opsional, e.g., graduation-cap)"
                 value={item.icon}
                 onChange={(e) => handleChange(index, 'icon', e.target.value)}
                 className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"

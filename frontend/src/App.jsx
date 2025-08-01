@@ -103,10 +103,10 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className={`transition flex items-center gap-1 hover:text-secondary ${location.pathname.startsWith('/modul') ? `font-bold text-secondary bg-white/10 px-3 py-1 rounded` : ''}`}>
-                  {link.label}
-                  <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
-                </button>
+                                 <button className={`transition flex items-center gap-1 hover:text-secondary ${location.pathname.startsWith('/modul') ? `font-bold ${isTransparent ? 'text-white bg-black/20 border border-black/30' : 'text-secondary bg-white/10'} px-3 py-1 rounded` : ''}`}>
+                   {link.label}
+                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
+                 </button>
                 {dropdownOpen && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-10 ring-1 ring-black ring-opacity-5">
                     {link.subLinks.map(subLink => (
@@ -123,9 +123,9 @@ function Header() {
                 )}
               </div>
             ) : (
-              <Link key={link.to} to={link.to} className={`transition hover:text-secondary ${location.pathname === link.to ? `font-bold bg-white/10 px-3 py-1 rounded text-secondary` : ''}`}>
-                {link.label}
-              </Link>
+                             <Link key={link.to} to={link.to} className={`transition hover:text-secondary ${location.pathname === link.to ? `font-bold ${isTransparent ? 'text-white bg-black/20 border border-black/30' : 'text-secondary bg-white/10'} px-3 py-1 rounded` : ''}`}>
+                 {link.label}
+               </Link>
             ))}
           </nav>
           {isAdmin ? (
@@ -163,12 +163,12 @@ function Header() {
               <nav className="flex flex-col gap-6 text-white text-lg font-bold items-start w-full">
                 {navLinks.map(link => link.subLinks ? (
                   <div key={link.label} className="w-full">
-                    <button
-                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-secondary transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`}
-                    >
-                      <span>{link.label}</span>
-                      <span className={`text-sm transition-transform duration-300 ${mobileDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
-                    </button>
+                                         <button
+                       onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-secondary transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`}
+                     >
+                       <span>{link.label}</span>
+                       <span className={`text-sm transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
+                     </button>
                     {mobileDropdownOpen && (
                       <div className="pl-4 mt-2 flex flex-col gap-4 border-l-2 border-white/20">
                         {link.subLinks.map(subLink => (
