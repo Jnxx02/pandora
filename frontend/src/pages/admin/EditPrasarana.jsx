@@ -133,9 +133,6 @@ const EditPrasarana = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Daftar Fasilitas (satu per baris)</label>
                 <textarea placeholder="TK/PAUD (4 Unit)&#10;SD Negeri (3 Unit)" value={item.list.join('\n')} onChange={(e) => handleChange(index, 'list', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary h-24" />
               </div>
-              <div className="md:col-span-2 flex justify-end">
-                <button onClick={() => handleRemoveItem(index)} className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-red-600 transition-colors">Hapus Kategori</button>
-              </div>
             </div>
           ))}
         </div>

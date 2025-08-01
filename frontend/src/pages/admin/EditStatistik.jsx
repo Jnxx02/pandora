@@ -71,7 +71,7 @@ const EditStatistik = () => {
         <div className="space-y-4">
           {statistik.map((item, index) => (
             // GANTI: Latar baris item menggunakan bg-neutral/50
-            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start p-3 bg-neutral/50 rounded-lg">
+            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start p-3 bg-neutral/50 rounded-lg">
               {/* GANTI: Input field dengan gaya yang diseragamkan */}
               <input
                 type="text"
@@ -87,13 +87,6 @@ const EditStatistik = () => {
                 onChange={(e) => handleChange(index, 'value', e.target.value)}
                 className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
               />
-              {/* GANTI: Tombol hapus dengan warna dari palet */}
-              <button
-                onClick={() => handleRemoveItem(index)}
-                className="bg-primary text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-secondary transition-colors"
-              >
-                Hapus
-              </button>
             </div>
           ))}
         </div>
