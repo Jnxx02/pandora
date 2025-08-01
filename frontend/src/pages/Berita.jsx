@@ -28,7 +28,9 @@ const Berita = () => {
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-12">
       <div className="w-full max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <span className="text-4xl sm:text-5xl mb-3 inline-block">📰</span>
+          <svg className="w-16 h-16 sm:w-20 sm:h-20 text-primary mb-3 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+          </svg>
           <h1 className="text-3xl sm:text-4xl font-bold text-primary">Berita Desa</h1>
           <p className="text-gray-600 mt-2 text-base">Kumpulan berita dan informasi terbaru seputar Desa Moncongloe Bulu.</p>
         </div>

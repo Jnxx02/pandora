@@ -4,22 +4,22 @@ import { useNavigate } from 'react-router-dom';
 const initialPrasarana = [
   {
     kategori: 'Pendidikan',
-    icon: '🎓',
+    icon: 'graduation-cap',
     list: ['TK/PAUD (4 Unit)', 'SD Negeri (3 Unit)', 'SMP Negeri (1 Unit)'],
   },
   {
     kategori: 'Kesehatan',
-    icon: '🏥',
+    icon: 'building-office',
     list: ['Puskesmas Pembantu (1 Unit)', 'Poskesdes (1 Unit)', 'Posyandu (5 Unit)'],
   },
   {
     kategori: 'Ibadah',
-    icon: '🕌',
+    icon: 'sun',
     list: ['Masjid (8 Unit)', 'Gereja (1 Unit)'],
   },
   {
     kategori: 'Umum',
-    icon: '🏛️',
+    icon: 'building-library',
     list: ['Kantor Desa (1 Unit)', 'Pasar Desa (1 Unit)', 'Lapangan Olahraga (2 Unit)'],
   },
 ];
@@ -97,7 +97,7 @@ const EditPrasarana = () => {
           {prasarana.map((item, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border">
               <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input type="text" placeholder="Ikon (emoji)" value={item.icon} onChange={(e) => handleChange(index, 'icon', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary" />
+                <input type="text" placeholder="Nama icon (e.g., graduation-cap)" value={item.icon} onChange={(e) => handleChange(index, 'icon', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary" />
                 <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary sm:col-span-2" />
               </div>
               <div className="md:col-span-2">
