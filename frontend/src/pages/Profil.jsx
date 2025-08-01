@@ -423,7 +423,9 @@ const Profil = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {prasarana.map((item) => (
               <div key={item.kategori} className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 flex flex-col items-center text-center">
-                <div className="mb-3">{item.icon}</div>
+                {item.icon && item.icon !== null && item.icon !== '' && (
+                  <div className="mb-3">{item.icon}</div>
+                )}
                 <h3 className="font-bold text-lg text-secondary mb-3">{item.kategori}</h3>
                 <ul className="space-y-1 text-primary text-sm">
                   {item.list.map(fasilitas => (

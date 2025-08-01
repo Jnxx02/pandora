@@ -102,7 +102,9 @@ const Home = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 justify-center">
           {statistik.map((item) => (
             <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-neutral">
-              <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
+              {item.icon && item.icon !== null && item.icon !== '' && (
+                <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
+              )}
               <span className="font-bold text-base sm:text-lg text-secondary">
                 {item.value}
               </span>
