@@ -153,17 +153,39 @@ const Home = () => {
       <section className="w-full max-w-4xl flex flex-col my-8 sm:my-12">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-primary mb-4">STATISTIK PENDUDUK</h1>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 justify-center">
-          {statistik.map((item) => (
-            <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-neutral">
-              <div className="mb-1">
-                {getStatistikIcon(item.label)}
+          {(() => {
+            // Urutan tampilan yang diinginkan
+            const orderMap = {
+              'Penduduk': 1,
+              'Laki-Laki': 2,
+              'Perempuan': 3,
+              'Kepala Keluarga': 4,
+              'Diccekang': 5,
+              'Tamalate': 6,
+              'Tammu-Tammu': 7,
+              'Tompo Balang': 8,
+              'Moncongloe Bulu': 9
+            };
+            
+            // Urutkan statistik sesuai urutan yang diinginkan
+            const sortedStatistik = [...statistik].sort((a, b) => {
+              const orderA = orderMap[a.label] || 999;
+              const orderB = orderMap[b.label] || 999;
+              return orderA - orderB;
+            });
+            
+            return sortedStatistik.map((item) => (
+              <div key={item.label} className="flex flex-col items-center bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-neutral">
+                <div className="mb-1">
+                  {getStatistikIcon(item.label)}
+                </div>
+                <span className="font-bold text-base sm:text-lg text-secondary">
+                  {item.value}
+                </span>
+                <span className="text-xs text-primary mt-0.5">{item.label}</span>
               </div>
-              <span className="font-bold text-base sm:text-lg text-secondary">
-                {item.value}
-              </span>
-              <span className="text-xs text-primary mt-0.5">{item.label}</span>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
       </section>
       {/* Preview Berita Terbaru */}
