@@ -180,14 +180,12 @@ function LaporanPengaduan() {
   };
 
   return (
-    // GANTI: Latar belakang menggunakan 'bg-neutral'
-    <div className="container mx-auto p-4 md:p-8 bg-neutral min-h-screen">
-      <div className="bg-white shadow-lg rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6 border-b border-neutral pb-4">
-          <h1 className="text-3xl font-bold text-secondary">Laporan Warga</h1>
-          {/* GANTI: Tombol kembali dengan gaya konsisten */}
-          <Link to="/admin/dashboard" className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral flex items-center gap-2">
-            <span>←</span> Kembali ke Dashboard
+    <div className="py-10 max-w-6xl mx-auto bg-neutral min-h-screen px-4">
+      <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
+          <Link to="/admin/dashboard" className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral">
+            ← Kembali ke Dashboard
           </Link>
         </div>
 

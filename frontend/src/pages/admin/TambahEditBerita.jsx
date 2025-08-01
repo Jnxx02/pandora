@@ -79,17 +79,17 @@ const TambahEditBerita = () => {
   };
 
   return (
-    // GANTI: Latar belakang menggunakan 'bg-neutral'
     <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
-      <div className="flex flex-col space-y-6">
-        {/* GANTI: Tombol kembali dengan gaya konsisten */}
-        <button onClick={() => navigate('/admin/dashboard')} className="mb-2 w-fit bg-white text-primary px-4 py-2 rounded-lg hover:bg-background transition font-semibold border border-neutral flex items-center gap-2">
-          &larr; Kembali ke Dashboard
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-secondary">{editId ? 'Edit Berita' : 'Tambah Berita Baru'}</h2>
+        <button onClick={() => navigate('/admin/dashboard')} className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral">
+          ← Kembali ke Dashboard
         </button>
-        
+      </div>
+      
+      <div className="space-y-6">
         {/* Form Section */}
         <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
-          <h2 className="text-2xl font-bold text-secondary mb-6 text-center">{editId ? 'Edit Berita' : 'Tambah Berita Baru'}</h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="block text-sm font-medium text-text-main mb-1">Judul</label>

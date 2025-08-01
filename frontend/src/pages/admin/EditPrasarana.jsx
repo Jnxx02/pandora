@@ -87,13 +87,6 @@ const EditPrasarana = () => {
     setPrasarana([...prasarana, { kategori: '', list: [] }]);
   };
 
-  const handleRemoveItem = (index) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
-      const updatedPrasarana = prasarana.filter((_, i) => i !== index);
-      setPrasarana(updatedPrasarana);
-    }
-  };
-
   const handleSave = () => {
     try {
       const cleanedPrasarana = prasarana.map(item => ({
@@ -111,33 +104,32 @@ const EditPrasarana = () => {
   };
 
   return (
-    <div className="py-10 max-w-4xl mx-auto bg-background min-h-screen px-4">
+    <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-primary">Edit Infrastruktur & Sarana</h2>
+        <h2 className="text-2xl font-bold text-secondary">Edit Infrastruktur & Sarana</h2>
         <button
           onClick={() => navigate('/admin/dashboard')}
-          className="bg-gray-200 text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors"
+          className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral"
         >
           ← Kembali ke Dashboard
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow p-6 border border-accent">
+      <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
         <div className="space-y-6">
           {prasarana.map((item, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border">
+            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-neutral/50 rounded-lg border">
               <div className="md:col-span-2">
-                <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary" />
+                <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Daftar Fasilitas (satu per baris)</label>
-                <textarea placeholder="TK/PAUD (4 Unit)&#10;SD Negeri (3 Unit)" value={item.list.join('\n')} onChange={(e) => handleChange(index, 'list', e.target.value)} className="w-full px-3 py-2 border border-accent rounded bg-white text-primary h-24" />
+                <textarea placeholder="TK/PAUD (4 Unit)&#10;SD Negeri (3 Unit)" value={item.list.join('\n')} onChange={(e) => handleChange(index, 'list', e.target.value)} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition h-24" />
               </div>
             </div>
           ))}
         </div>
         <div className="mt-6 flex flex-col md:flex-row gap-4">
-          <button onClick={handleAddItem} className="bg-blue-500 text-white px-4 py-2 rounded-md w-full md:w-auto hover:bg-blue-600 transition font-semibold">Tambah Kategori</button>
           <button onClick={handleSave} className="bg-secondary text-white px-6 py-2 rounded-md w-full md:w-auto hover:bg-primary transition font-semibold">Simpan Perubahan</button>
         </div>
       </div>

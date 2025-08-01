@@ -19,17 +19,6 @@ const EditStatistik = () => {
     setStatistik(updatedStatistik);
   };
 
-  const handleAddItem = () => {
-    setStatistik([...statistik, { label: '', value: '' }]);
-  };
-
-  const handleRemoveItem = (index) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus item statistik ini?')) {
-      const updatedStatistik = statistik.filter((_, i) => i !== index);
-      setStatistik(updatedStatistik);
-    }
-  };
-
   const handleSave = async () => {
     const hasEmptyLabel = statistik.some(item => !item.label || item.label.trim() === '');
     if (hasEmptyLabel) {

@@ -34,6 +34,112 @@ function RequireAdmin({ children }) {
   return children;
 }
 
+// Komponen Header untuk Admin
+function AdminHeader() {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
+    navigate('/admin/login');
+  };
+
+  const adminNavLinks = [
+    { to: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
+    { to: '/admin/berita', label: 'Kelola Berita', icon: '📰' },
+    { to: '/admin/statistik', label: 'Edit Statistik', icon: '📈' },
+    { to: '/admin/prasarana', label: 'Edit Prasarana', icon: '🏗️' },
+    { to: '/admin/pengaduan', label: 'Laporan Pengaduan', icon: '📋' },
+  ];
+
+  return (
+    <header className="w-full bg-primary text-white shadow-lg sticky top-0 z-20">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+        {/* Logo */}
+        <Link to="/admin/dashboard" className="flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors">
+          <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-10 h-10 object-contain" />
+          <div className="leading-tight">
+            <div>Admin Panel</div>
+            <div className="text-xs font-normal opacity-80">Desa Moncongloe Bulu</div>
+          </div>
+        </Link>
+
+        {/* Hamburger (mobile) */}
+        <button
+          className="md:hidden ml-auto text-2xl focus:outline-none hover:text-secondary transition-colors"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          {open ? <span>&#10005;</span> : <span>&#9776;</span>}
+        </button>
+
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex items-center gap-6">
+          {adminNavLinks.map(link => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                location.pathname === link.to
+                  ? 'bg-secondary text-white font-semibold'
+                  : 'hover:bg-white/10 hover:text-secondary'
+              }`}
+            >
+              <span>{link.icon}</span>
+              <span>{link.label}</span>
+            </Link>
+          ))}
+          
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold"
+          >
+            <span>🚪</span>
+            <span>Logout</span>
+          </button>
+        </nav>
+
+        {/* Mobile Menu */}
+        {open && (
+          <div className="absolute top-full left-0 right-0 bg-primary shadow-lg md:hidden">
+            <nav className="flex flex-col p-4 space-y-2">
+              {adminNavLinks.map(link => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    location.pathname === link.to
+                      ? 'bg-secondary text-white font-semibold'
+                      : 'hover:bg-white/10 hover:text-secondary'
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  <span>{link.icon}</span>
+                  <span>{link.label}</span>
+                </Link>
+              ))}
+              
+              {/* Logout Button Mobile */}
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+                className="flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors font-semibold"
+              >
+                <span>🚪</span>
+                <span>Logout</span>
+              </button>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
+
 function Header() {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -103,18 +209,23 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                                 <button className={`transition flex items-center gap-1 hover:text-secondary ${location.pathname.startsWith('/modul') ? `font-bold ${isTransparent ? 'text-white bg-black/20 border border-black/30' : 'text-secondary bg-white/10'} px-3 py-1 rounded` : ''}`}>
-                   {link.label}
-                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
-                 </button>
+                <button className={`flex items-center gap-1 py-2 px-3 rounded transition-colors ${
+                  isTransparent 
+                    ? 'hover:text-secondary' 
+                    : 'hover:text-secondary'
+                }`}>
+                  {link.label}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
                 {dropdownOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-10 ring-1 ring-black ring-opacity-5">
+                  <div className="absolute top-full left-0 mt-1 bg-white text-primary shadow-lg rounded-lg py-2 min-w-48 z-10">
                     {link.subLinks.map(subLink => (
                       <Link
                         key={subLink.to}
                         to={subLink.to}
-                        onClick={() => setDropdownOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100 hover:text-secondary transition-colors"
+                        className="block px-4 py-2 hover:bg-gray-100 transition-colors"
                       >
                         {subLink.label}
                       </Link>
@@ -123,96 +234,102 @@ function Header() {
                 )}
               </div>
             ) : (
-                             <Link key={link.to} to={link.to} className={`transition hover:text-secondary ${location.pathname === link.to ? `font-bold ${isTransparent ? 'text-white bg-black/20 border border-black/30' : 'text-secondary bg-white/10'} px-3 py-1 rounded` : ''}`}>
-                 {link.label}
-               </Link>
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`py-2 px-3 rounded transition-colors ${
+                  location.pathname === link.to
+                    ? isTransparent
+                      ? 'font-bold text-white bg-black/20 border border-black/30 px-3 py-1 rounded'
+                      : 'font-bold text-secondary bg-white/10 px-3 py-1 rounded'
+                    : isTransparent
+                      ? 'hover:text-secondary'
+                      : 'hover:text-secondary'
+                }`}
+              >
+                {link.label}
+              </Link>
             ))}
           </nav>
           {isAdmin ? (
-            <button
-              onClick={() => {
-                localStorage.removeItem('isAdmin');
-                setIsAdmin(false);
-                navigate('/');
-              }}
-              className="ml-2 bg-red-600 text-white px-3 py-1 rounded font-semibold shadow hover:bg-red-700 transition text-sm"
+            <Link
+              to="/admin/dashboard"
+              className="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary transition-colors"
             >
-              <span className="inline-block align-middle mr-1">🚪</span> Logout
-            </button>
+              Dashboard Admin
+            </Link>
           ) : (
             <Link
               to="/admin/login"
-              className="ml-2 bg-white text-primary px-3 py-1 rounded font-semibold shadow hover:bg-secondary hover:text-white transition text-sm"
+              className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary hover:text-white transition-colors"
             >
-              <span className="inline-block align-middle mr-1">🔑</span> Login
+              Login Admin
             </Link>
           )}
         </div>
-        {/* Mobile Sidebar Menu */}
+        {/* Mobile Menu */}
         {open && (
-          <>
-            <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setOpen(false)} />
-            <aside className="fixed top-0 right-0 w-4/5 max-w-xs h-full bg-primary z-50 flex flex-col p-6 shadow-lg transition-transform duration-300 animate-slide-in">
-              <button
-                onClick={() => setOpen(false)}
-                className="self-end text-3xl text-white mb-6 focus:outline-none hover:text-secondary transition-colors"
-                aria-label="Tutup menu"
-              >
-                &times;
-              </button>
-              <nav className="flex flex-col gap-6 text-white text-lg font-bold items-start w-full">
-                {navLinks.map(link => link.subLinks ? (
-                  <div key={link.label} className="w-full">
-                                         <button
-                       onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-secondary transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`}
-                     >
-                       <span>{link.label}</span>
-                       <span className={`text-sm transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
-                     </button>
-                    {mobileDropdownOpen && (
-                      <div className="pl-4 mt-2 flex flex-col gap-4 border-l-2 border-white/20">
-                        {link.subLinks.map(subLink => (
-                          <Link
-                            key={subLink.to}
-                            to={subLink.to}
-                            className="w-full text-left text-base font-medium hover:text-secondary transition-colors"
-                            onClick={() => setOpen(false)}
-                          >
-                            {subLink.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link key={link.to} to={link.to} className={`w-full text-left hover:text-secondary transition ${location.pathname === link.to ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`} onClick={() => setOpen(false)}>
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-              {isAdmin ? (
-                <button
-                  onClick={() => {
-                    localStorage.removeItem('isAdmin');
-                    setIsAdmin(false);
-                    setOpen(false);
-                    navigate('/');
-                  }}
-                  className="mt-8 bg-red-600 text-white px-5 py-2 rounded font-semibold shadow hover:bg-red-700 transition text-base w-full text-center"
+          <div className="absolute top-full left-0 right-0 bg-primary shadow-lg md:hidden">
+            <nav className="flex flex-col p-4 space-y-2">
+              {navLinks.map(link => link.subLinks ? (
+                <div key={link.label}>
+                  <button
+                    className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-white/10 rounded-lg transition-colors"
+                    onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                  >
+                    <span>{link.label}</span>
+                    <svg className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {mobileDropdownOpen && (
+                    <div className="pl-4 space-y-1">
+                      {link.subLinks.map(subLink => (
+                        <Link
+                          key={subLink.to}
+                          to={subLink.to}
+                          className="block px-4 py-2 hover:bg-white/10 rounded-lg transition-colors"
+                          onClick={() => setOpen(false)}
+                        >
+                          {subLink.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`block px-4 py-3 rounded-lg transition-colors ${
+                    location.pathname === link.to
+                      ? 'font-bold text-secondary bg-white/10'
+                      : 'hover:bg-white/10 hover:text-secondary'
+                  }`}
+                  onClick={() => setOpen(false)}
                 >
-                  <span className="inline-block align-middle mr-1">🚪</span> Logout
-                </button>
+                  {link.label}
+                </Link>
+              ))}
+              {isAdmin ? (
+                <Link
+                  to="/admin/dashboard"
+                  className="block px-4 py-3 bg-secondary text-white rounded-lg font-semibold hover:bg-primary transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  Dashboard Admin
+                </Link>
               ) : (
                 <Link
                   to="/admin/login"
-                  className="mt-8 bg-white text-primary px-5 py-2 rounded font-semibold shadow hover:bg-secondary hover:text-white transition text-base w-full text-center"
+                  className="block px-4 py-3 bg-white text-primary rounded-lg font-semibold hover:bg-secondary hover:text-white transition-colors"
                   onClick={() => setOpen(false)}
                 >
-                  <span className="inline-block align-middle mr-1">🔑</span> Login
+                  Login Admin
                 </Link>
               )}
-            </aside>
-          </>
+            </nav>
+          </div>
         )}
       </div>
     </header>
@@ -381,6 +498,9 @@ function ScrollToTopButton() {
 }
 
 function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
+  
   // Auto refresh on beranda if admin login and sessionStorage flag set
   React.useEffect(() => {
     if (
@@ -392,55 +512,60 @@ function App() {
       window.location.reload();
     }
   }, []);
+  
   return (
     <DesaProvider>
       <StatistikProvider>
         <div className="flex flex-col min-h-screen bg-background font-sans">
-        <Header />
-        <HeroSection />
-        <SambutanKepalaDesa />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/berita" element={<Berita />} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/pengaduan" element={<Pengaduan />} />
-            <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
-            <Route path="/sejarah" element={<Sejarah />} />
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/dashboard" element={
-              <RequireAdmin>
-                <Dashboard />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/tambah-edit-berita" element={
-              <RequireAdmin>
-                <TambahEditBerita />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/laporan-pengaduan" element={
-              <RequireAdmin>
-                <LaporanPengaduan />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/edit-statistik" element={
-              <RequireAdmin>
-                <EditStatistik />
-              </RequireAdmin>
-            } />
-            <Route path="/admin/edit-prasarana" element={
-              <RequireAdmin>
-                <EditPrasarana />
-              </RequireAdmin>
-            } />
-            <Route path="/berita/:id" element={<DetailBerita />} />
-            <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
-            <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
-          </Routes>
-        </main>
-        <FooterInfo />
-        <ScrollToTopButton />
-      </div>
+          {isAdminRoute ? <AdminHeader /> : <Header />}
+          {!isAdminRoute && (
+            <>
+              <HeroSection />
+              <SambutanKepalaDesa />
+            </>
+          )}
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/berita" element={<Berita />} />
+              <Route path="/profil" element={<Profil />} />
+              <Route path="/pengaduan" element={<Pengaduan />} />
+              <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
+              <Route path="/sejarah" element={<Sejarah />} />
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/dashboard" element={
+                <RequireAdmin>
+                  <Dashboard />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/berita" element={
+                <RequireAdmin>
+                  <TambahEditBerita />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/pengaduan" element={
+                <RequireAdmin>
+                  <LaporanPengaduan />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/statistik" element={
+                <RequireAdmin>
+                  <EditStatistik />
+                </RequireAdmin>
+              } />
+              <Route path="/admin/prasarana" element={
+                <RequireAdmin>
+                  <EditPrasarana />
+                </RequireAdmin>
+              } />
+              <Route path="/berita/:id" element={<DetailBerita />} />
+              <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
+              <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
+            </Routes>
+          </main>
+          {!isAdminRoute && <FooterInfo />}
+          <ScrollToTopButton />
+        </div>
       </StatistikProvider>
     </DesaProvider>
   )
