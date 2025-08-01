@@ -109,13 +109,6 @@ const EditStatistik = () => {
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row gap-4">
-          {/* GANTI: Tombol tambah item dengan gaya outline */}
-          <button
-            onClick={handleAddItem}
-            className="bg-white text-primary border-2 border-primary px-4 py-2 rounded-md w-full md:w-auto hover:bg-primary hover:text-white transition font-semibold"
-          >
-            Tambah Item
-          </button>
           {/* GANTI: Tombol simpan dengan warna secondary dan primary */}
           <button
             onClick={handleSave}
