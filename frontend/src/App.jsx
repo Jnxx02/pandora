@@ -75,10 +75,10 @@ function Header() {
     },
   ];
   return (
-    <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/50 backdrop-blur text-white' : 'bg-primary text-white'}`}>
+    <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/20 backdrop-blur-sm text-white' : 'bg-primary text-white'}`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 relative">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 font-bold text-xl">
+        <Link to="/" className="flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors">
           <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-12 h-12 object-contain" />
           <div className="leading-tight">
             <div>Moncongloe Bulu</div>
@@ -87,7 +87,7 @@ function Header() {
         </Link>
         {/* Hamburger (mobile) */}
         <button
-          className="md:hidden ml-auto text-2xl focus:outline-none"
+          className="md:hidden ml-auto text-2xl focus:outline-none hover:text-secondary transition-colors"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -103,7 +103,7 @@ function Header() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className={`transition flex items-center gap-1 hover:text-accent ${location.pathname.startsWith('/modul') ? `font-bold text-accent` : ''}`}>
+                <button className={`transition flex items-center gap-1 hover:text-secondary ${location.pathname.startsWith('/modul') ? `font-bold text-secondary bg-white/10 px-3 py-1 rounded` : ''}`}>
                   {link.label}
                   <span className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>▼</span>
                 </button>
@@ -114,7 +114,7 @@ function Header() {
                         key={subLink.to}
                         to={subLink.to}
                         onClick={() => setDropdownOpen(false)}
-                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100 hover:text-secondary transition-colors"
                       >
                         {subLink.label}
                       </Link>
@@ -123,7 +123,7 @@ function Header() {
                 )}
               </div>
             ) : (
-              <Link key={link.to} to={link.to} className={`transition hover:text-accent ${location.pathname === link.to ? `font-bold underline underline-offset-4 text-accent` : ''}`}>
+              <Link key={link.to} to={link.to} className={`transition hover:text-secondary ${location.pathname === link.to ? `font-bold bg-white/10 px-3 py-1 rounded text-secondary` : ''}`}>
                 {link.label}
               </Link>
             ))}
@@ -142,7 +142,7 @@ function Header() {
           ) : (
             <Link
               to="/admin/login"
-              className="ml-2 bg-white text-primary px-3 py-1 rounded font-semibold shadow hover:bg-accent transition text-sm"
+              className="ml-2 bg-white text-primary px-3 py-1 rounded font-semibold shadow hover:bg-secondary hover:text-white transition text-sm"
             >
               <span className="inline-block align-middle mr-1">🔑</span> Login
             </Link>
@@ -155,7 +155,7 @@ function Header() {
             <aside className="fixed top-0 right-0 w-4/5 max-w-xs h-full bg-primary z-50 flex flex-col p-6 shadow-lg transition-transform duration-300 animate-slide-in">
               <button
                 onClick={() => setOpen(false)}
-                className="self-end text-3xl text-white mb-6 focus:outline-none"
+                className="self-end text-3xl text-white mb-6 focus:outline-none hover:text-secondary transition-colors"
                 aria-label="Tutup menu"
               >
                 &times;
@@ -164,7 +164,7 @@ function Header() {
                 {navLinks.map(link => link.subLinks ? (
                   <div key={link.label} className="w-full">
                     <button
-                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-accent transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary' : ''}`}
+                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)} className={`w-full text-left hover:text-secondary transition flex justify-between items-center ${location.pathname.startsWith('/modul') ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`}
                     >
                       <span>{link.label}</span>
                       <span className={`text-sm transition-transform duration-300 ${mobileDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
@@ -175,7 +175,7 @@ function Header() {
                           <Link
                             key={subLink.to}
                             to={subLink.to}
-                            className="w-full text-left text-base font-medium hover:text-accent transition"
+                            className="w-full text-left text-base font-medium hover:text-secondary transition-colors"
                             onClick={() => setOpen(false)}
                           >
                             {subLink.label}
@@ -185,7 +185,7 @@ function Header() {
                     )}
                   </div>
                 ) : (
-                  <Link key={link.to} to={link.to} className={`w-full text-left hover:text-accent transition ${location.pathname === link.to ? 'font-bold text-secondary underline underline-offset-4' : ''}`} onClick={() => setOpen(false)}>
+                  <Link key={link.to} to={link.to} className={`w-full text-left hover:text-secondary transition ${location.pathname === link.to ? 'font-bold text-secondary bg-white/10 px-3 py-1 rounded' : ''}`} onClick={() => setOpen(false)}>
                     {link.label}
                   </Link>
                 ))}
@@ -205,7 +205,7 @@ function Header() {
               ) : (
                 <Link
                   to="/admin/login"
-                  className="mt-8 bg-white text-primary px-5 py-2 rounded font-semibold shadow hover:bg-accent transition text-base w-full text-center"
+                  className="mt-8 bg-white text-primary px-5 py-2 rounded font-semibold shadow hover:bg-secondary hover:text-white transition text-base w-full text-center"
                   onClick={() => setOpen(false)}
                 >
                   <span className="inline-block align-middle mr-1">🔑</span> Login
@@ -301,14 +301,14 @@ function FooterInfo() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
-            <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:text-accent transition">moncongloebulu16@gmail.com</a>
+            <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:text-secondary transition-colors">moncongloebulu16@gmail.com</a>
           </div>
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            <Link to="/admin/dashboard" className="underline hover:text-accent transition">Developer Desa</Link>
+            <Link to="/admin/dashboard" className="underline hover:text-secondary transition-colors">Developer Desa</Link>
           </div>
         </div>
         {/* Kolom 3: Telepon Penting */}
