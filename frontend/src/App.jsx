@@ -6,7 +6,7 @@ import Sejarah from './pages/Sejarah'
 import Login from './pages/admin/Login'
 import Pengaduan from './pages/Pengaduan'
 import FormulirPengaduan from './pages/FormulirPengaduan'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import Dashboard from './pages/admin/Dashboard'
 import LaporanPengaduan from './pages/admin/LaporanPengaduan'
 import TambahEditBerita from './pages/admin/TambahEditBerita'
@@ -15,6 +15,17 @@ import EditPrasarana from './pages/admin/EditPrasarana'
 import DetailBerita from './pages/DetailBerita'
 import { DesaProvider } from './context/DesaContext';
 import { StatistikProvider } from './context/StatistikContext';
+
+// Context untuk sidebar state
+const SidebarContext = createContext();
+
+export const useSidebar = () => {
+  const context = useContext(SidebarContext);
+  if (!context) {
+    throw new Error('useSidebar must be used within a SidebarProvider');
+  }
+  return context;
+};
 
 // Komponen placeholder untuk halaman modul
 const ModulPage = ({ title }) => (
@@ -37,8 +48,22 @@ function RequireAdmin({ children }) {
 // Komponen Header untuk Admin
 function AdminHeader() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Load sidebar state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      setSidebarCollapsed(JSON.parse(savedState));
+    }
+  }, []);
+
+  // Save sidebar state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
+  }, [sidebarCollapsed]);
 
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
@@ -74,92 +99,112 @@ function AdminHeader() {
   ];
 
   return (
-    <>
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <SidebarContext.Provider value={{ sidebarCollapsed, setSidebarCollapsed }}>
+      <>
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
-      {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full bg-primary text-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0 lg:relative lg:z-auto w-64`}>
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-white/20">
-            <Link to="/admin/dashboard" className="flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors">
-              <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
-              <div className="leading-tight">
-                <div>Admin Panel</div>
-                <div className="text-xs font-normal opacity-80">Desa Moncongloe Bulu</div>
-              </div>
-            </Link>
-            <button
-              className="lg:hidden text-white hover:text-secondary transition-colors"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {adminNavLinks.map(link => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-                  location.pathname === link.to
-                    ? 'bg-secondary text-white font-semibold'
-                    : 'hover:bg-white/10 hover:text-secondary'
-                }`}
+        {/* Sidebar */}
+        <div className={`fixed top-0 left-0 h-full bg-primary text-white shadow-xl z-50 transform transition-all duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 lg:relative lg:z-auto ${sidebarCollapsed ? 'lg:w-16' : 'w-64'}`}>
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/20">
+              <Link to="/admin/dashboard" className={`flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors ${sidebarCollapsed ? 'lg:justify-center' : ''}`}>
+                <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
+                {!sidebarCollapsed && (
+                  <div className="leading-tight">
+                    <div>Admin Panel</div>
+                    <div className="text-xs font-normal opacity-80">Desa Moncongloe Bulu</div>
+                  </div>
+                )}
+              </Link>
+              <button
+                className="lg:hidden text-white hover:text-secondary transition-colors"
                 onClick={() => setSidebarOpen(false)}
               >
-                {link.icon}
-                <span>{link.label}</span>
-              </Link>
-            ))}
-          </nav>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-white/20">
+            {/* Navigation */}
+            <nav className="flex-1 p-4 space-y-2">
+              {adminNavLinks.map(link => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                    location.pathname === link.to
+                      ? 'bg-secondary text-white font-semibold'
+                      : 'hover:bg-white/10 hover:text-secondary'
+                  } ${sidebarCollapsed ? 'lg:justify-center' : ''}`}
+                  onClick={() => setSidebarOpen(false)}
+                  title={sidebarCollapsed ? link.label : ''}
+                >
+                  {link.icon}
+                  {!sidebarCollapsed && <span>{link.label}</span>}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-white/20">
+              <button
+                onClick={handleLogout}
+                className={`flex items-center gap-3 w-full bg-red-600 hover:bg-red-700 text-white px-3 py-3 rounded-lg transition-colors font-semibold ${sidebarCollapsed ? 'lg:justify-center' : ''}`}
+                title={sidebarCollapsed ? 'Logout' : ''}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                {!sidebarCollapsed && <span>Logout</span>}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Bar with Hamburger */}
+        <div className={`fixed top-0 left-0 right-0 bg-primary text-white shadow-lg z-30 lg:transition-all lg:duration-300 ${
+          sidebarCollapsed ? 'lg:left-16' : 'lg:left-64'
+        } lg:right-0`}>
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-4">
+              <button
+                className="text-white hover:text-secondary transition-colors"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </button>
+              <div className="flex items-center gap-3 font-bold text-lg">
+                <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
+                <span>Admin Panel</span>
+              </div>
+            </div>
+            
+            {/* Desktop Toggle Button */}
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full bg-red-600 hover:bg-red-700 text-white px-3 py-3 rounded-lg transition-colors font-semibold"
+              className="hidden lg:block text-white hover:text-secondary transition-colors"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path>
               </svg>
-              <span>Logout</span>
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Top Bar with Hamburger */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-primary text-white shadow-lg z-30">
-        <div className="flex items-center justify-between px-4 py-3">
-          <button
-            className="text-white hover:text-secondary transition-colors"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-          <div className="flex items-center gap-3 font-bold text-lg">
-            <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
-            <span>Admin Panel</span>
-          </div>
-          <div className="w-6"></div> {/* Spacer for centering */}
-        </div>
-      </div>
-    </>
+      </>
+    </SidebarContext.Provider>
   );
 }
 
@@ -547,7 +592,7 @@ function App() {
               <SambutanKepalaDesa />
             </>
           )}
-          <main className={`flex-1 ${isAdminRoute ? 'lg:ml-64' : ''}`}>
+          <main className={`flex-1 ${isAdminRoute ? 'lg:pt-16 transition-all duration-300' : ''}`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/berita" element={<Berita />} />
