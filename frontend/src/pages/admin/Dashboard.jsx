@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useBerita } from '../../context/BeritaContext';
 
 const Dashboard = () => {
-  const [totalBerita, setTotalBerita] = useState(0);
+  const { berita } = useBerita();
   const [totalLaporan, setTotalLaporan] = useState(0);
-  const [recentBerita, setRecentBerita] = useState([]);
   const [recentLaporan, setRecentLaporan] = useState([]);
   const [statistik, setStatistik] = useState([]);
 
   useEffect(() => {
     try {
-      // Load berita data
-      const storedBerita = localStorage.getItem('berita');
-      const beritaData = storedBerita ? JSON.parse(storedBerita) : [];
-      setTotalBerita(beritaData.length);
-      setRecentBerita(beritaData.slice(-3).reverse()); // Get last 3 berita
-
       // Load pengaduan data
       const storedLaporan = localStorage.getItem('pengaduan');
       const laporanData = storedLaporan ? JSON.parse(storedLaporan) : [];
@@ -54,6 +48,9 @@ const Dashboard = () => {
         return 'bg-blue-100 text-blue-800';
     }
   };
+
+  // Get recent berita (last 3)
+  const recentBerita = berita.slice(0, 3);
 
   // Animation variants
   const pageVariants = {
@@ -114,7 +111,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Berita</p>
-                <p className="text-2xl font-bold text-primary">{totalBerita}</p>
+                <p className="text-2xl font-bold text-primary">{berita.length}</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +184,7 @@ const Dashboard = () => {
             <div className="p-6">
               {recentBerita.length > 0 ? (
                 <div className="space-y-4">
-                  {recentBerita.map((berita, index) => (
+                  {recentBerita.map((beritaItem, index) => (
                     <motion.div 
                       key={index} 
                       className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
@@ -204,10 +201,10 @@ const Dashboard = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {berita.judul || 'Judul tidak tersedia'}
+                          {beritaItem.judul || 'Judul tidak tersedia'}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {formatDate(berita.tanggal)}
+                          {formatDate(beritaItem.tanggal_publikasi)}
                         </p>
                       </div>
                     </motion.div>
@@ -218,7 +215,16 @@ const Dashboard = () => {
                   <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                   </svg>
-                  <p className="text-gray-500">Belum ada berita</p>
+                  <p className="text-gray-500 mb-4">Belum ada berita yang dipublikasikan</p>
+                  <Link 
+                    to="/admin/berita" 
+                    className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Tambah Berita Pertama
+                  </Link>
                 </div>
               )}
             </div>

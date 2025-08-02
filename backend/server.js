@@ -239,6 +239,178 @@ app.post('/api/prasarana', async (req, res) => {
   }
 });
 
+// GET /api/berita endpoint
+app.get('/api/berita', async (req, res) => {
+  try {
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('berita')
+        .select('*')
+        .order('tanggal_publikasi', { ascending: false });
+      
+      if (error) throw error;
+      
+      res.status(200).json(data || []);
+    } else {
+      // Return empty array if Supabase is not available
+      res.status(200).json([]);
+    }
+  } catch (error) {
+    console.error('Error fetching berita:', error);
+    res.status(500).json({ error: 'Gagal mengambil data berita' });
+  }
+});
+
+// GET /api/berita/:id endpoint
+app.get('/api/berita/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('berita')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ error: 'Berita tidak ditemukan' });
+      }
+    } else {
+      res.status(503).json({ error: 'Database tidak tersedia' });
+    }
+  } catch (error) {
+    console.error('Error fetching berita by id:', error);
+    res.status(500).json({ error: 'Gagal mengambil data berita' });
+  }
+});
+
+// POST /api/berita endpoint
+app.post('/api/berita', async (req, res) => {
+  try {
+    const { judul, konten, gambar, penulis } = req.body;
+    
+    if (!judul || !konten) {
+      return res.status(400).json({ error: 'Judul dan konten harus diisi' });
+    }
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const beritaData = {
+        judul,
+        konten,
+        gambar: gambar || null,
+        penulis: penulis || 'Admin Desa',
+        status: 'published'
+      };
+      
+      const { data, error } = await supabase
+        .from('berita')
+        .insert(beritaData)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      res.status(201).json({ 
+        message: 'Berita berhasil ditambahkan!', 
+        data 
+      });
+    } else {
+      res.status(503).json({ 
+        error: 'Database tidak tersedia. Data hanya disimpan secara lokal.' 
+      });
+    }
+  } catch (error) {
+    console.error('Error creating berita:', error);
+    res.status(500).json({ 
+      error: `Gagal menambahkan berita: ${error.message}` 
+    });
+  }
+});
+
+// PUT /api/berita/:id endpoint
+app.put('/api/berita/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { judul, konten, gambar, penulis, status } = req.body;
+    
+    if (!judul || !konten) {
+      return res.status(400).json({ error: 'Judul dan konten harus diisi' });
+    }
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const updateData = {
+        judul,
+        konten,
+        gambar: gambar || null,
+        penulis: penulis || 'Admin Desa',
+        status: status || 'published',
+        updated_at: new Date().toISOString()
+      };
+      
+      const { data, error } = await supabase
+        .from('berita')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        res.status(200).json({ 
+          message: 'Berita berhasil diupdate!', 
+          data 
+        });
+      } else {
+        res.status(404).json({ error: 'Berita tidak ditemukan' });
+      }
+    } else {
+      res.status(503).json({ 
+        error: 'Database tidak tersedia. Data hanya disimpan secara lokal.' 
+      });
+    }
+  } catch (error) {
+    console.error('Error updating berita:', error);
+    res.status(500).json({ 
+      error: `Gagal mengupdate berita: ${error.message}` 
+    });
+  }
+});
+
+// DELETE /api/berita/:id endpoint
+app.delete('/api/berita/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const { error } = await supabase
+        .from('berita')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      res.status(200).json({ 
+        message: 'Berita berhasil dihapus!' 
+      });
+    } else {
+      res.status(503).json({ 
+        error: 'Database tidak tersedia.' 
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting berita:', error);
+    res.status(500).json({ 
+      error: `Gagal menghapus berita: ${error.message}` 
+    });
+  }
+});
+
 // Jalankan server di semua environment
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);

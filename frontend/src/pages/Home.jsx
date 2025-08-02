@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStatistik } from '../context/StatistikContext';
+import { useBerita } from '../context/BeritaContext';
 
 // Standardized icons for statistics
 const getStatistikIcon = (label) => {
@@ -69,33 +70,35 @@ const orbitrasi = [
 ];
 
 const Home = () => {
-  const [berita, setBerita] = useState([]);
   const [beritaIdx, setBeritaIdx] = useState(0);
   const { statistik } = useStatistik();
+  const { berita } = useBerita();
+
+  // Get recent berita (first 5)
+  const recentBerita = berita.slice(0, 5);
 
   useEffect(() => {
-    try {
-      const storedBerita = localStorage.getItem('berita');
-      const dataBerita = storedBerita ? JSON.parse(storedBerita) : [];
-      
-      // Urutkan berita dari yang terbaru
-      dataBerita.sort((a, b) => new Date(b.tanggalDibuat || 0) - new Date(a.tanggalDibuat || 0));
-
-      // Ambil 5 berita terbaru saja untuk ditampilkan di beranda
-      setBerita(dataBerita.slice(0, 5));
-    } catch (error) {
-      console.error("Gagal memuat berita dari localStorage:", error);
-      setBerita([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (berita.length === 0) return;
+    if (recentBerita.length === 0) return;
     const interval = setInterval(() => {
-      setBeritaIdx(idx => (idx + 1) % berita.length);
+      setBeritaIdx(idx => (idx + 1) % recentBerita.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [berita]);
+  }, [recentBerita]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Tanggal tidak tersedia';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Tanggal tidak tersedia';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 flex flex-col items-center">
@@ -195,23 +198,34 @@ const Home = () => {
       {/* Preview Berita Terbaru */}
       <section className="w-full max-w-4xl flex flex-col my-8 sm:my-12">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-primary mb-4">BERITA TERKINI</h1>
-        {berita.length > 0 ? (
+        {recentBerita.length > 0 ? (
           <div className="relative flex flex-col">
-            <Link to={`/berita/${berita[beritaIdx].id}`} className="block w-full">
-              <img src={berita[beritaIdx].gambar} alt={berita[beritaIdx].judul} className="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" />
+            <Link to={`/berita/${recentBerita[beritaIdx].id}`} className="block w-full">
+              <img 
+                src={recentBerita[beritaIdx].gambar || 'https://via.placeholder.com/800x400'} 
+                alt={recentBerita[beritaIdx].judul} 
+                className="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" 
+              />
             </Link>
-            <Link to={`/berita/${berita[beritaIdx].id}`}>
-              <h3 className="text-lg sm:text-xl font-semibold text-secondary mb-1 hover:underline">{berita[beritaIdx].judul}</h3>
+            <Link to={`/berita/${recentBerita[beritaIdx].id}`}>
+              <h3 className="text-lg sm:text-xl font-semibold text-secondary mb-1 hover:underline">
+                {recentBerita[beritaIdx].judul}
+              </h3>
             </Link>
             <div className="text-xs text-primary mb-2">
-              {new Date(berita[beritaIdx].tanggal).toLocaleDateString('id-ID', {
-                day: 'numeric', month: 'long', year: 'numeric'
-              })}
+              {formatDate(recentBerita[beritaIdx].tanggal_publikasi)}
             </div>
-            <p className="text-text-secondary mb-4 text-left text-sm sm:text-base">{berita[beritaIdx].ringkasan}</p>
-            <Link to="/berita" className="inline-block bg-primary text-white px-3 sm:px-4 py-2 rounded hover:bg-secondary transition text-xs sm:text-sm self-start">Lihat Seluruh Berita</Link>
+            <p className="text-text-secondary mb-4 text-left text-sm sm:text-base">
+              {recentBerita[beritaIdx].konten ? 
+                recentBerita[beritaIdx].konten.substring(0, 150) + (recentBerita[beritaIdx].konten.length > 150 ? '...' : '') : 
+                'Tidak ada ringkasan berita.'
+              }
+            </p>
+            <Link to="/berita" className="inline-block bg-primary text-white px-3 sm:px-4 py-2 rounded hover:bg-secondary transition text-xs sm:text-sm self-start">
+              Lihat Seluruh Berita
+            </Link>
             <div className="flex gap-2 mt-4 self-center">
-              {berita.map((_, i) => (
+              {recentBerita.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setBeritaIdx(i)}
@@ -223,7 +237,19 @@ const Home = () => {
           </div>
         ) : (
           <div className="text-center text-text-secondary py-8">
-            <p>Belum ada berita untuk ditampilkan.</p>
+            <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+            </svg>
+            <p className="text-gray-500 mb-4">Belum ada berita yang dipublikasikan</p>
+            <Link 
+              to="/berita" 
+              className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Tambah Berita Pertama
+            </Link>
           </div>
         )}
       </section>
