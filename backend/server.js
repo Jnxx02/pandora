@@ -150,16 +150,14 @@ app.post('/api/statistik', async (req, res) => {
   }
 });
 
-// Jalankan server hanya jika tidak di Vercel (untuk pengembangan lokal)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
-    console.log(`📊 API endpoints:`);
-    console.log(`   GET  /api/health - Health check`);
-    console.log(`   GET  /api/statistik - Get statistik data`);
-    console.log(`   POST /api/statistik - Save statistik data`);
-    console.log(`🔧 Supabase Status: ${supabaseStatus}`);
-  });
-}
+// Jalankan server di semua environment
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`📊 API endpoints:`);
+  console.log(`   GET  /api/health - Health check`);
+  console.log(`   GET  /api/statistik - Get statistik data`);
+  console.log(`   POST /api/statistik - Save statistik data`);
+  console.log(`🔧 Supabase Status: ${supabaseStatus}`);
+});
 
 module.exports = app;
