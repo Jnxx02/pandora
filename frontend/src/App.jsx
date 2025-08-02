@@ -14,6 +14,7 @@ import DaftarBerita from './pages/admin/DaftarBerita'
 import EditStatistik from './pages/admin/EditStatistik'
 import EditPrasarana from './pages/admin/EditPrasarana'
 import DetailBerita from './pages/DetailBerita'
+import ScrollToTop from './components/ScrollToTop'
 import { DesaProvider } from './context/DesaContext';
 import { StatistikProvider } from './context/StatistikContext';
 import { PrasaranaProvider } from './context/PrasaranaContext';
@@ -605,6 +606,7 @@ function App() {
         <StatistikProvider>
           <BeritaProvider>
             <div className={`min-h-screen bg-background font-sans ${isAdminRoute ? 'lg:flex' : 'flex flex-col'}`}>
+              <ScrollToTop />
               {isAdminRoute ? (
                 <AdminHeader 
                   sidebarOpen={sidebarOpen}
