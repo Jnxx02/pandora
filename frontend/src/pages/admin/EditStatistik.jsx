@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStatistik } from '../../context/StatistikContext';
+import { motion } from 'framer-motion';
 
 const EditStatistik = () => {
   const [statistik, setStatistik] = useState([]);
@@ -40,18 +41,72 @@ const EditStatistik = () => {
     }
   };
 
+  // Animation variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    in: { opacity: 1, y: 0 },
+    out: { opacity: 0, y: -20 }
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
-      <div className="mb-6">
+    <motion.div 
+      className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4"
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+    >
+      <motion.div 
+        className="mb-6"
+        variants={itemVariants}
+      >
         <h2 className="text-2xl font-bold text-secondary">Edit Statistik Desa</h2>
-      </div>
+      </motion.div>
 
       {/* GANTI: Card utama dengan border neutral */}
-      <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
-        <div className="space-y-4">
+      <motion.div 
+        className="bg-white rounded-xl shadow p-6 border border-neutral/50"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div 
+          className="space-y-4"
+          variants={containerVariants}
+        >
           {statistik.map((item, index) => (
             // GANTI: Latar baris item menggunakan bg-neutral/50
-            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start p-3 bg-neutral/50 rounded-lg">
+            <motion.div 
+              key={index} 
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start p-3 bg-neutral/50 rounded-lg"
+              variants={itemVariants}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
               {/* GANTI: Input field dengan gaya yang diseragamkan */}
               <input
                 type="text"
@@ -67,21 +122,26 @@ const EditStatistik = () => {
                 onChange={(e) => handleChange(index, 'value', e.target.value)}
                 className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-6 flex flex-col md:flex-row gap-4">
+        <motion.div 
+          className="mt-6 flex flex-col md:flex-row gap-4"
+          variants={itemVariants}
+        >
           {/* GANTI: Tombol simpan dengan warna secondary dan primary */}
-          <button
+          <motion.button
             onClick={handleSave}
             className="bg-secondary text-white px-6 py-2 rounded-md w-full md:w-auto hover:bg-primary transition font-semibold"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             Simpan Perubahan
-          </button>
-        </div>
-      </div>
-    </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
 

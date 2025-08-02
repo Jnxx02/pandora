@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 // Komponen Modal yang akan menampilkan detail isi laporan
 const DetailModal = ({ laporan, onClose }) => {
@@ -7,32 +8,46 @@ const DetailModal = ({ laporan, onClose }) => {
 
   return (
     // Backdrop / Overlay
-    <div 
+    <motion.div 
       className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4"
-      onClick={onClose} // Menutup modal saat backdrop diklik
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
     >
       {/* GANTI: Konten Modal dengan gaya baru */}
-      <div 
-        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-1/2 lg:w-1/3 relative animate-slide-in"
-        onClick={e => e.stopPropagation()} // Mencegah modal tertutup saat kontennya diklik
+      <motion.div 
+        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-1/2 lg:w-1/3 relative"
+        onClick={e => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 50 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
         <h3 className="text-xl font-bold text-secondary mb-4 border-b border-neutral pb-3">{laporan.judul}</h3>
         <p className="text-text-main whitespace-pre-wrap max-h-[60vh] overflow-y-auto">{laporan.isi}</p>
-        <button
+        <motion.button
           onClick={onClose}
           className="absolute top-4 right-4 text-text-secondary hover:text-primary transition"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-      </div>
-    </div>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 };
 
 
 // Komponen Tabel Laporan yang sudah dimodifikasi
 const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
-  <div className="overflow-x-auto rounded-lg border border-neutral">
+  <motion.div 
+    className="overflow-x-auto rounded-lg border border-neutral"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.2 }}
+  >
     <table className="min-w-full bg-white">
       {/* GANTI: Header tabel dengan warna neutral dan teks secondary */}
       <thead className="bg-neutral/60">
@@ -51,21 +66,29 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
       </thead>
       <tbody>
         {data.length > 0 ? (
-          data.map((laporan) => (
+          data.map((laporan, index) => (
             // GANTI: Baris tabel dengan warna teks yang sesuai
-            <tr key={laporan.id} className="hover:bg-neutral/40 transition-colors">
+            <motion.tr 
+              key={laporan.id} 
+              className="hover:bg-neutral/40 transition-colors"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
               <td className="py-3 px-4 border-b border-neutral text-text-secondary">{laporan.id}</td>
               <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.tanggal}</td>
               <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.kategori}</td>
               <td className="py-3 px-4 border-b border-neutral text-text-main font-semibold">{laporan.judul}</td>
               <td className="py-3 px-4 border-b border-neutral text-center">
                 {/* GANTI: Tombol "Lihat" dengan gaya baru */}
-                <button
+                <motion.button
                   onClick={() => onShowDetail(laporan)}
                   className="bg-white text-primary border-2 border-primary px-3 py-1 rounded-md text-sm hover:bg-primary hover:text-white transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   Lihat
-                </button>
+                </motion.button>
               </td>
               <td className="py-3 px-4 border-b border-neutral text-text-main">{laporan.nama}</td>
               <td className="py-3 px-4 border-b border-neutral text-text-main">
@@ -78,14 +101,16 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
               </td>
               <td className="py-3 px-4 border-b border-neutral text-center">
                 {/* GANTI: Tombol "Hapus" dengan warna dari palet */}
-                <button
+                <motion.button
                   onClick={() => onDelete(laporan.id)}
                   className="bg-primary text-white px-3 py-1 rounded-md text-sm font-semibold hover:bg-secondary transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   Hapus
-                </button>
+                </motion.button>
               </td>
-            </tr>
+            </motion.tr>
           ))
         ) : (
           <tr>
@@ -97,7 +122,7 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete }) => (
         )}
       </tbody>
     </table>
-  </div>
+  </motion.div>
 );
 
 
@@ -179,53 +204,117 @@ function LaporanPengaduan() {
     setSelectedLaporan(null);
   };
 
+  // Animation variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    in: { opacity: 1, y: 0 },
+    out: { opacity: 0, y: -20 }
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="py-10 max-w-6xl mx-auto bg-neutral min-h-screen px-4">
-      <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
-        <div className="mb-6">
+    <motion.div 
+      className="py-10 max-w-6xl mx-auto bg-neutral min-h-screen px-4"
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+    >
+      <motion.div 
+        className="bg-white rounded-xl shadow p-6 border border-neutral/50"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div 
+          className="mb-6"
+          variants={itemVariants}
+        >
           <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
-        </div>
+        </motion.div>
 
         {/* GANTI: Navigasi Tab dengan gaya baru */}
-        <div className="border-b border-neutral">
+        <motion.div 
+          className="border-b border-neutral"
+          variants={itemVariants}
+        >
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            <button
+            <motion.button
               onClick={() => setActiveTab('pengaduan')}
               className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'pengaduan'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Pengaduan ({laporanPengaduan.length})
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => setActiveTab('aspirasi')}
               className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'aspirasi'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Aspirasi ({laporanAspirasi.length})
-            </button>
+            </motion.button>
           </nav>
-        </div>
+        </motion.div>
 
         {loading ? (
-          <div className="text-center py-4 text-text-secondary">Memuat data...</div>
+          <motion.div 
+            className="text-center py-4 text-text-secondary"
+            variants={itemVariants}
+          >
+            Memuat data...
+          </motion.div>
         ) : error ? (
-          <div className="text-center py-4 text-primary">Error: {error.message}</div>
+          <motion.div 
+            className="text-center py-4 text-primary"
+            variants={itemVariants}
+          >
+            Error: {error.message}
+          </motion.div>
         ) : (
-          <div className="mt-6">
+          <motion.div 
+            className="mt-6"
+            variants={itemVariants}
+          >
             {activeTab === 'pengaduan' && <LaporanTable title="Pengaduan" data={laporanPengaduan} onShowDetail={handleShowDetail} onDelete={handleDelete} />}
             {activeTab === 'aspirasi' && <LaporanTable title="Aspirasi" data={laporanAspirasi} onShowDetail={handleShowDetail} onDelete={handleDelete} />}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {isModalOpen && <DetailModal laporan={selectedLaporan} onClose={handleCloseModal} />}
-    </div>
+    </motion.div>
   );
 }
 

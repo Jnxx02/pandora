@@ -416,11 +416,15 @@ const Profil = () => {
           
           <div className="flex justify-center gap-8 mb-10">
             <div className="text-center p-4">
-              <div className="text-4xl font-extrabold text-primary">{statistik.find(s => s.label === 'Penduduk')?.value}</div>
+              <div className="text-4xl font-extrabold text-primary">
+                {statistik.find(s => s.label === 'Penduduk')?.value || '3.820'}
+              </div>
               <div className="text-secondary font-semibold mt-1">Total Penduduk</div>
             </div>
             <div className="text-center p-4">
-              <div className="text-4xl font-extrabold text-primary">{statistik.find(s => s.label === 'Kepala Keluarga')?.value}</div>
+              <div className="text-4xl font-extrabold text-primary">
+                {statistik.find(s => s.label === 'Kepala Keluarga')?.value || '1.245'}
+              </div>
               <div className="text-secondary font-semibold mt-1">Kepala Keluarga</div>
             </div>
           </div>
@@ -466,8 +470,14 @@ const Profil = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {prasarana.map((item) => (
               <div key={item.kategori} className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 flex flex-col items-center text-center">
-                {item.icon && item.icon !== null && item.icon !== '' && (
+                {typeof item.icon === 'object' && item.icon !== null ? (
                   <div className="mb-3">{item.icon}</div>
+                ) : (
+                  <div className="mb-3">
+                    <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                  </div>
                 )}
                 <h3 className="font-bold text-lg text-secondary mb-3">{item.kategori}</h3>
                 <ul className="space-y-1 text-primary text-sm">
@@ -491,7 +501,13 @@ const Profil = () => {
                   className="w-full flex justify-between items-center text-left font-semibold text-lg text-secondary focus:outline-none"
                 >
                   <span className="flex items-center gap-3">
-                    {item.icon}
+                    {typeof item.icon === 'object' && item.icon !== null ? (
+                      item.icon
+                    ) : (
+                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                    )}
                     <span>{item.nama}</span>
                   </span>
                   <span className={`transform transition-transform duration-300 ${openOrganisasi[item.nama] ? 'rotate-180' : ''}`}>
