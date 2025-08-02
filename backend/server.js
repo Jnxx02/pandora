@@ -8,6 +8,18 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = 3001;
 
+// Increase payload size limit
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// CORS configuration
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://pandora-vite.vercel.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Inisialisasi Supabase Client dengan error handling yang lebih baik
 let supabase = null;
 let supabaseStatus = 'not_configured';
@@ -31,15 +43,6 @@ try {
   console.log('⚠️  Failed to initialize Supabase client:', error.message);
   supabaseStatus = 'error';
 }
-
-// CORS configuration untuk development
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(express.json());
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -408,6 +411,195 @@ app.delete('/api/berita/:id', async (req, res) => {
     res.status(500).json({ 
       error: `Gagal menghapus berita: ${error.message}` 
     });
+  }
+});
+
+// GET /api/pengaduan endpoint
+app.get('/api/pengaduan', async (req, res) => {
+  try {
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .select('*')
+        .order('tanggal_pengaduan', { ascending: false });
+      
+      if (error) throw error;
+      res.status(200).json(data || []);
+    } else {
+      // Fallback data if Supabase is not available
+      const fallbackData = [
+        {
+          id: '1',
+          nama: 'John Doe',
+          email: 'john@example.com',
+          whatsapp: '081234567890',
+          klasifikasi: 'pengaduan',
+          judul: 'Jalan Rusak di Gang 3',
+          isi: 'Jalan di depan rumah saya rusak parah, ada lubang besar yang membahayakan pengendara. Mohon diperbaiki segera.',
+          tanggal_kejadian: '2024-01-15',
+          kategori: 'Infrastruktur (Jalan, Jembatan, dll.)',
+          lampiran_info: null,
+          lampiran_data_url: null,
+          status: 'pending',
+          tanggal_pengaduan: new Date().toISOString(),
+          tanggal_ditangani: null,
+          catatan_admin: null
+        }
+      ];
+      res.status(200).json(fallbackData);
+    }
+  } catch (error) {
+    console.error('Error fetching pengaduan:', error);
+    res.status(500).json({ error: 'Gagal mengambil data pengaduan' });
+  }
+});
+
+// GET /api/pengaduan/:id endpoint
+app.get('/api/pengaduan/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      if (!data) {
+        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+      }
+      res.status(200).json(data);
+    } else {
+      res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+    }
+  } catch (error) {
+    console.error('Error fetching pengaduan by ID:', error);
+    res.status(500).json({ error: 'Gagal mengambil data pengaduan' });
+  }
+});
+
+// POST /api/pengaduan endpoint
+app.post('/api/pengaduan', async (req, res) => {
+  try {
+    const { nama, email, whatsapp, klasifikasi, judul, isi, tanggal_kejadian, kategori, lampiran_info, lampiran_data_url } = req.body;
+    
+    // Validasi input
+    if (!judul || !isi || !kategori) {
+      return res.status(400).json({ error: 'Judul, isi, dan kategori harus diisi' });
+    }
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const pengaduanData = {
+        nama: nama || 'Anonim',
+        email: email || null,
+        whatsapp: whatsapp || null,
+        klasifikasi: klasifikasi || 'pengaduan',
+        judul,
+        isi,
+        tanggal_kejadian: tanggal_kejadian || null,
+        kategori,
+        lampiran_info: lampiran_info || null,
+        lampiran_data_url: lampiran_data_url || null,
+        status: 'pending'
+      };
+      
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .insert(pengaduanData)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      res.status(201).json({ 
+        message: 'Laporan berhasil dikirim!', 
+        data 
+      });
+    } else {
+      // Fallback: simpan ke localStorage
+      const newPengaduan = {
+        id: Date.now().toString(),
+        nama: nama || 'Anonim',
+        email: email || null,
+        whatsapp: whatsapp || null,
+        klasifikasi: klasifikasi || 'pengaduan',
+        judul,
+        isi,
+        tanggal_kejadian: tanggal_kejadian || null,
+        kategori,
+        lampiran_info: lampiran_info || null,
+        lampiran_data_url: lampiran_data_url || null,
+        status: 'pending',
+        tanggal_pengaduan: new Date().toISOString()
+      };
+      
+      res.status(201).json({ 
+        message: 'Laporan berhasil dikirim! (disimpan lokal)', 
+        data: newPengaduan 
+      });
+    }
+  } catch (error) {
+    console.error('Error creating pengaduan:', error);
+    res.status(500).json({ error: 'Gagal mengirim laporan' });
+  }
+});
+
+// PUT /api/pengaduan/:id endpoint
+app.put('/api/pengaduan/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, catatan_admin } = req.body;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const updateData = {};
+      if (status) updateData.status = status;
+      if (catatan_admin !== undefined) updateData.catatan_admin = catatan_admin;
+      if (status === 'selesai') updateData.tanggal_ditangani = new Date().toISOString();
+      
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      if (!data) {
+        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+      }
+      
+      res.status(200).json({ 
+        message: 'Pengaduan berhasil diupdate!', 
+        data 
+      });
+    } else {
+      res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+    }
+  } catch (error) {
+    console.error('Error updating pengaduan:', error);
+    res.status(500).json({ error: 'Gagal mengupdate pengaduan' });
+  }
+});
+
+// DELETE /api/pengaduan/:id endpoint
+app.delete('/api/pengaduan/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const { error } = await supabase
+        .from('pengaduan')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      res.status(200).json({ message: 'Pengaduan berhasil dihapus!' });
+    } else {
+      res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+    }
+  } catch (error) {
+    console.error('Error deleting pengaduan:', error);
+    res.status(500).json({ error: 'Gagal menghapus pengaduan' });
   }
 });
 

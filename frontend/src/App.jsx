@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { Routes, Route, Link, useLocation, useNavigate, Navigate, HashRouter } from 'react-router-dom'
 import Home from './pages/Home'
 import Profil from './pages/Profil'
 import Berita from './pages/Berita'
@@ -19,6 +19,7 @@ import { DesaProvider } from './context/DesaContext';
 import { StatistikProvider } from './context/StatistikContext';
 import { PrasaranaProvider } from './context/PrasaranaContext';
 import { BeritaProvider } from './context/BeritaContext';
+import { PengaduanProvider } from './context/PengaduanContext';
 
 // Context untuk sidebar state
 const SidebarContext = createContext();
@@ -605,74 +606,76 @@ function App() {
       <DesaProvider>
         <StatistikProvider>
           <BeritaProvider>
-            <div className={`min-h-screen bg-background font-sans ${isAdminRoute ? 'lg:flex' : 'flex flex-col'}`}>
-              <ScrollToTop />
-              {isAdminRoute ? (
-                <AdminHeader 
-                  sidebarOpen={sidebarOpen}
-                  setSidebarOpen={setSidebarOpen}
-                  sidebarCollapsed={sidebarCollapsed}
-                  setSidebarCollapsed={setSidebarCollapsed}
-                />
-              ) : <Header />}
-              {!isAdminRoute && (
-                <>
-                  <HeroSection />
-                  <SambutanKepalaDesa />
-                </>
-              )}
-              <main className={`flex-1 ${isAdminRoute ? `pt-16 lg:pt-16 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}` : ''}`}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/berita" element={<Berita />} />
-                  <Route path="/profil" element={<Profil />} />
-                  <Route path="/pengaduan" element={<Pengaduan />} />
-                  <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
-                  <Route path="/sejarah" element={<Sejarah />} />
-                  <Route path="/admin/login" element={<Login />} />
-                  <Route path="/admin/dashboard" element={
-                    <RequireAdmin>
-                      <Dashboard />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/berita" element={
-                    <RequireAdmin>
-                      <DaftarBerita />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/berita/tambah" element={
-                    <RequireAdmin>
-                      <TambahEditBerita />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/berita/edit/:id" element={
-                    <RequireAdmin>
-                      <TambahEditBerita />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/pengaduan" element={
-                    <RequireAdmin>
-                      <LaporanPengaduan />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/statistik" element={
-                    <RequireAdmin>
-                      <EditStatistik />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/admin/prasarana" element={
-                    <RequireAdmin>
-                      <EditPrasarana />
-                    </RequireAdmin>
-                  } />
-                  <Route path="/berita/:id" element={<DetailBerita />} />
-                  <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
-                  <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
-                </Routes>
-              </main>
-              {!isAdminRoute && <FooterInfo />}
-              <ScrollToTopButton />
-            </div>
+            <PengaduanProvider>
+              <div className={`min-h-screen bg-background font-sans ${isAdminRoute ? 'lg:flex' : 'flex flex-col'}`}>
+                <ScrollToTop />
+                {isAdminRoute ? (
+                  <AdminHeader 
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                    sidebarCollapsed={sidebarCollapsed}
+                    setSidebarCollapsed={setSidebarCollapsed}
+                  />
+                ) : <Header />}
+                {!isAdminRoute && (
+                  <>
+                    <HeroSection />
+                    <SambutanKepalaDesa />
+                  </>
+                )}
+                <main className={`flex-1 ${isAdminRoute ? `pt-16 lg:pt-16 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}` : ''}`}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/berita" element={<Berita />} />
+                    <Route path="/profil" element={<Profil />} />
+                    <Route path="/pengaduan" element={<Pengaduan />} />
+                    <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
+                    <Route path="/sejarah" element={<Sejarah />} />
+                    <Route path="/admin/login" element={<Login />} />
+                    <Route path="/admin/dashboard" element={
+                      <RequireAdmin>
+                        <Dashboard />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/berita" element={
+                      <RequireAdmin>
+                        <DaftarBerita />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/berita/tambah" element={
+                      <RequireAdmin>
+                        <TambahEditBerita />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/berita/edit/:id" element={
+                      <RequireAdmin>
+                        <TambahEditBerita />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/pengaduan" element={
+                      <RequireAdmin>
+                        <LaporanPengaduan />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/statistik" element={
+                      <RequireAdmin>
+                        <EditStatistik />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/admin/prasarana" element={
+                      <RequireAdmin>
+                        <EditPrasarana />
+                      </RequireAdmin>
+                    } />
+                    <Route path="/berita/:id" element={<DetailBerita />} />
+                    <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
+                    <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
+                  </Routes>
+                </main>
+                {!isAdminRoute && <FooterInfo />}
+                <ScrollToTopButton />
+              </div>
+            </PengaduanProvider>
           </BeritaProvider>
         </StatistikProvider>
       </DesaProvider>
