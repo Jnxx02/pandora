@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDesa } from '../context/DesaContext';
 import { useStatistik } from '../context/StatistikContext';
+import { usePrasarana } from '../context/PrasaranaContext';
 
 // Data ini bisa dipindahkan ke context atau file data terpusat jika diperlukan di halaman lain
 const batasWilayah = [
@@ -98,28 +99,12 @@ const Profil = () => {
   const [openOrganisasi, setOpenOrganisasi] = useState({});
 
   const { statistik } = useStatistik();
-  const [prasarana, setPrasarana] = useState(initialPrasarana);
+  const { prasarana, setPrasarana } = usePrasarana();
 
   useEffect(() => {
-    const loadPrasarana = () => {
-      try {
-        const storedPrasarana = localStorage.getItem('prasarana');
-        if (storedPrasarana) {
-          setPrasarana(JSON.parse(storedPrasarana));
-        } else {
-          // Jika tidak ada di localStorage, gunakan data awal dan simpan
-          localStorage.setItem('prasarana', JSON.stringify(initialPrasarana));
-          setPrasarana(initialPrasarana);
-        }
-      } catch (error) {
-        console.error("Gagal memuat prasarana dari localStorage:", error);
-        setPrasarana(initialPrasarana); // Fallback ke data awal jika ada error
-      }
-    };
-
-    loadPrasarana();
-    window.addEventListener('storage', loadPrasarana);
-    return () => window.removeEventListener('storage', loadPrasarana);
+    // Data prasarana sudah di-context, jadi tidak perlu load dari localStorage lagi
+    // Namun, jika ada kebutuhan untuk mengubah data prasarana dari context,
+    // Anda bisa menambahkan logika di sini.
   }, []);
 
   const toggleOrganisasi = (nama) => {
@@ -360,17 +345,87 @@ const Profil = () => {
         {/* Infrastruktur */}
         <section className="w-full mb-16">
           <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">Infrastruktur & Sarana</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {prasarana.map((item) => (
-              <div key={item.kategori} className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 flex flex-col items-center text-center">
-                <h3 className="font-bold text-lg text-secondary mb-3">{item.kategori}</h3>
-                <ul className="space-y-1 text-primary text-sm">
-                  {item.list.map(fasilitas => (
-                    <li key={fasilitas}>{fasilitas}</li>
+              <div key={item.kategori} className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  {/* Icon berdasarkan kategori */}
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    {item.kategori === 'Pendidikan' && (
+                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                      </svg>
+                    )}
+                    {item.kategori === 'Kesehatan' && (
+                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                    )}
+                    {item.kategori === 'Ibadah' && (
+                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    )}
+                    {item.kategori === 'Umum' && (
+                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-xl text-secondary">{item.kategori}</h3>
+                </div>
+                
+                <div className="space-y-2">
+                  {item.list.map((fasilitas, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-primary text-sm leading-relaxed">{fasilitas}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="text-center">
+                    <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                      {item.list.length} Fasilitas
+                    </span>
+                  </div>
+                </div>
               </div>
             ))}
+          </div>
+          
+          {/* Ringkasan Statistik */}
+          <div className="mt-8 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6 border border-primary/20">
+            <h3 className="text-lg font-bold text-primary mb-4 text-center">Ringkasan Infrastruktur</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">
+                  {prasarana.reduce((total, item) => total + item.list.length, 0)}
+                </div>
+                <div className="text-sm text-gray-600">Total Fasilitas</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-secondary">
+                  {prasarana.length}
+                </div>
+                <div className="text-sm text-gray-600">Kategori</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {prasarana.find(item => item.kategori === 'Pendidikan')?.list.length || 0}
+                </div>
+                <div className="text-sm text-gray-600">Fasilitas Pendidikan</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  {prasarana.find(item => item.kategori === 'Kesehatan')?.list.length || 0}
+                </div>
+                <div className="text-sm text-gray-600">Fasilitas Kesehatan</div>
+              </div>
+            </div>
           </div>
         </section>
 

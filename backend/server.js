@@ -150,6 +150,95 @@ app.post('/api/statistik', async (req, res) => {
   }
 });
 
+// GET /api/prasarana endpoint
+app.get('/api/prasarana', async (req, res) => {
+  try {
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('prasarana')
+        .select('kategori, list')
+        .order('kategori');
+      
+      if (error) throw error;
+      
+      // Convert JSONB back to array if needed
+      const processedData = data ? data.map(item => ({
+        kategori: item.kategori,
+        list: Array.isArray(item.list) ? item.list : (item.list || [])
+      })) : [];
+      
+      res.status(200).json(processedData);
+    } else {
+      // Fallback data jika Supabase tidak tersedia
+      const fallbackData = [
+        {
+          kategori: 'Pendidikan',
+          list: ['TK/PAUD (4 Unit)', 'SD Negeri (3 Unit)', 'SMP Negeri (1 Unit)'],
+        },
+        {
+          kategori: 'Kesehatan',
+          list: ['Puskesmas Pembantu (1 Unit)', 'Poskesdes (1 Unit)', 'Posyandu (5 Unit)'],
+        },
+        {
+          kategori: 'Ibadah',
+          list: ['Masjid (8 Unit)', 'Gereja (1 Unit)'],
+        },
+        {
+          kategori: 'Umum',
+          list: ['Kantor Desa (1 Unit)', 'Pasar Desa (1 Unit)', 'Lapangan Olahraga (2 Unit)'],
+        },
+      ];
+      res.status(200).json(fallbackData);
+    }
+  } catch (error) {
+    console.error('Error fetching prasarana:', error);
+    res.status(500).json({ error: 'Gagal mengambil data prasarana' });
+  }
+});
+
+// POST /api/prasarana endpoint
+app.post('/api/prasarana', async (req, res) => {
+  try {
+    const prasaranaData = req.body;
+    
+    if (!Array.isArray(prasaranaData)) {
+      return res.status(400).json({ error: 'Data harus berupa array' });
+    }
+    
+    if (supabase && supabaseStatus === 'configured') {
+      // Hapus semua data lama
+      const { error: deleteError } = await supabase
+        .from('prasarana')
+        .delete()
+        .neq('kategori', 'NON_EXISTENT_KATEGORI');
+      
+      if (deleteError) throw deleteError;
+      
+      // Insert data baru
+      const { data, error: insertError } = await supabase
+        .from('prasarana')
+        .insert(prasaranaData)
+        .select();
+      
+      if (insertError) throw insertError;
+      
+      res.status(200).json({ 
+        message: 'Data prasarana berhasil disimpan ke database!', 
+        data 
+      });
+    } else {
+      res.status(503).json({ 
+        error: 'Database tidak tersedia. Data hanya disimpan secara lokal.' 
+      });
+    }
+  } catch (error) {
+    console.error('Error saving prasarana:', error);
+    res.status(500).json({ 
+      error: `Gagal menyimpan data prasarana: ${error.message}` 
+    });
+  }
+});
+
 // Jalankan server di semua environment
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);

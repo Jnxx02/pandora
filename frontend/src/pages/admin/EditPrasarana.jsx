@@ -1,78 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { usePrasarana } from '../../context/PrasaranaContext';
 
 const initialPrasarana = [
   {
     kategori: 'Pendidikan',
-    icon: (
-      <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-        <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-      </svg>
-    ),
     list: ['TK/PAUD (4 Unit)', 'SD Negeri (3 Unit)', 'SMP Negeri (1 Unit)'],
   },
   {
     kategori: 'Kesehatan',
-    icon: (
-      <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-      </svg>
-    ),
     list: ['Puskesmas Pembantu (1 Unit)', 'Poskesdes (1 Unit)', 'Posyandu (5 Unit)'],
   },
   {
     kategori: 'Ibadah',
-    icon: (
-      <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg>
-    ),
     list: ['Masjid (8 Unit)', 'Gereja (1 Unit)'],
   },
   {
     kategori: 'Umum',
-    icon: (
-      <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-      </svg>
-    ),
     list: ['Kantor Desa (1 Unit)', 'Pasar Desa (1 Unit)', 'Lapangan Olahraga (2 Unit)'],
   },
 ];
 
 const EditPrasarana = () => {
   const [prasarana, setPrasarana] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const navigate = useNavigate();
+  const { prasarana: contextPrasarana, refetchPrasarana } = usePrasarana();
+
+  const showNotification = (type, message) => {
+    setNotification({ show: true, type, message });
+    setTimeout(() => {
+      setNotification({ show: false, type: '', message: '' });
+    }, 3000);
+  };
 
   useEffect(() => {
-    try {
-      const storedPrasarana = localStorage.getItem('prasarana');
-      if (storedPrasarana) {
-        const parsedPrasarana = JSON.parse(storedPrasarana);
-        // Periksa apakah data lama menggunakan nama icon (string)
-        const hasOldFormat = parsedPrasarana.some(item => 
-          typeof item.icon === 'string' && item.icon !== '' && !item.icon.includes('<svg')
-        );
-        
-        if (hasOldFormat) {
-          // Jika ada data lama, gunakan data baru
-          setPrasarana(initialPrasarana);
-          localStorage.setItem('prasarana', JSON.stringify(initialPrasarana));
-        } else {
-          setPrasarana(parsedPrasarana);
-        }
-      } else {
-        setPrasarana(initialPrasarana);
-        localStorage.setItem('prasarana', JSON.stringify(initialPrasarana));
-      }
-    } catch (error) {
-      console.error("Gagal memuat prasarana dari localStorage:", error);
+    if (contextPrasarana && contextPrasarana.length > 0) {
+      setPrasarana(contextPrasarana);
+    } else {
       setPrasarana(initialPrasarana);
     }
-  }, []);
+  }, [contextPrasarana]);
 
   const handleChange = (index, field, value) => {
     const updatedPrasarana = [...prasarana];
@@ -88,19 +58,43 @@ const EditPrasarana = () => {
     setPrasarana([...prasarana, { kategori: '', list: [] }]);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    // Validasi data
+    const hasEmptyKategori = prasarana.some(item => !item.kategori.trim());
+    if (hasEmptyKategori) {
+      showNotification('error', 'Setiap item prasarana harus memiliki "Kategori". Kolom kategori tidak boleh kosong.');
+      return;
+    }
+
+    setIsSaving(true);
     try {
       const cleanedPrasarana = prasarana.map(item => ({
-        ...item,
+        kategori: item.kategori.trim(),
         list: item.list.filter(line => line.trim() !== '')
       }));
-      localStorage.setItem('prasarana', JSON.stringify(cleanedPrasarana));
-      window.dispatchEvent(new Event('storage'));
-      alert('Data prasarana berhasil disimpan!');
-      navigate('/admin/dashboard');
+
+      const apiUrl = process.env.NODE_ENV === 'production'
+        ? 'https://pandora-vite.vercel.app/api/prasarana'
+        : 'http://localhost:3001/api/prasarana';
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cleanedPrasarana)
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const result = await response.json();
+      localStorage.setItem('prasarana', JSON.stringify(cleanedPrasarana)); // Backup to localStorage
+      await refetchPrasarana();
+      showNotification('success', result.message || 'Data prasarana berhasil disimpan ke database!');
+      setTimeout(() => { navigate('/admin/dashboard'); }, 1500);
     } catch (error) {
-      console.error("Gagal menyimpan prasarana ke localStorage:", error);
-      alert('Gagal menyimpan data prasarana.');
+      console.error("Gagal menyimpan prasarana:", error);
+      showNotification('error', `Gagal menyimpan data prasarana! Error: ${error.message}. Data hanya disimpan secara lokal.`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -142,6 +136,31 @@ const EditPrasarana = () => {
       variants={pageVariants}
       transition={pageTransition}
     >
+      {/* Custom Notification */}
+      {notification.show && (
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+            notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            {notification.type === 'success' ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            )}
+            <span className="font-medium">{notification.message}</span>
+          </div>
+        </motion.div>
+      )}
+
       <motion.div 
         className="mb-6"
         variants={itemVariants}
@@ -169,11 +188,22 @@ const EditPrasarana = () => {
               transition={{ delay: index * 0.1 }}
             >
               <div className="md:col-span-2">
-                <input type="text" placeholder="Kategori (e.g., Pendidikan)" value={item.kategori} onChange={(e) => handleChange(index, 'kategori', e.target.value)} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" />
+                <input 
+                  type="text" 
+                  placeholder="Kategori (e.g., Pendidikan)" 
+                  value={item.kategori} 
+                  onChange={(e) => handleChange(index, 'kategori', e.target.value)} 
+                  className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition" 
+                />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Daftar Fasilitas (satu per baris)</label>
-                <textarea placeholder="TK/PAUD (4 Unit)&#10;SD Negeri (3 Unit)" value={item.list.join('\n')} onChange={(e) => handleChange(index, 'list', e.target.value)} className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition h-24" />
+                <textarea 
+                  placeholder="TK/PAUD (4 Unit)&#10;SD Negeri (3 Unit)" 
+                  value={item.list.join('\n')} 
+                  onChange={(e) => handleChange(index, 'list', e.target.value)} 
+                  className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition h-24" 
+                />
               </div>
             </motion.div>
           ))}
@@ -184,11 +214,26 @@ const EditPrasarana = () => {
         >
           <motion.button 
             onClick={handleSave} 
-            className="bg-secondary text-white px-6 py-2 rounded-md w-full md:w-auto hover:bg-primary transition font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            disabled={isSaving}
+            className={`px-6 py-2 rounded-md w-full md:w-auto font-semibold transition ${
+              isSaving
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-secondary text-white hover:bg-primary'
+            }`}
+            whileHover={!isSaving ? { scale: 1.02 } : {}}
+            whileTap={!isSaving ? { scale: 0.98 } : {}}
           >
-            Simpan Perubahan
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Menyimpan...
+              </span>
+            ) : (
+              'Simpan Perubahan'
+            )}
           </motion.button>
         </motion.div>
       </motion.div>
