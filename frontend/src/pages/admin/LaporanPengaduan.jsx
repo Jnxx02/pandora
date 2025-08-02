@@ -182,11 +182,8 @@ function LaporanPengaduan() {
   return (
     <div className="py-10 max-w-6xl mx-auto bg-neutral min-h-screen px-4">
       <div className="bg-white rounded-xl shadow p-6 border border-neutral/50">
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6">
           <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
-          <Link to="/admin/dashboard" className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral">
-            ← Kembali ke Dashboard
-          </Link>
         </div>
 
         {/* GANTI: Navigasi Tab dengan gaya baru */}

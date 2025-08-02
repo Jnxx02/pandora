@@ -80,11 +80,8 @@ const TambahEditBerita = () => {
 
   return (
     <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6">
         <h2 className="text-2xl font-bold text-secondary">{editId ? 'Edit Berita' : 'Tambah Berita Baru'}</h2>
-        <button onClick={() => navigate('/admin/dashboard')} className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral">
-          ← Kembali ke Dashboard
-        </button>
       </div>
       
       <div className="space-y-6">

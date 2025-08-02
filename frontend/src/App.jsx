@@ -45,25 +45,9 @@ function RequireAdmin({ children }) {
   return children;
 }
 
-// Komponen Header untuk Admin
-function AdminHeader() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+function AdminHeader({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarCollapsed }) {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Load sidebar state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebarCollapsed');
-    if (savedState !== null) {
-      setSidebarCollapsed(JSON.parse(savedState));
-    }
-  }, []);
-
-  // Save sidebar state to localStorage
-  useEffect(() => {
-    localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
-  }, [sidebarCollapsed]);
 
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
@@ -72,27 +56,27 @@ function AdminHeader() {
 
   const adminNavLinks = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
       </svg>
     )},
     { to: '/admin/berita', label: 'Kelola Berita', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
       </svg>
     )},
     { to: '/admin/statistik', label: 'Edit Statistik', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
       </svg>
     )},
     { to: '/admin/prasarana', label: 'Edit Prasarana', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
       </svg>
     )},
     { to: '/admin/pengaduan', label: 'Laporan Pengaduan', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4.19 4a2 2 0 00-1.81 1.81V19a2 2 0 002 2h12a2 2 0 002-2V5.81A2 2 0 0019.81 4H4.19zM16 2v4M8 2v4M3 10h18"></path>
       </svg>
     )},
@@ -112,27 +96,19 @@ function AdminHeader() {
         {/* Sidebar */}
         <div className={`fixed top-0 left-0 h-full bg-primary text-white shadow-xl z-50 transform transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 lg:relative lg:z-auto ${sidebarCollapsed ? 'lg:w-16' : 'w-64'}`}>
+        } lg:translate-x-0 lg:fixed lg:z-50 ${sidebarCollapsed ? 'lg:w-16' : 'w-64'}`}>
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/20">
-              <Link to="/admin/dashboard" className={`flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors ${sidebarCollapsed ? 'lg:justify-center' : ''}`}>
+            <div className="p-4 border-b border-white/20">
+              <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'lg:justify-center' : ''}`}>
                 <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
                 {!sidebarCollapsed && (
                   <div className="leading-tight">
-                    <div>Admin Panel</div>
-                    <div className="text-xs font-normal opacity-80">Desa Moncongloe Bulu</div>
+                    <div className="font-bold text-lg">Desa Moncongloe Bulu</div>
+                    <div className="text-xs font-normal opacity-80">Kabupaten Maros</div>
                   </div>
                 )}
-              </Link>
-              <button
-                className="lg:hidden text-white hover:text-secondary transition-colors"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
+              </div>
             </div>
 
             {/* Navigation */}
@@ -141,16 +117,18 @@ function AdminHeader() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 ${
                     location.pathname === link.to
-                      ? 'bg-secondary text-white font-semibold'
-                      : 'hover:bg-white/10 hover:text-secondary'
-                  } ${sidebarCollapsed ? 'lg:justify-center' : ''}`}
+                      ? 'bg-gray-700 text-white shadow-sm border-l-4 border-secondary'
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  } ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
                   onClick={() => setSidebarOpen(false)}
                   title={sidebarCollapsed ? link.label : ''}
                 >
-                  {link.icon}
-                  {!sidebarCollapsed && <span>{link.label}</span>}
+                  <div className={`${sidebarCollapsed ? 'lg:w-6 lg:h-6' : 'w-5 h-5'}`}>
+                    {link.icon}
+                  </div>
+                  {!sidebarCollapsed && <span className="font-medium">{link.label}</span>}
                 </Link>
               ))}
             </nav>
@@ -159,48 +137,51 @@ function AdminHeader() {
             <div className="p-4 border-t border-white/20">
               <button
                 onClick={handleLogout}
-                className={`flex items-center gap-3 w-full bg-red-600 hover:bg-red-700 text-white px-3 py-3 rounded-lg transition-colors font-semibold ${sidebarCollapsed ? 'lg:justify-center' : ''}`}
+                className={`flex items-center gap-3 w-full bg-red-600 hover:bg-red-700 text-white px-3 py-3 rounded-lg transition-colors font-semibold ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
                 title={sidebarCollapsed ? 'Logout' : ''}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
+                <div className={`${sidebarCollapsed ? 'lg:w-6 lg:h-6' : 'w-5 h-5'}`}>
+                  <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                  </svg>
+                </div>
                 {!sidebarCollapsed && <span>Logout</span>}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Top Bar with Hamburger */}
+        {/* Top Bar */}
         <div className={`fixed top-0 left-0 right-0 bg-primary text-white shadow-lg z-30 lg:transition-all lg:duration-300 ${
           sidebarCollapsed ? 'lg:left-16' : 'lg:left-64'
         } lg:right-0`}>
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-4">
+              {/* Hamburger Menu - Both Mobile and Desktop */}
               <button
                 className="text-white hover:text-secondary transition-colors"
-                onClick={() => setSidebarOpen(true)}
+                onClick={() => {
+                  if (window.innerWidth < 1024) { // Mobile breakpoint
+                    setSidebarOpen(!sidebarOpen);
+                  } else { // Desktop
+                    setSidebarCollapsed(!sidebarCollapsed);
+                  }
+                }}
+                title="Toggle Menu"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
               </button>
+              
               <div className="flex items-center gap-3 font-bold text-lg">
-                <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
-                <span>Admin Panel</span>
+                <img src="https://images.icon-icons.com/1715/PNG/512/2730367-box-inkcontober-pandora-shattered-square_112695.png" alt="PANDORA Logo" className="w-8 h-8 object-contain" />
+                <div className="leading-tight">
+                  <div>PANDORA Panel</div>
+                  <div className="text-xs font-normal opacity-80">Admin Dashboard</div>
+                </div>
               </div>
             </div>
-            
-            {/* Desktop Toggle Button */}
-            <button
-              className="hidden lg:block text-white hover:text-secondary transition-colors"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-            </button>
           </div>
         </div>
       </>
@@ -483,15 +464,15 @@ function FooterInfo() {
         <div>
           <div className="font-bold text-lg mb-2">Kontak</div>
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
             <a href="mailto:moncongloebulu16@gmail.com" className="underline hover:text-secondary transition-colors">moncongloebulu16@gmail.com</a>
           </div>
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
             <Link to="/admin/dashboard" className="underline hover:text-secondary transition-colors">Developer Desa</Link>
           </div>
@@ -500,14 +481,14 @@ function FooterInfo() {
         <div>
           <div className="font-bold text-lg mb-2">Telepon Penting</div>
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
             </svg>
             Kantor Desa: 0812-0979-1290
           </div>
           <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
             </svg>
             Darurat: 112
           </div>
@@ -516,9 +497,9 @@ function FooterInfo() {
         <div>
           <div className="font-bold text-lg mb-2">Alamat</div>
           <div className="flex items-start gap-2">
-            <svg className="w-6 h-6 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
             <span>Jalan Poros Pamanjengan, Desa Moncongloe Bulu, Kec. Moncongloe, Kab. Maros, Sulawesi Selatan 90564</span>
           </div>
@@ -569,6 +550,23 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
   
+  // State for sidebar management
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Load sidebar state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      setSidebarCollapsed(JSON.parse(savedState));
+    }
+  }, []);
+
+  // Save sidebar state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
+  }, [sidebarCollapsed]);
+  
   // Auto refresh on beranda if admin login and sessionStorage flag set
   React.useEffect(() => {
     if (
@@ -585,14 +583,21 @@ function App() {
     <DesaProvider>
       <StatistikProvider>
         <div className={`min-h-screen bg-background font-sans ${isAdminRoute ? 'lg:flex' : 'flex flex-col'}`}>
-          {isAdminRoute ? <AdminHeader /> : <Header />}
+          {isAdminRoute ? (
+            <AdminHeader 
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+              sidebarCollapsed={sidebarCollapsed}
+              setSidebarCollapsed={setSidebarCollapsed}
+            />
+          ) : <Header />}
           {!isAdminRoute && (
             <>
               <HeroSection />
               <SambutanKepalaDesa />
             </>
           )}
-          <main className={`flex-1 ${isAdminRoute ? 'lg:pt-16 transition-all duration-300' : ''}`}>
+          <main className={`flex-1 ${isAdminRoute ? `pt-16 lg:pt-16 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}` : ''}`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/berita" element={<Berita />} />

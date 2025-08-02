@@ -41,18 +41,9 @@ const EditStatistik = () => {
   };
 
   return (
-    // GANTI: Menggunakan bg-neutral untuk latar belakang admin
     <div className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4">
-      <div className="flex justify-between items-center mb-6">
-        {/* GANTI: Judul menggunakan warna secondary agar konsisten */}
-        <h2 className="text-2xl font-bold text-secondary">Edit Statistik Penduduk</h2>
-        {/* GANTI: Tombol kembali dengan gaya yang konsisten */}
-        <button
-          onClick={() => navigate('/admin/dashboard')}
-          className="bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-background transition-colors border border-neutral"
-        >
-          ← Kembali ke Dashboard
-        </button>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-secondary">Edit Statistik Desa</h2>
       </div>
 
       {/* GANTI: Card utama dengan border neutral */}

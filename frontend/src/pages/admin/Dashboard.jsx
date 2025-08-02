@@ -129,7 +129,7 @@ const Dashboard = () => {
             <div className="p-6 border-b border-neutral/100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-secondary">Berita Terbaru</h2>
-                <Link to="/admin/berita" className="text-primary hover:text-secondary text-sm font-medium">
+                <Link to="/berita" className="text-primary hover:text-secondary text-sm font-medium">
                   Lihat Semua →
                 </Link>
               </div>
