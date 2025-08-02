@@ -89,13 +89,22 @@ export const PengaduanProvider = ({ children }) => {
   const addPengaduan = async (pengaduanData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/pengaduan'
-        : 'http://localhost:3001/api/pengaduan';
-      
-      // Optimize payload size
+        ? `https://pandora-vite.vercel.app/api/pengaduan`
+        : `http://localhost:3001/api/pengaduan`;
+
+      // Optimize payload size and ensure proper structure
       const optimizedData = {
-        ...pengaduanData,
-        // Remove large tracking data if it exists
+        nama: pengaduanData.nama || 'Anonim',
+        email: pengaduanData.email || null,
+        whatsapp: pengaduanData.whatsapp || null,
+        klasifikasi: pengaduanData.klasifikasi || 'pengaduan',
+        judul: pengaduanData.judul,
+        isi: pengaduanData.isi,
+        tanggal_kejadian: pengaduanData.tanggal_kejadian || null,
+        kategori: pengaduanData.kategori,
+        lampiran_info: pengaduanData.lampiran_info || null,
+        lampiran_data_url: pengaduanData.lampiran_data_url || null,
+        // Optimize tracking data
         tracking: pengaduanData.tracking ? {
           deviceInfo: {
             userAgent: pengaduanData.tracking.deviceInfo?.userAgent?.substring(0, 200) || '',
@@ -109,16 +118,18 @@ export const PengaduanProvider = ({ children }) => {
           formSubmissionTime: pengaduanData.tracking.formSubmissionTime || '',
           formFillingDuration: pengaduanData.tracking.formFillingDuration || 0,
           captchaQuestion: pengaduanData.tracking.captchaQuestion || '',
-          hasContactInfo: pengaduanData.tracking.hasContactInfo || false
-        } : null,
-        // Limit lampiran data URL size
-        lampiran_data_url: pengaduanData.lampiran_data_url ? 
-          pengaduanData.lampiran_data_url.substring(0, 1000) : null
+          hasContactInfo: pengaduanData.tracking.hasContactInfo || false,
+          isAnonymous: pengaduanData.tracking.isAnonymous || false
+        } : null
       };
 
       console.log('📤 Sending pengaduan data:', {
-        ...optimizedData,
-        lampiran_data_url: optimizedData.lampiran_data_url ? 'COMPRESSED_DATA' : null
+        nama: optimizedData.nama,
+        judul: optimizedData.judul,
+        kategori: optimizedData.kategori,
+        hasLampiran: !!optimizedData.lampiran_data_url,
+        lampiranSize: optimizedData.lampiran_data_url ? optimizedData.lampiran_data_url.length : 0,
+        hasTracking: !!optimizedData.tracking
       });
 
       const response = await fetch(apiUrl, {
@@ -144,6 +155,7 @@ export const PengaduanProvider = ({ children }) => {
       }
       
       const result = await response.json();
+      console.log('✅ Pengaduan saved successfully:', result);
       await refetchPengaduan();
       return result;
     } catch (error) {

@@ -482,14 +482,43 @@ app.get('/api/pengaduan/:id', async (req, res) => {
 // POST /api/pengaduan endpoint
 app.post('/api/pengaduan', async (req, res) => {
   try {
-    const { nama, email, whatsapp, klasifikasi, judul, isi, tanggal_kejadian, kategori, lampiran_info, lampiran_data_url } = req.body;
+    console.log('📥 Received pengaduan data:', {
+      hasJudul: !!req.body.judul,
+      hasIsi: !!req.body.isi,
+      hasKategori: !!req.body.kategori,
+      hasLampiran: !!req.body.lampiran_data_url,
+      lampiranSize: req.body.lampiran_data_url ? req.body.lampiran_data_url.length : 0,
+      supabaseStatus,
+      bodyKeys: Object.keys(req.body)
+    });
+
+    const { 
+      nama, 
+      email, 
+      whatsapp, 
+      klasifikasi, 
+      judul, 
+      isi, 
+      tanggal_kejadian, 
+      kategori, 
+      lampiran_info, 
+      lampiran_data_url,
+      tracking 
+    } = req.body;
     
     // Validasi input
     if (!judul || !isi || !kategori) {
+      console.log('❌ Validation failed:', { judul: !!judul, isi: !!isi, kategori: !!kategori });
       return res.status(400).json({ error: 'Judul, isi, dan kategori harus diisi' });
     }
     
     if (supabase && supabaseStatus === 'configured') {
+      console.log('🗄️ Using Supabase for storage');
+      
+      // Hitung ukuran lampiran jika ada
+      const lampiran_size = lampiran_data_url ? lampiran_data_url.length : null;
+      const lampiran_type = lampiran_info ? getMimeType(lampiran_info) : null;
+      
       const pengaduanData = {
         nama: nama || 'Anonim',
         email: email || null,
@@ -501,24 +530,64 @@ app.post('/api/pengaduan', async (req, res) => {
         kategori,
         lampiran_info: lampiran_info || null,
         lampiran_data_url: lampiran_data_url || null,
-        status: 'pending'
+        lampiran_size,
+        lampiran_type,
+        status: 'pending',
+        // Tracking data - handle safely
+        client_ip: tracking?.clientIP || null,
+        user_agent: tracking?.deviceInfo?.userAgent || null,
+        device_info: tracking?.deviceInfo ? JSON.stringify(tracking.deviceInfo) : null,
+        session_id: tracking?.sessionId || null,
+        form_submission_time: tracking?.formSubmissionTime || null,
+        form_filling_duration: tracking?.formFillingDuration || null,
+        verification_status: 'unverified',
+        verification_notes: null,
+        risk_score: calculateRiskScore(tracking)
       };
+      
+      console.log('💾 Inserting data to Supabase...');
+      console.log('📊 Data structure:', {
+        hasNama: !!pengaduanData.nama,
+        hasJudul: !!pengaduanData.judul,
+        hasIsi: !!pengaduanData.isi,
+        hasKategori: !!pengaduanData.kategori,
+        hasLampiran: !!pengaduanData.lampiran_data_url,
+        lampiranSize: pengaduanData.lampiran_size,
+        trackingKeys: tracking ? Object.keys(tracking) : []
+      });
       
       const { data, error } = await supabase
         .from('pengaduan')
-        .insert(pengaduanData)
-        .select()
-        .single();
+        .insert([pengaduanData])
+        .select();
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        
+        // Handle specific Supabase errors
+        if (error.code === 'PGRST116') {
+          return res.status(400).json({ error: 'Data yang dikirim tidak valid. Silakan periksa kembali form Anda.' });
+        } else if (error.code === '23505') {
+          return res.status(409).json({ error: 'Data duplikat terdeteksi. Silakan coba lagi.' });
+        } else if (error.code === '42P01') {
+          return res.status(500).json({ error: 'Tabel database tidak ditemukan. Hubungi administrator.' });
+        } else if (error.message && error.message.includes('JWT')) {
+          return res.status(401).json({ error: 'Koneksi database tidak valid. Hubungi administrator.' });
+        } else {
+          return res.status(500).json({ error: 'Gagal menyimpan pengaduan ke database' });
+        }
+      }
+      
+      console.log('✅ Data saved to Supabase successfully');
       res.status(201).json({ 
-        message: 'Laporan berhasil dikirim!', 
-        data 
+        message: 'Pengaduan berhasil disimpan', 
+        data: data[0] 
       });
     } else {
-      // Fallback: simpan ke localStorage
-      const newPengaduan = {
-        id: Date.now().toString(),
+      console.log('📦 Using fallback storage (Supabase not available)');
+      
+      // Fallback jika Supabase tidak tersedia
+      const pengaduanData = {
         nama: nama || 'Anonim',
         email: email || null,
         whatsapp: whatsapp || null,
@@ -529,18 +598,30 @@ app.post('/api/pengaduan', async (req, res) => {
         kategori,
         lampiran_info: lampiran_info || null,
         lampiran_data_url: lampiran_data_url || null,
+        lampiran_size: lampiran_data_url ? lampiran_data_url.length : null,
+        lampiran_type: lampiran_info ? getMimeType(lampiran_info) : null,
         status: 'pending',
+        client_ip: tracking?.clientIP || null,
+        user_agent: tracking?.deviceInfo?.userAgent || null,
+        device_info: tracking?.deviceInfo ? JSON.stringify(tracking.deviceInfo) : null,
+        session_id: tracking?.sessionId || null,
+        form_submission_time: tracking?.formSubmissionTime || null,
+        form_filling_duration: tracking?.formFillingDuration || null,
+        verification_status: 'unverified',
+        verification_notes: null,
+        risk_score: calculateRiskScore(tracking),
         tanggal_pengaduan: new Date().toISOString()
       };
       
+      console.log('✅ Data processed successfully (fallback mode)');
       res.status(201).json({ 
-        message: 'Laporan berhasil dikirim! (disimpan lokal)', 
-        data: newPengaduan 
+        message: 'Pengaduan berhasil diproses (database tidak tersedia)', 
+        data: pengaduanData 
       });
     }
   } catch (error) {
-    console.error('Error creating pengaduan:', error);
-    res.status(500).json({ error: 'Gagal mengirim laporan' });
+    console.error('❌ Error in POST /api/pengaduan:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });
 
@@ -603,6 +684,344 @@ app.delete('/api/pengaduan/:id', async (req, res) => {
   }
 });
 
+// Endpoint untuk mendapatkan statistik lampiran
+app.get('/api/pengaduan/stats/lampiran', async (req, res) => {
+  try {
+    if (supabase && supabaseStatus === 'configured') {
+      // Simple stats without complex queries
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .select('lampiran_data_url, lampiran_size');
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal mengambil statistik lampiran' });
+      }
+      
+      const totalPengaduan = data.length;
+      const withLampiran = data.filter(p => p.lampiran_data_url).length;
+      const withoutLampiran = totalPengaduan - withLampiran;
+      const avgSize = withLampiran > 0 
+        ? Math.round(data.filter(p => p.lampiran_size).reduce((sum, p) => sum + (p.lampiran_size || 0), 0) / withLampiran)
+        : 0;
+      const maxSize = withLampiran > 0 
+        ? Math.max(...data.filter(p => p.lampiran_size).map(p => p.lampiran_size || 0))
+        : 0;
+      
+      res.json({
+        total_pengaduan: totalPengaduan,
+        with_lampiran: withLampiran,
+        without_lampiran: withoutLampiran,
+        avg_size: avgSize,
+        max_size: maxSize,
+        compressed_count: 0, // Not available in current schema
+        uncompressed_count: withLampiran
+      });
+    } else {
+      // Fallback untuk localStorage
+      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
+      const withLampiran = storedPengaduan.filter(p => p.lampiran_data_url).length;
+      const withoutLampiran = storedPengaduan.length - withLampiran;
+      
+      res.json({
+        total_pengaduan: storedPengaduan.length,
+        with_lampiran: withLampiran,
+        without_lampiran: withoutLampiran,
+        avg_size: 0,
+        max_size: 0,
+        compressed_count: 0,
+        uncompressed_count: withLampiran
+      });
+    }
+  } catch (error) {
+    console.error('Error in GET /api/pengaduan/stats/lampiran:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk mendapatkan pengaduan dengan risk score tinggi
+app.get('/api/pengaduan/high-risk', async (req, res) => {
+  try {
+    const { threshold = 50 } = req.query;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .select('id, nama, judul, risk_score, verification_status, tanggal_pengaduan')
+        .gte('risk_score', parseInt(threshold))
+        .order('risk_score', { ascending: false });
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal mengambil data pengaduan berisiko tinggi' });
+      }
+      
+      const highRiskPengaduan = (data || []).map(p => ({
+        id: p.id,
+        nama: p.nama,
+        judul: p.judul,
+        risk_score: p.risk_score || 0,
+        verification_status: p.verification_status || 'unverified',
+        created_at: p.tanggal_pengaduan
+      }));
+      
+      res.json(highRiskPengaduan);
+    } else {
+      // Fallback untuk localStorage
+      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
+      const highRiskPengaduan = storedPengaduan
+        .filter(p => (p.risk_score || 0) >= parseInt(threshold))
+        .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0))
+        .map(p => ({
+          id: p.id,
+          nama: p.nama,
+          judul: p.judul,
+          risk_score: p.risk_score || 0,
+          verification_status: p.verification_status || 'unverified',
+          created_at: p.tanggal_pengaduan
+        }));
+      
+      res.json(highRiskPengaduan);
+    }
+  } catch (error) {
+    console.error('Error in GET /api/pengaduan/high-risk:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk mendapatkan statistik berdasarkan periode
+app.get('/api/pengaduan/stats/period', async (req, res) => {
+  try {
+    const { start_date, end_date } = req.query;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      let query = supabase
+        .from('pengaduan')
+        .select('*');
+      
+      if (start_date) {
+        query = query.gte('tanggal_pengaduan', start_date);
+      }
+      if (end_date) {
+        query = query.lte('tanggal_pengaduan', end_date);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal mengambil statistik periode' });
+      }
+      
+      const filteredPengaduan = data || [];
+      const stats = {
+        total_pengaduan: filteredPengaduan.length,
+        pengaduan_count: filteredPengaduan.filter(p => p.klasifikasi === 'pengaduan').length,
+        aspirasi_count: filteredPengaduan.filter(p => p.klasifikasi === 'aspirasi').length,
+        pending_count: filteredPengaduan.filter(p => p.status === 'pending').length,
+        proses_count: filteredPengaduan.filter(p => p.status === 'proses').length,
+        selesai_count: filteredPengaduan.filter(p => p.status === 'selesai').length,
+        with_lampiran: filteredPengaduan.filter(p => p.lampiran_data_url).length,
+        avg_risk_score: filteredPengaduan.length > 0 
+          ? Math.round(filteredPengaduan.reduce((sum, p) => sum + (p.risk_score || 0), 0) / filteredPengaduan.length * 100) / 100
+          : 0
+      };
+      
+      res.json(stats);
+    } else {
+      // Fallback untuk localStorage
+      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
+      const filteredPengaduan = storedPengaduan.filter(p => {
+        const pengaduanDate = new Date(p.tanggal_pengaduan);
+        const start = start_date ? new Date(start_date) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const end = end_date ? new Date(end_date) : new Date();
+        return pengaduanDate >= start && pengaduanDate <= end;
+      });
+      
+      const stats = {
+        total_pengaduan: filteredPengaduan.length,
+        pengaduan_count: filteredPengaduan.filter(p => p.klasifikasi === 'pengaduan').length,
+        aspirasi_count: filteredPengaduan.filter(p => p.klasifikasi === 'aspirasi').length,
+        pending_count: filteredPengaduan.filter(p => p.status === 'pending').length,
+        proses_count: filteredPengaduan.filter(p => p.status === 'proses').length,
+        selesai_count: filteredPengaduan.filter(p => p.status === 'selesai').length,
+        with_lampiran: filteredPengaduan.filter(p => p.lampiran_data_url).length,
+        avg_risk_score: filteredPengaduan.length > 0 
+          ? Math.round(filteredPengaduan.reduce((sum, p) => sum + (p.risk_score || 0), 0) / filteredPengaduan.length * 100) / 100
+          : 0
+      };
+      
+      res.json(stats);
+    }
+  } catch (error) {
+    console.error('Error in GET /api/pengaduan/stats/period:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk mendapatkan rekomendasi aksi
+app.get('/api/pengaduan/:id/recommendation', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      const { data, error } = await supabase
+        .from('pengaduan')
+        .select('risk_score, verification_status, email, whatsapp')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal mendapatkan rekomendasi' });
+      }
+      
+      if (!data) {
+        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+      }
+      
+      const risk_score = data.risk_score || 0;
+      const verification_status = data.verification_status || 'unverified';
+      const has_contact = !!(data.email || data.whatsapp);
+      
+      let recommendation = 'Review manual diperlukan';
+      
+      if (risk_score >= 70) {
+        recommendation = 'Segera review manual - Risk score sangat tinggi';
+      } else if (risk_score >= 50) {
+        recommendation = 'Perlu verifikasi tambahan - Risk score tinggi';
+      } else if (verification_status === 'failed') {
+        recommendation = 'Tolak pengaduan - Status verifikasi gagal';
+      } else if (!has_contact) {
+        recommendation = 'Minta informasi kontak untuk verifikasi';
+      } else if (verification_status === 'verified') {
+        recommendation = 'Proses normal - Status terverifikasi';
+      }
+      
+      res.json({ recommendation });
+    } else {
+      // Fallback untuk localStorage
+      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
+      const pengaduan = storedPengaduan.find(p => p.id === id);
+      
+      if (!pengaduan) {
+        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
+      }
+      
+      const risk_score = pengaduan.risk_score || 0;
+      const verification_status = pengaduan.verification_status || 'unverified';
+      const has_contact = !!(pengaduan.email || pengaduan.whatsapp);
+      
+      let recommendation = 'Review manual diperlukan';
+      
+      if (risk_score >= 70) {
+        recommendation = 'Segera review manual - Risk score sangat tinggi';
+      } else if (risk_score >= 50) {
+        recommendation = 'Perlu verifikasi tambahan - Risk score tinggi';
+      } else if (verification_status === 'failed') {
+        recommendation = 'Tolak pengaduan - Status verifikasi gagal';
+      } else if (!has_contact) {
+        recommendation = 'Minta informasi kontak untuk verifikasi';
+      } else if (verification_status === 'verified') {
+        recommendation = 'Proses normal - Status terverifikasi';
+      }
+      
+      res.json({ recommendation });
+    }
+  } catch (error) {
+    console.error('Error in GET /api/pengaduan/:id/recommendation:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk export data pengaduan
+app.get('/api/pengaduan/export', async (req, res) => {
+  try {
+    const { start_date, end_date, status_filter } = req.query;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      let query = supabase
+        .from('pengaduan')
+        .select('*');
+      
+      if (start_date) {
+        query = query.gte('tanggal_pengaduan', start_date);
+      }
+      if (end_date) {
+        query = query.lte('tanggal_pengaduan', end_date);
+      }
+      if (status_filter) {
+        query = query.eq('status', status_filter);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal export data pengaduan' });
+      }
+      
+      const exportData = (data || []).map(p => ({
+        id: p.id,
+        nama: p.nama,
+        email: p.email,
+        whatsapp: p.whatsapp,
+        klasifikasi: p.klasifikasi,
+        judul: p.judul,
+        kategori: p.kategori,
+        status: p.status,
+        tanggal_pengaduan: p.tanggal_pengaduan,
+        tanggal_ditangani: p.tanggal_ditangani,
+        risk_score: p.risk_score || 0,
+        verification_status: p.verification_status || 'unverified',
+        lampiran_info: p.lampiran_info,
+        lampiran_size: p.lampiran_size
+      }));
+      
+      res.json(exportData);
+    } else {
+      // Fallback untuk localStorage
+      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
+      let filteredPengaduan = storedPengaduan;
+      
+      if (start_date || end_date) {
+        filteredPengaduan = storedPengaduan.filter(p => {
+          const pengaduanDate = new Date(p.tanggal_pengaduan);
+          const start = start_date ? new Date(start_date) : new Date(0);
+          const end = end_date ? new Date(end_date) : new Date();
+          return pengaduanDate >= start && pengaduanDate <= end;
+        });
+      }
+      
+      if (status_filter) {
+        filteredPengaduan = filteredPengaduan.filter(p => p.status === status_filter);
+      }
+      
+      const exportData = filteredPengaduan.map(p => ({
+        id: p.id,
+        nama: p.nama,
+        email: p.email,
+        whatsapp: p.whatsapp,
+        klasifikasi: p.klasifikasi,
+        judul: p.judul,
+        kategori: p.kategori,
+        status: p.status,
+        tanggal_pengaduan: p.tanggal_pengaduan,
+        tanggal_ditangani: p.tanggal_ditangani,
+        risk_score: p.risk_score || 0,
+        verification_status: p.verification_status || 'unverified',
+        lampiran_info: p.lampiran_info,
+        lampiran_size: p.lampiran_size
+      }));
+      
+      res.json(exportData);
+    }
+  } catch (error) {
+    console.error('Error in GET /api/pengaduan/export:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
 // Jalankan server di semua environment
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
@@ -614,3 +1033,51 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// Helper function untuk mendapatkan MIME type
+function getMimeType(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const mimeTypes = {
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'webp': 'image/webp'
+  };
+  return mimeTypes[ext] || 'application/octet-stream';
+}
+
+// Helper function untuk menghitung risk score
+function calculateRiskScore(tracking) {
+  if (!tracking) return 0;
+  
+  let score = 0;
+  
+  try {
+    // Cek apakah anonim
+    if (tracking.isAnonymous) score += 10;
+    
+    // Cek apakah ada kontak info
+    if (!tracking.hasContactInfo) score += 15;
+    
+    // Cek durasi pengisian form (terlalu cepat = mencurigakan)
+    const formDuration = tracking.formFillingDuration || 0;
+    if (formDuration < 5000) score += 20; // < 5 detik
+    if (formDuration < 10000) score += 10; // < 10 detik
+    
+    // Cek apakah ada device info yang mencurigakan
+    const userAgent = tracking.deviceInfo?.userAgent || '';
+    if (userAgent.includes('bot')) score += 30;
+    
+    // Cek apakah ada session ID
+    if (!tracking.sessionId) score += 5;
+    
+    // Cek apakah ada client IP
+    if (!tracking.clientIP) score += 5;
+    
+    return Math.min(score, 100); // Max 100
+  } catch (error) {
+    console.error('Error calculating risk score:', error);
+    return 0; // Return 0 if calculation fails
+  }
+}

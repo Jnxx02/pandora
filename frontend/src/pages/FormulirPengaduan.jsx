@@ -175,11 +175,22 @@ const FormulirPengaduan = () => {
                 tanggal_kejadian: data.tanggal || null,
                 kategori: data.kategori,
                 lampiran_info: lampiran ? lampiran.name : null,
-                lampiran_data_url: lampiranDataUrl ? lampiranDataUrl.substring(0, 1000) : null, // Limit size
+                lampiran_data_url: lampiranDataUrl || null, // Remove substring limitation
                 status: 'pending',
                 // Tracking data untuk deteksi laporan fiktif
                 tracking: trackingData
             };
+
+            // Debug info untuk troubleshooting
+            if (lampiranDataUrl) {
+                console.log('📤 Sending image data:', {
+                    fileName: lampiran?.name,
+                    fileSize: lampiran?.size,
+                    dataUrlLength: lampiranDataUrl.length,
+                    dataUrlStart: lampiranDataUrl.substring(0, 50) + '...',
+                    dataUrlEnd: '...' + lampiranDataUrl.substring(lampiranDataUrl.length - 50)
+                });
+            }
 
             await addPengaduan(pengaduanData);
             showNotification('success', 'Laporan berhasil dikirim! Terima kasih atas laporan Anda.');
@@ -228,36 +239,68 @@ const FormulirPengaduan = () => {
             setLampiran(file);
             const reader = new FileReader();
             reader.onloadend = () => {
-                // Kompresi gambar jika terlalu besar
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Resize jika terlalu besar
-                    let { width, height } = img;
-                    const maxDimension = 800;
-                    
-                    if (width > maxDimension || height > maxDimension) {
-                        if (width > height) {
-                            height = (height * maxDimension) / width;
-                            width = maxDimension;
-                        } else {
-                            width = (width * maxDimension) / height;
-                            height = maxDimension;
+                try {
+                    // Kompresi gambar jika terlalu besar
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Resize jika terlalu besar
+                        let { width, height } = img;
+                        const maxDimension = 800;
+                        
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = (height * maxDimension) / width;
+                                width = maxDimension;
+                            } else {
+                                width = (width * maxDimension) / height;
+                                height = maxDimension;
+                            }
                         }
-                    }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Kompresi dengan kualitas 0.7
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        // Validasi hasil kompresi
+                        if (compressedDataUrl && compressedDataUrl.length > 100) {
+                            setLampiranDataUrl(compressedDataUrl);
+                            console.log('✅ Gambar berhasil dikompresi:', {
+                                originalSize: file.size,
+                                compressedSize: compressedDataUrl.length,
+                                dimensions: `${width}x${height}`
+                            });
+                        } else {
+                            throw new Error('Kompresi gambar gagal');
+                        }
+                    };
                     
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
+                    img.onerror = () => {
+                        throw new Error('Gagal memuat gambar untuk kompresi');
+                    };
                     
-                    // Kompresi dengan kualitas 0.7
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    setLampiranDataUrl(compressedDataUrl);
-                };
-                img.src = reader.result;
+                    img.src = reader.result;
+                } catch (error) {
+                    console.error('Error processing image:', error);
+                    showNotification('error', 'Gagal memproses gambar. Silakan coba lagi.');
+                    e.target.value = '';
+                    setLampiran(null);
+                    setLampiranDataUrl('');
+                }
             };
+            
+            reader.onerror = () => {
+                showNotification('error', 'Gagal membaca file. Silakan coba lagi.');
+                e.target.value = '';
+                setLampiran(null);
+                setLampiranDataUrl('');
+            };
+            
             reader.readAsDataURL(file);
         }
     };
