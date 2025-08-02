@@ -1,22 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBerita } from '../../context/BeritaContext';
+import CustomNotification from '../../components/CustomNotification';
 
 const TambahEditBerita = () => {
-  const { berita, addBerita, updateBerita, deleteBerita, loading } = useBerita();
+  const { id } = useParams();
+  const { berita, addBerita, updateBerita, loading } = useBerita();
   const [form, setForm] = useState({ judul: '', gambar: '', konten: '', penulis: 'Admin Desa' });
-  const [editId, setEditId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const navigate = useNavigate();
 
   const showNotification = (type, message) => {
     setNotification({ show: true, type, message });
-    setTimeout(() => {
-      setNotification({ show: false, type: '', message: '' });
-    }, 3000);
   };
+
+  // Load berita data if editing
+  useEffect(() => {
+    if (id && berita.length > 0) {
+      const beritaToEdit = berita.find(b => String(b.id) === String(id));
+      if (beritaToEdit) {
+        setForm({ 
+          judul: beritaToEdit.judul, 
+          gambar: beritaToEdit.gambar || '', 
+          konten: beritaToEdit.konten, 
+          penulis: beritaToEdit.penulis || 'Admin Desa' 
+        });
+      }
+    }
+  }, [id, berita]);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -46,44 +59,23 @@ const TambahEditBerita = () => {
 
     setIsSaving(true);
     try {
-      if (editId) {
-        await updateBerita(editId, form);
+      if (id) {
+        await updateBerita(id, form);
         showNotification('success', 'Berita berhasil diupdate!');
       } else {
         await addBerita(form);
         showNotification('success', 'Berita berhasil dipublikasikan!');
       }
       
-      setForm({ judul: '', gambar: '', konten: '', penulis: 'Admin Desa' });
-      setEditId(null);
+      // Navigate back to list after short delay
+      setTimeout(() => {
+        navigate('/admin/berita');
+      }, 1500);
     } catch (error) {
       console.error("Gagal menyimpan berita:", error);
       showNotification('error', `Gagal menyimpan berita: ${error.message}`);
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleEdit = (b) => {
-    setForm({ 
-      judul: b.judul, 
-      gambar: b.gambar || '', 
-      konten: b.konten, 
-      penulis: b.penulis || 'Admin Desa' 
-    });
-    setEditId(b.id);
-    window.scrollTo(0, 0);
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
-    
-    try {
-      await deleteBerita(id);
-      showNotification('success', 'Berita berhasil dihapus!');
-    } catch (error) {
-      console.error("Gagal menghapus berita:", error);
-      showNotification('error', `Gagal menghapus berita: ${error.message}`);
     }
   };
 
@@ -118,7 +110,7 @@ const TambahEditBerita = () => {
 
   return (
     <motion.div 
-      className="py-10 max-w-6xl mx-auto bg-neutral min-h-screen px-4"
+      className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4"
       initial="initial"
       animate="in"
       exit="out"
@@ -126,37 +118,24 @@ const TambahEditBerita = () => {
       transition={pageTransition}
     >
       {/* Custom Notification */}
-      {notification.show && (
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
-            notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            {notification.type === 'success' ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            )}
-            <span className="font-medium">{notification.message}</span>
-          </div>
-        </motion.div>
-      )}
+      <CustomNotification notification={notification} setNotification={setNotification} />
 
       <motion.div 
-        className="mb-6"
+        className="mb-6 flex justify-between items-center"
         variants={itemVariants}
       >
         <h2 className="text-2xl font-bold text-secondary">
-          {editId ? 'Edit Berita' : 'Tambah Berita Baru'}
+          {id ? 'Edit Berita' : 'Tambah Berita Baru'}
         </h2>
+        <Link
+          to="/admin/berita"
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Kembali ke Daftar
+        </Link>
       </motion.div>
 
       <motion.div 
@@ -247,101 +226,18 @@ const TambahEditBerita = () => {
                   Menyimpan...
                 </span>
               ) : (
-                editId ? 'Update Berita' : 'Publikasikan Berita'
+                id ? 'Update Berita' : 'Publikasikan Berita'
               )}
             </motion.button>
 
-            {editId && (
-              <motion.button
-                type="button"
-                onClick={() => {
-                  setForm({ judul: '', gambar: '', konten: '', penulis: 'Admin Desa' });
-                  setEditId(null);
-                }}
-                className="px-6 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 transition font-semibold"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Batal Edit
-              </motion.button>
-            )}
+            <Link
+              to="/admin/berita"
+              className="px-6 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 transition font-semibold"
+            >
+              Batal
+            </Link>
           </motion.div>
         </form>
-      </motion.div>
-
-      {/* Daftar Berita */}
-      <motion.div 
-        className="mt-8 bg-white rounded-xl shadow p-6 border border-neutral/50"
-        variants={containerVariants}
-      >
-        <h3 className="text-xl font-bold text-secondary mb-6">Daftar Berita</h3>
-        
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-gray-500">Memuat berita...</p>
-          </div>
-        ) : berita.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">Belum ada berita yang ditambahkan.</div>
-        ) : (
-          <div className="space-y-4">
-            {berita.map((b) => (
-              <motion.div 
-                key={b.id} 
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                variants={itemVariants}
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="font-semibold text-lg text-primary">{b.judul}</h4>
-                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                        {b.status || 'published'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                      <span>
-                        📅 {b.tanggal_publikasi ? new Date(b.tanggal_publikasi).toLocaleDateString('id-ID', {
-                          day: 'numeric', month: 'long', year: 'numeric'
-                        }) : ''}
-                      </span>
-                      <span>
-                        👤 {b.penulis || 'Admin Desa'}
-                      </span>
-                      {b.gambar && (
-                        <span className="text-blue-600">🖼️ Ada gambar</span>
-                      )}
-                    </div>
-                    <p className="text-gray-700 text-sm line-clamp-3">
-                      {b.konten ? b.konten.substring(0, 200) + (b.konten.length > 200 ? '...' : '') : ''}
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      {b.konten ? `${b.konten.length} karakter` : '0 karakter'}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 ml-4">
-                    <motion.button
-                      onClick={() => handleEdit(b)}
-                      className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      ✏️ Edit
-                    </motion.button>
-                    <motion.button
-                      onClick={() => handleDelete(b.id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      🗑️ Hapus
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
       </motion.div>
     </motion.div>
   );

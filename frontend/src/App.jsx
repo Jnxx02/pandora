@@ -10,6 +10,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import Dashboard from './pages/admin/Dashboard'
 import LaporanPengaduan from './pages/admin/LaporanPengaduan'
 import TambahEditBerita from './pages/admin/TambahEditBerita'
+import DaftarBerita from './pages/admin/DaftarBerita'
 import EditStatistik from './pages/admin/EditStatistik'
 import EditPrasarana from './pages/admin/EditPrasarana'
 import DetailBerita from './pages/DetailBerita'
@@ -633,6 +634,16 @@ function App() {
                     </RequireAdmin>
                   } />
                   <Route path="/admin/berita" element={
+                    <RequireAdmin>
+                      <DaftarBerita />
+                    </RequireAdmin>
+                  } />
+                  <Route path="/admin/berita/tambah" element={
+                    <RequireAdmin>
+                      <TambahEditBerita />
+                    </RequireAdmin>
+                  } />
+                  <Route path="/admin/berita/edit/:id" element={
                     <RequireAdmin>
                       <TambahEditBerita />
                     </RequireAdmin>
