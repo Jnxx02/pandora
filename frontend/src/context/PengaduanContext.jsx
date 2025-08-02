@@ -104,7 +104,7 @@ export const PengaduanProvider = ({ children }) => {
         kategori: pengaduanData.kategori,
         lampiran_info: pengaduanData.lampiran_info || null,
         lampiran_data_url: pengaduanData.lampiran_data_url || null,
-        // Optimize tracking data
+        // Optimize tracking data - hanya IP address
         tracking: pengaduanData.tracking ? {
           deviceInfo: {
             userAgent: pengaduanData.tracking.deviceInfo?.userAgent?.substring(0, 200) || '',

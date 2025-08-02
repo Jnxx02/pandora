@@ -130,6 +130,18 @@ const FormulirPengaduan = () => {
                 return;
             }
 
+            // Validasi tanggal kejadian
+            if (data.tanggal) {
+              const selectedDate = new Date(data.tanggal);
+              const today = new Date();
+              today.setHours(23, 59, 59, 999); // Set to end of today
+              
+              if (selectedDate > today) {
+                showNotification('error', 'Tanggal kejadian tidak boleh melebihi hari ini!');
+                return;
+              }
+            }
+
             // Validasi kontak minimal
             if (!data.email && !data.whatsapp && !isAnonim) {
                 showNotification('error', 'Untuk laporan non-anonim, harap isi email ATAU nomor WhatsApp untuk verifikasi!');
@@ -162,7 +174,8 @@ const FormulirPengaduan = () => {
                 formSubmissionTime: new Date().toISOString(),
                 formFillingDuration: Date.now() - (window.formStartTime || Date.now()),
                 captchaQuestion: captchaQuestion.question,
-                hasContactInfo: !!(data.email || data.whatsapp)
+                hasContactInfo: !!(data.email || data.whatsapp),
+                isAnonymous: isAnonim
             };
 
             const pengaduanData = {
@@ -539,8 +552,12 @@ const FormulirPengaduan = () => {
                                             name="tanggal"
                                             id="tanggal"
                                             className="block w-full rounded-md border-neutral px-3 py-2 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm"
+                                            max={new Date().toISOString().split('T')[0]}
                                         />
                                     </div>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Tanggal kejadian tidak boleh melebihi hari ini
+                                    </p>
                                 </div>
                             )}
 

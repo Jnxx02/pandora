@@ -2,38 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBerita } from '../../context/BeritaContext';
+import { usePengaduan } from '../../context/PengaduanContext';
 
 const Dashboard = () => {
   const { berita } = useBerita();
-  const [totalLaporan, setTotalLaporan] = useState(0);
-  const [recentLaporan, setRecentLaporan] = useState([]);
+  const { pengaduan, loading } = usePengaduan();
   const [statistik, setStatistik] = useState([]);
 
   useEffect(() => {
     try {
-      // Load pengaduan data
-      const storedLaporan = localStorage.getItem('pengaduan');
-      const laporanData = storedLaporan ? JSON.parse(storedLaporan) : [];
-      setTotalLaporan(laporanData.length);
-      setRecentLaporan(laporanData.slice(-3).reverse()); // Get last 3 laporan
-
       // Load statistik data
       const storedStatistik = localStorage.getItem('statistik');
       const statistikData = storedStatistik ? JSON.parse(storedStatistik) : [];
       setStatistik(statistikData);
     } catch (error) {
-      console.error("Gagal memuat data dari localStorage:", error);
+      console.error("Gagal memuat data statistik:", error);
     }
   }, []);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Tanggal tidak tersedia';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Tanggal tidak valid';
+      
+      return date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Tanggal tidak tersedia';
+    }
   };
 
   const getStatusColor = (status) => {
@@ -49,6 +52,9 @@ const Dashboard = () => {
     }
   };
 
+  // Get recent laporan (last 3)
+  const recentLaporan = pengaduan.slice(-3).reverse();
+  
   // Get recent berita (last 3)
   const recentBerita = berita.slice(0, 3);
 
@@ -125,7 +131,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Laporan</p>
-                <p className="text-2xl font-bold text-primary">{totalLaporan}</p>
+                <p className="text-2xl font-bold text-primary">{pengaduan.length}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,7 +274,7 @@ const Dashboard = () => {
                           </span>
                         </div>
                         <p className="text-sm text-gray-500">
-                          {formatDate(laporan.tanggal)}
+                          {formatDate(laporan.tanggal_pengaduan)}
                         </p>
                       </div>
                     </motion.div>

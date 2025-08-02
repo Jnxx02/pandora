@@ -533,16 +533,13 @@ app.post('/api/pengaduan', async (req, res) => {
         lampiran_size,
         lampiran_type,
         status: 'pending',
-        // Tracking data - handle safely
+        // Tracking data - hanya IP address
         client_ip: tracking?.clientIP || null,
         user_agent: tracking?.deviceInfo?.userAgent || null,
         device_info: tracking?.deviceInfo ? JSON.stringify(tracking.deviceInfo) : null,
         session_id: tracking?.sessionId || null,
         form_submission_time: tracking?.formSubmissionTime || null,
-        form_filling_duration: tracking?.formFillingDuration || null,
-        verification_status: 'unverified',
-        verification_notes: null,
-        risk_score: calculateRiskScore(tracking)
+        form_filling_duration: tracking?.formFillingDuration || null
       };
       
       console.log('💾 Inserting data to Supabase...');
@@ -607,9 +604,6 @@ app.post('/api/pengaduan', async (req, res) => {
         session_id: tracking?.sessionId || null,
         form_submission_time: tracking?.formSubmissionTime || null,
         form_filling_duration: tracking?.formFillingDuration || null,
-        verification_status: 'unverified',
-        verification_notes: null,
-        risk_score: calculateRiskScore(tracking),
         tanggal_pengaduan: new Date().toISOString()
       };
       
@@ -789,7 +783,7 @@ app.get('/api/pengaduan/high-risk', async (req, res) => {
   }
 });
 
-// Endpoint untuk mendapatkan statistik berdasarkan periode
+// Endpoint untuk mendapatkan statistik pengaduan berdasarkan periode
 app.get('/api/pengaduan/stats/period', async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
@@ -799,137 +793,57 @@ app.get('/api/pengaduan/stats/period', async (req, res) => {
         .from('pengaduan')
         .select('*');
       
-      if (start_date) {
-        query = query.gte('tanggal_pengaduan', start_date);
-      }
-      if (end_date) {
-        query = query.lte('tanggal_pengaduan', end_date);
+      if (start_date && end_date) {
+        query = query
+          .gte('tanggal_pengaduan', start_date)
+          .lte('tanggal_pengaduan', end_date);
       }
       
       const { data, error } = await query;
       
       if (error) {
         console.error('Supabase error:', error);
-        return res.status(500).json({ error: 'Gagal mengambil statistik periode' });
+        return res.status(500).json({ error: 'Gagal mendapatkan statistik' });
       }
       
-      const filteredPengaduan = data || [];
       const stats = {
-        total_pengaduan: filteredPengaduan.length,
-        pengaduan_count: filteredPengaduan.filter(p => p.klasifikasi === 'pengaduan').length,
-        aspirasi_count: filteredPengaduan.filter(p => p.klasifikasi === 'aspirasi').length,
-        pending_count: filteredPengaduan.filter(p => p.status === 'pending').length,
-        proses_count: filteredPengaduan.filter(p => p.status === 'proses').length,
-        selesai_count: filteredPengaduan.filter(p => p.status === 'selesai').length,
-        with_lampiran: filteredPengaduan.filter(p => p.lampiran_data_url).length,
-        avg_risk_score: filteredPengaduan.length > 0 
-          ? Math.round(filteredPengaduan.reduce((sum, p) => sum + (p.risk_score || 0), 0) / filteredPengaduan.length * 100) / 100
-          : 0
+        total: data.length,
+        pengaduan: data.filter(p => p.klasifikasi === 'pengaduan').length,
+        aspirasi: data.filter(p => p.klasifikasi === 'aspirasi').length,
+        pending: data.filter(p => p.status === 'pending').length,
+        proses: data.filter(p => p.status === 'proses').length,
+        selesai: data.filter(p => p.status === 'selesai').length,
+        with_attachment: data.filter(p => p.lampiran_data_url).length,
+        without_attachment: data.filter(p => !p.lampiran_data_url).length
       };
       
       res.json(stats);
     } else {
       // Fallback untuk localStorage
       const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
-      const filteredPengaduan = storedPengaduan.filter(p => {
-        const pengaduanDate = new Date(p.tanggal_pengaduan);
-        const start = start_date ? new Date(start_date) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-        const end = end_date ? new Date(end_date) : new Date();
-        return pengaduanDate >= start && pengaduanDate <= end;
+      const filteredData = storedPengaduan.filter(p => {
+        if (!start_date || !end_date) return true;
+        const reportDate = new Date(p.tanggal_pengaduan);
+        const start = new Date(start_date);
+        const end = new Date(end_date);
+        return reportDate >= start && reportDate <= end;
       });
       
       const stats = {
-        total_pengaduan: filteredPengaduan.length,
-        pengaduan_count: filteredPengaduan.filter(p => p.klasifikasi === 'pengaduan').length,
-        aspirasi_count: filteredPengaduan.filter(p => p.klasifikasi === 'aspirasi').length,
-        pending_count: filteredPengaduan.filter(p => p.status === 'pending').length,
-        proses_count: filteredPengaduan.filter(p => p.status === 'proses').length,
-        selesai_count: filteredPengaduan.filter(p => p.status === 'selesai').length,
-        with_lampiran: filteredPengaduan.filter(p => p.lampiran_data_url).length,
-        avg_risk_score: filteredPengaduan.length > 0 
-          ? Math.round(filteredPengaduan.reduce((sum, p) => sum + (p.risk_score || 0), 0) / filteredPengaduan.length * 100) / 100
-          : 0
+        total: filteredData.length,
+        pengaduan: filteredData.filter(p => p.klasifikasi === 'pengaduan').length,
+        aspirasi: filteredData.filter(p => p.klasifikasi === 'aspirasi').length,
+        pending: filteredData.filter(p => p.status === 'pending').length,
+        proses: filteredData.filter(p => p.status === 'proses').length,
+        selesai: filteredData.filter(p => p.status === 'selesai').length,
+        with_attachment: filteredData.filter(p => p.lampiran_data_url).length,
+        without_attachment: filteredData.filter(p => !p.lampiran_data_url).length
       };
       
       res.json(stats);
     }
   } catch (error) {
-    console.error('Error in GET /api/pengaduan/stats/period:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
-  }
-});
-
-// Endpoint untuk mendapatkan rekomendasi aksi
-app.get('/api/pengaduan/:id/recommendation', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (supabase && supabaseStatus === 'configured') {
-      const { data, error } = await supabase
-        .from('pengaduan')
-        .select('risk_score, verification_status, email, whatsapp')
-        .eq('id', id)
-        .single();
-      
-      if (error) {
-        console.error('Supabase error:', error);
-        return res.status(500).json({ error: 'Gagal mendapatkan rekomendasi' });
-      }
-      
-      if (!data) {
-        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
-      }
-      
-      const risk_score = data.risk_score || 0;
-      const verification_status = data.verification_status || 'unverified';
-      const has_contact = !!(data.email || data.whatsapp);
-      
-      let recommendation = 'Review manual diperlukan';
-      
-      if (risk_score >= 70) {
-        recommendation = 'Segera review manual - Risk score sangat tinggi';
-      } else if (risk_score >= 50) {
-        recommendation = 'Perlu verifikasi tambahan - Risk score tinggi';
-      } else if (verification_status === 'failed') {
-        recommendation = 'Tolak pengaduan - Status verifikasi gagal';
-      } else if (!has_contact) {
-        recommendation = 'Minta informasi kontak untuk verifikasi';
-      } else if (verification_status === 'verified') {
-        recommendation = 'Proses normal - Status terverifikasi';
-      }
-      
-      res.json({ recommendation });
-    } else {
-      // Fallback untuk localStorage
-      const storedPengaduan = JSON.parse(localStorage.getItem('pengaduan') || '[]');
-      const pengaduan = storedPengaduan.find(p => p.id === id);
-      
-      if (!pengaduan) {
-        return res.status(404).json({ error: 'Pengaduan tidak ditemukan' });
-      }
-      
-      const risk_score = pengaduan.risk_score || 0;
-      const verification_status = pengaduan.verification_status || 'unverified';
-      const has_contact = !!(pengaduan.email || pengaduan.whatsapp);
-      
-      let recommendation = 'Review manual diperlukan';
-      
-      if (risk_score >= 70) {
-        recommendation = 'Segera review manual - Risk score sangat tinggi';
-      } else if (risk_score >= 50) {
-        recommendation = 'Perlu verifikasi tambahan - Risk score tinggi';
-      } else if (verification_status === 'failed') {
-        recommendation = 'Tolak pengaduan - Status verifikasi gagal';
-      } else if (!has_contact) {
-        recommendation = 'Minta informasi kontak untuk verifikasi';
-      } else if (verification_status === 'verified') {
-        recommendation = 'Proses normal - Status terverifikasi';
-      }
-      
-      res.json({ recommendation });
-    }
-  } catch (error) {
-    console.error('Error in GET /api/pengaduan/:id/recommendation:', error);
+    console.error('Error getting period stats:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });
@@ -1036,48 +950,18 @@ module.exports = app;
 
 // Helper function untuk mendapatkan MIME type
 function getMimeType(filename) {
+  if (!filename) return 'application/octet-stream';
+  
   const ext = filename.split('.').pop().toLowerCase();
   const mimeTypes = {
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
     'png': 'image/png',
     'gif': 'image/gif',
-    'webp': 'image/webp'
+    'pdf': 'application/pdf',
+    'doc': 'application/msword',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   };
+  
   return mimeTypes[ext] || 'application/octet-stream';
-}
-
-// Helper function untuk menghitung risk score
-function calculateRiskScore(tracking) {
-  if (!tracking) return 0;
-  
-  let score = 0;
-  
-  try {
-    // Cek apakah anonim
-    if (tracking.isAnonymous) score += 10;
-    
-    // Cek apakah ada kontak info
-    if (!tracking.hasContactInfo) score += 15;
-    
-    // Cek durasi pengisian form (terlalu cepat = mencurigakan)
-    const formDuration = tracking.formFillingDuration || 0;
-    if (formDuration < 5000) score += 20; // < 5 detik
-    if (formDuration < 10000) score += 10; // < 10 detik
-    
-    // Cek apakah ada device info yang mencurigakan
-    const userAgent = tracking.deviceInfo?.userAgent || '';
-    if (userAgent.includes('bot')) score += 30;
-    
-    // Cek apakah ada session ID
-    if (!tracking.sessionId) score += 5;
-    
-    // Cek apakah ada client IP
-    if (!tracking.clientIP) score += 5;
-    
-    return Math.min(score, 100); // Max 100
-  } catch (error) {
-    console.error('Error calculating risk score:', error);
-    return 0; // Return 0 if calculation fails
-  }
 }

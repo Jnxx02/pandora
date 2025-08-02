@@ -43,16 +43,18 @@ const DetailModal = ({ laporan, onClose }) => {
       >
         <div className="flex items-center justify-between mb-4 border-b border-neutral pb-3">
           <h3 className="text-xl font-bold text-secondary">{laporan.judul}</h3>
-          <motion.button
-            onClick={onClose}
-            className="text-text-secondary hover:text-primary transition"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </motion.button>
+          <div className="flex items-center space-x-2">
+            <motion.button
+              onClick={onClose}
+              className="text-text-secondary hover:text-primary transition"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </motion.button>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -99,11 +101,20 @@ const DetailModal = ({ laporan, onClose }) => {
               <div>
                 <span className="font-medium">Tanggal Pengaduan:</span> {formatDate(laporan.tanggal_pengaduan)}
               </div>
-              {laporan.tanggal_ditangani && (
-                <div>
-                  <span className="font-medium">Tanggal Ditangani:</span> {formatDate(laporan.tanggal_ditangani)}
+              <div className="info-row">
+                  <div className="info-label">Tanggal Ditangani:</div>
+                  <div className="info-value">
+                    {laporan.tanggal_ditangani ? formatDate(laporan.tanggal_ditangani) : 'Belum ditangani'}
+                  </div>
                 </div>
-              )}
+                <div>
+                  <span className="font-semibold text-gray-700">IP Address:</span>
+                  <span className="ml-2 text-gray-900">{laporan.client_ip || 'Tidak tersedia'}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">User Agent:</span>
+                  <span className="ml-2 text-gray-900">{laporan.user_agent ? laporan.user_agent.substring(0, 100) + '...' : 'Tidak tersedia'}</span>
+                </div>
             </div>
           </div>
 
@@ -114,97 +125,131 @@ const DetailModal = ({ laporan, onClose }) => {
           </div>
 
           {/* Lampiran */}
-          {laporan.lampiran_info && (
+          {laporan.lampiran_data_url && (
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-2">Lampiran</h4>
-              <div className="space-y-2">
-                <div>
-                  <span className="font-medium">File:</span> {laporan.lampiran_info}
-                </div>
-                {laporan.lampiran_data_url && (
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => {
-                          try {
-                            // Coba buat blob URL untuk gambar
-                            fetch(laporan.lampiran_data_url)
-                              .then(response => response.blob())
-                              .then(blob => {
-                                const url = window.URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = laporan.lampiran_info || 'lampiran.jpg';
-                                document.body.appendChild(a);
-                                a.click();
-                                window.URL.revokeObjectURL(url);
-                                document.body.removeChild(a);
-                              })
-                              .catch(error => {
-                                console.error('Error downloading image:', error);
-                                alert('Gagal mengunduh gambar. Silakan coba lagi.');
-                              });
-                          } catch (error) {
-                            console.error('Error with image URL:', error);
-                            alert('Gambar tidak dapat diakses. Silakan hubungi admin.');
-                          }
-                        }}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition-colors inline-flex items-center"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Download Gambar
-                      </button>
-                      
-                      <button
-                        onClick={() => {
-                          try {
-                            // Coba tampilkan gambar dalam tab baru
-                            const newWindow = window.open();
-                            newWindow.document.write(`
-                              <html>
-                                <head>
-                                  <title>Preview Lampiran</title>
-                                  <style>
-                                    body { margin: 0; padding: 20px; background: #f5f5f5; }
-                                    img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                                    .container { text-align: center; }
-                                    .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
-                                  </style>
-                                </head>
-                                <body>
-                                  <div class="container">
-                                    <h2>Preview Lampiran</h2>
-                                    <img src="${laporan.lampiran_data_url}" alt="Lampiran" onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
-                                  </div>
-                                </body>
-                              </html>
-                            `);
-                            newWindow.document.close();
-                          } catch (error) {
-                            console.error('Error opening image:', error);
-                            alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
-                          }
-                        }}
-                        className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition-colors inline-flex items-center"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        Preview Gambar
-                      </button>
+              <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+                Lampiran
+              </h4>
+              
+              <div className="space-y-3">
+                {/* File Info */}
+                <div className="flex items-center justify-between bg-white p-3 rounded-md border">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                     </div>
-                    
-                    {/* Info tentang ukuran data */}
-                    <div className="text-xs text-gray-500 mt-2">
-                      <p>Ukuran data: {Math.round(laporan.lampiran_data_url.length / 1024)} KB</p>
-                      {laporan.lampiran_data_url.length > 1000 && (
-                        <p className="text-yellow-600">
-                          ⚠️ Data gambar sangat besar. Gunakan tombol download untuk mengunduh file.
+                    <div>
+                      <p className="font-medium text-gray-900">{laporan.lampiran_info || 'Lampiran'}</p>
+                      <p className="text-sm text-gray-500">
+                        {Math.round(laporan.lampiran_data_url.length / 1024)} KB • {laporan.lampiran_type || 'Image'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => {
+                      try {
+                        fetch(laporan.lampiran_data_url)
+                          .then(response => response.blob())
+                          .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = laporan.lampiran_info || 'lampiran.jpg';
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                          })
+                          .catch(error => {
+                            console.error('Error downloading image:', error);
+                            alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                          });
+                      } catch (error) {
+                        console.error('Error with image URL:', error);
+                        alert('Gambar tidak dapat diakses.');
+                      }
+                    }}
+                    className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      try {
+                        const newWindow = window.open();
+                        newWindow.document.write(`
+                          <html>
+                            <head>
+                              <title>Preview Lampiran</title>
+                              <style>
+                                body { margin: 0; padding: 20px; background: #f5f5f5; font-family: Arial, sans-serif; }
+                                img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                .container { text-align: center; max-width: 800px; margin: 0 auto; }
+                                .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                                .info { background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; text-align: left; }
+                                .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                              </style>
+                            </head>
+                            <body>
+                              <div class="container">
+                                <div class="header">
+                                  <h2>Preview Lampiran</h2>
+                                  <div class="info">
+                                    <strong>File:</strong> ${laporan.lampiran_info}<br>
+                                    <strong>Ukuran:</strong> ${Math.round(laporan.lampiran_data_url.length / 1024)} KB<br>
+                                    <strong>Tipe:</strong> ${laporan.lampiran_type || 'Image'}
+                                  </div>
+                                </div>
+                                <div class="loading">Memuat gambar...</div>
+                                <img src="${laporan.lampiran_data_url}" alt="Lampiran" 
+                                  onload="document.querySelector('.loading').style.display='none';"
+                                  onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
+                              </div>
+                            </body>
+                          </html>
+                        `);
+                        newWindow.document.close();
+                      } catch (error) {
+                        console.error('Error opening image:', error);
+                        alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                      }
+                    }}
+                    className="flex-1 bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Preview
+                  </button>
+                </div>
+
+                {/* Warning for large files */}
+                {laporan.lampiran_data_url.length > 500000 && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                    <div className="flex">
+                      <svg className="w-5 h-5 text-yellow-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      <div>
+                        <p className="text-sm text-yellow-800">
+                          <strong>File besar:</strong> Gunakan tombol Download untuk mengunduh file dengan ukuran optimal.
                         </p>
-                      )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -225,131 +270,239 @@ const DetailModal = ({ laporan, onClose }) => {
   );
 };
 
-// Komponen untuk menangani gambar lampiran
-const ImageHandler = ({ lampiran_info, lampiran_data_url, lampiran_size, lampiran_type, lampiran_compressed }) => {
-  const handleDownload = () => {
+// Komponen Modal Preview Laporan
+const PreviewModal = ({ laporan, onClose, onDownload }) => {
+  if (!laporan) return null;
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
     try {
-      fetch(lampiran_data_url)
-        .then(response => response.blob())
-        .then(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = lampiran_info || 'lampiran.jpg';
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-        })
-        .catch(error => {
-          console.error('Error downloading image:', error);
-          alert('Gagal mengunduh gambar. Silakan coba lagi.');
-        });
+      return new Date(dateString).toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
-      console.error('Error with image URL:', error);
-      alert('Gambar tidak dapat diakses.');
+      return dateString;
     }
   };
 
-  const handlePreview = () => {
-    try {
-      // Validasi URL gambar
-      if (!lampiran_data_url || lampiran_data_url.length < 100) {
-        alert('URL gambar tidak valid atau terlalu pendek');
-        return;
-      }
-
-      const newWindow = window.open();
-      newWindow.document.write(`
-        <html>
-          <head>
-            <title>Preview Lampiran</title>
-            <style>
-              body { margin: 0; padding: 20px; background: #f5f5f5; }
-              img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-              .container { text-align: center; }
-              .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
-              .info { background: #e6fffa; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 14px; }
-              .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h2>Preview Lampiran</h2>
-              <div class="info">
-                <strong>File:</strong> ${lampiran_info}<br>
-                <strong>Ukuran:</strong> ${lampiran_size ? Math.round(lampiran_size / 1024) : 'Unknown'} KB<br>
-                <strong>Tipe:</strong> ${lampiran_type || 'Unknown'}<br>
-                <strong>Status:</strong> ${lampiran_compressed ? 'Dikompresi' : 'Belum dikompresi'}<br>
-                <strong>URL Length:</strong> ${lampiran_data_url.length} characters
-              </div>
-              <div class="loading">Memuat gambar...</div>
-              <img src="${lampiran_data_url}" alt="Lampiran" 
-                onload="document.querySelector('.loading').style.display='none';"
-                onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. URL mungkin terlalu panjang atau tidak valid. Silakan download file untuk melihatnya.</div>'"/>
-            </div>
-          </body>
-        </html>
-      `);
-      newWindow.document.close();
-    } catch (error) {
-      console.error('Error opening image:', error);
-      alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending': return 'Menunggu';
+      case 'proses': return 'Proses';
+      case 'selesai': return 'Selesai';
+      default: return status || 'Baru';
     }
   };
 
-  if (!lampiran_info) return <span className="text-xs text-gray-400">-</span>;
-
-  const getSizeCategory = (size) => {
-    if (!size) return 'Unknown';
-    if (size < 1024) return 'Kecil';
-    if (size < 10240) return 'Sedang';
-    if (size < 102400) return 'Besar';
-    return 'Sangat Besar';
-  };
-
-  const getTypeIcon = (type) => {
-    if (!type) return '📄';
-    if (type.includes('jpeg') || type.includes('jpg')) return '🖼️';
-    if (type.includes('png')) return '🖼️';
-    if (type.includes('gif')) return '🎬';
-    return '📄';
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'proses': return 'bg-blue-100 text-blue-800';
+      case 'selesai': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
-    <div className="flex items-center justify-center space-x-1">
-      <svg className="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-      </svg>
-      <div className="flex flex-col space-y-1">
-        <span className="text-xs text-green-600">Ada</span>
-        <div className="flex space-x-1">
-          <button
-            onClick={handleDownload}
-            className="text-xs bg-blue-500 text-white px-1 py-0.5 rounded hover:bg-blue-600 transition-colors"
-            title="Download gambar"
-          >
-            ⬇️
-          </button>
-          <button
-            onClick={handlePreview}
-            className="text-xs bg-green-500 text-white px-1 py-0.5 rounded hover:bg-green-600 transition-colors"
-            title="Preview gambar"
-          >
-            👁️
-          </button>
-        </div>
-        <div className="text-xs text-gray-500 space-y-1">
-          <div className="flex items-center">
-            <span className="mr-1">{getTypeIcon(lampiran_type)}</span>
-            <span>{getSizeCategory(lampiran_size)}</span>
+    <motion.div 
+      className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div 
+        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-4/5 lg:w-3/4 max-h-[90vh] overflow-y-auto relative"
+        onClick={e => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 50 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+      >
+        <div className="flex items-center justify-between mb-6 border-b border-neutral pb-4">
+          <div>
+            <h3 className="text-2xl font-bold text-secondary">Preview Laporan</h3>
+            <p className="text-sm text-gray-500">Laporan akan ditampilkan seperti ini saat di-download</p>
           </div>
-          {lampiran_compressed && (
-            <span className="text-green-600">✓ Kompresi</span>
-          )}
+          <div className="flex items-center space-x-3">
+            <motion.button
+              onClick={() => onDownload(laporan)}
+              className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Download PDF
+            </motion.button>
+            <motion.button
+              onClick={onClose}
+              className="text-text-secondary hover:text-primary transition"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </motion.button>
+          </div>
         </div>
-      </div>
-    </div>
+
+        {/* Preview Content */}
+        <div className="bg-gray-50 p-6 rounded-lg border">
+          <div className="bg-white p-8 rounded-lg shadow-sm">
+            {/* Header */}
+            <div className="text-center border-b-2 border-gray-300 pb-6 mb-6">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">LAPORAN WARGA</h1>
+              <h2 className="text-xl font-semibold text-gray-700 mb-2">{laporan.judul}</h2>
+              <p className="text-gray-600">Desa Moncongloe Bulu</p>
+              <p className="text-sm text-gray-500 mt-2">Kecamatan Moncongloe, Kabupaten Maros, Sulawesi Selatan</p>
+            </div>
+
+            {/* Informasi Pelapor */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-blue-600 border-b border-gray-200 pb-2 mb-4">INFORMASI PELAPOR</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="font-semibold text-gray-700">Nama:</span>
+                  <span className="ml-2 text-gray-900">{laporan.nama || 'Anonim'}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Email:</span>
+                  <span className="ml-2 text-gray-900">{laporan.email || '-'}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">WhatsApp:</span>
+                  <span className="ml-2 text-gray-900">{laporan.whatsapp || '-'}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Status:</span>
+                  <span className={`ml-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(laporan.status)}`}>
+                    {getStatusText(laporan.status)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Detail Laporan */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-blue-600 border-b border-gray-200 pb-2 mb-4">DETAIL LAPORAN</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="font-semibold text-gray-700">ID Laporan:</span>
+                  <span className="ml-2 text-gray-900">{laporan.id}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Klasifikasi:</span>
+                  <span className="ml-2 text-gray-900">{laporan.klasifikasi}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Kategori:</span>
+                  <span className="ml-2 text-gray-900">{laporan.kategori}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Tanggal Kejadian:</span>
+                  <span className="ml-2 text-gray-900">{formatDate(laporan.tanggal_kejadian)}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Tanggal Pengaduan:</span>
+                  <span className="ml-2 text-gray-900">{formatDate(laporan.tanggal_pengaduan)}</span>
+                </div>
+                {laporan.tanggal_ditangani && (
+                  <div>
+                    <span className="font-semibold text-gray-700">Tanggal Ditangani:</span>
+                    <span className="ml-2 text-gray-900">{formatDate(laporan.tanggal_ditangani)}</span>
+                  </div>
+                )}
+                <div>
+                  <span className="font-semibold text-gray-700">IP Address:</span>
+                  <span className="ml-2 text-gray-900">{laporan.client_ip || 'Tidak tersedia'}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">User Agent:</span>
+                  <span className="ml-2 text-gray-900">{laporan.user_agent ? laporan.user_agent.substring(0, 100) + '...' : 'Tidak tersedia'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Isi Laporan */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-blue-600 border-b border-gray-200 pb-2 mb-4">ISI LAPORAN</h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">{laporan.isi}</p>
+              </div>
+            </div>
+
+            {/* Lampiran */}
+            {laporan.lampiran_info && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-blue-600 border-b border-gray-200 pb-2 mb-4">LAMPIRAN</h3>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <span className="font-semibold text-gray-700">File:</span>
+                      <span className="ml-2 text-gray-900">{laporan.lampiran_info}</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-700">Ukuran:</span>
+                      <span className="ml-2 text-gray-900">{laporan.lampiran_size ? Math.round(laporan.lampiran_size / 1024) : 'Unknown'} KB</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-700">Tipe:</span>
+                      <span className="ml-2 text-gray-900">{laporan.lampiran_type || 'Unknown'}</span>
+                    </div>
+                  </div>
+                  {laporan.lampiran_data_url && (
+                    <div className="mt-4">
+                      <img 
+                        src={laporan.lampiran_data_url} 
+                        alt={laporan.lampiran_info} 
+                        className="max-w-full max-h-64 border border-gray-300 rounded-lg shadow-sm"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <div className="hidden text-center text-gray-500 text-sm py-4">
+                        Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Catatan Admin */}
+            {laporan.catatan_admin && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-blue-600 border-b border-gray-200 pb-2 mb-4">CATATAN ADMIN</h3>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-blue-900 leading-relaxed whitespace-pre-wrap">{laporan.catatan_admin}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="mt-8 pt-6 border-t border-gray-300 text-center text-sm text-gray-500">
+              <div className="flex justify-between items-center flex-wrap gap-4">
+                <div className="flex-1 text-left">
+                  <p>Dokumen ini dibuat secara otomatis pada {new Date().toLocaleDateString('id-ID')} {new Date().toLocaleTimeString('id-ID')}</p>
+                </div>
+                <div className="flex-1 text-right">
+                  <p>© 2025 Desa Moncongloe Bulu</p>
+                  <p>Sistem Pengaduan Warga</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -430,7 +583,96 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                   </select>
                 </td>
                 <td className="py-3 px-4 border-b border-neutral text-center">
-                  <ImageHandler lampiran_info={laporan.lampiran_info} lampiran_data_url={laporan.lampiran_data_url} lampiran_size={laporan.lampiran_size} lampiran_type={laporan.lampiran_type} lampiran_compressed={laporan.lampiran_compressed} />
+                  {laporan.lampiran_data_url ? (
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="flex items-center space-x-1">
+                        <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                        <span className="text-xs text-green-600 font-medium">Ada</span>
+                      </div>
+                      <div className="flex space-x-1">
+                        <button
+                          onClick={() => {
+                            try {
+                              const newWindow = window.open();
+                              newWindow.document.write(`
+                                <html>
+                                  <head>
+                                    <title>Preview Lampiran</title>
+                                    <style>
+                                      body { margin: 0; padding: 20px; background: #f5f5f5; font-family: Arial, sans-serif; }
+                                      img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                      .container { text-align: center; max-width: 800px; margin: 0 auto; }
+                                      .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                                      .info { background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; text-align: left; }
+                                      .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                      .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                    </style>
+                                  </head>
+                                  <body>
+                                    <div class="container">
+                                      <div class="header">
+                                        <h2>Preview Lampiran</h2>
+                                        <div class="info">
+                                          <strong>File:</strong> ${laporan.lampiran_info}<br>
+                                          <strong>Ukuran:</strong> ${Math.round(laporan.lampiran_data_url.length / 1024)} KB<br>
+                                          <strong>Tipe:</strong> ${laporan.lampiran_type || 'Image'}
+                                        </div>
+                                      </div>
+                                      <div class="loading">Memuat gambar...</div>
+                                      <img src="${laporan.lampiran_data_url}" alt="Lampiran" 
+                                        onload="document.querySelector('.loading').style.display='none';"
+                                        onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
+                                    </div>
+                                  </body>
+                                </html>
+                              `);
+                              newWindow.document.close();
+                            } catch (error) {
+                              console.error('Error opening image:', error);
+                              alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                            }
+                          }}
+                          className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                          title="Lihat lampiran"
+                        >
+                          Lihat
+                        </button>
+                        <button
+                          onClick={() => {
+                            try {
+                              fetch(laporan.lampiran_data_url)
+                                .then(response => response.blob())
+                                .then(blob => {
+                                  const url = window.URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = laporan.lampiran_info || 'lampiran.jpg';
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  window.URL.revokeObjectURL(url);
+                                  document.body.removeChild(a);
+                                })
+                                .catch(error => {
+                                  console.error('Error downloading image:', error);
+                                  alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                                });
+                            } catch (error) {
+                              console.error('Error with image URL:', error);
+                              alert('Gambar tidak dapat diakses.');
+                            }
+                          }}
+                          className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors"
+                          title="Download lampiran"
+                        >
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="py-3 px-4 border-b border-neutral text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -475,6 +717,23 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
   );
 };
 
+// Helper functions untuk format data
+const getSizeCategory = (size) => {
+  if (!size) return 'Unknown';
+  if (size < 1024) return 'Kecil';
+  if (size < 10240) return 'Sedang';
+  if (size < 102400) return 'Besar';
+  return 'Sangat Besar';
+};
+
+const getTypeIcon = (type) => {
+  if (!type) return '📄';
+  if (type.includes('jpeg') || type.includes('jpg')) return '🖼️';
+  if (type.includes('png')) return '🖼️';
+  if (type.includes('gif')) return '🎬';
+  return '📄';
+};
+
 // Komponen Utama
 function LaporanPengaduan() {
   const { pengaduan, loading, error, refetchPengaduan, updatePengaduan, deletePengaduan } = usePengaduan();
@@ -482,6 +741,7 @@ function LaporanPengaduan() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLaporan, setSelectedLaporan] = useState(null);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
+  const [downloadPeriod, setDownloadPeriod] = useState('all'); // all, weekly, monthly, yearly
 
   const showNotification = (type, message) => {
     setNotification({ show: true, type, message });
@@ -490,6 +750,48 @@ function LaporanPengaduan() {
   // Filter data berdasarkan klasifikasi
   const laporanPengaduan = pengaduan.filter(l => l.klasifikasi === 'pengaduan');
   const laporanAspirasi = pengaduan.filter(l => l.klasifikasi === 'aspirasi');
+
+  // Function untuk filter data berdasarkan periode
+  const filterDataByPeriod = (data, period) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    switch (period) {
+      case 'weekly':
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return data.filter(l => {
+          const reportDate = new Date(l.tanggal_pengaduan);
+          return reportDate >= weekAgo && reportDate <= today;
+        });
+      
+      case 'monthly':
+        const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        return data.filter(l => {
+          const reportDate = new Date(l.tanggal_pengaduan);
+          return reportDate >= monthAgo && reportDate <= today;
+        });
+      
+      case 'yearly':
+        const yearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+        return data.filter(l => {
+          const reportDate = new Date(l.tanggal_pengaduan);
+          return reportDate >= yearAgo && reportDate <= today;
+        });
+      
+      default: // 'all'
+        return data;
+    }
+  };
+
+  // Function untuk mendapatkan nama periode
+  const getPeriodName = (period) => {
+    switch (period) {
+      case 'weekly': return 'Mingguan';
+      case 'monthly': return 'Bulanan';
+      case 'yearly': return 'Tahunan';
+      default: return 'Semua';
+    }
+  };
 
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
@@ -521,6 +823,305 @@ function LaporanPengaduan() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedLaporan(null);
+  };
+
+  // Function untuk download semua laporan dalam format PDF berdasarkan periode
+  const downloadBulkReports = (laporanList) => {
+    try {
+      // Filter data berdasarkan periode yang dipilih
+      const filteredData = filterDataByPeriod(laporanList, downloadPeriod);
+      
+      if (filteredData.length === 0) {
+        showNotification('warning', `Tidak ada laporan ${activeTab} untuk periode ${getPeriodName(downloadPeriod)}`);
+        return;
+      }
+
+      // Generate comprehensive PDF content for bulk reports
+      const pdfContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Laporan ${activeTab === 'pengaduan' ? 'Pengaduan' : 'Aspirasi'} ${getPeriodName(downloadPeriod)} - ${new Date().toLocaleDateString('id-ID')}</title>
+          <style>
+            @page {
+              size: A4;
+              margin: 2cm;
+            }
+            body { 
+              font-family: 'Times New Roman', serif; 
+              margin: 0; 
+              padding: 20px; 
+              line-height: 1.6;
+              color: #333;
+            }
+            .header { 
+              text-align: center; 
+              border-bottom: 3px solid #333; 
+              padding-bottom: 20px; 
+              margin-bottom: 30px; 
+            }
+            .logo-container {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 15px;
+            }
+            .logo {
+              width: 80px;
+              height: 80px;
+              margin-right: 20px;
+            }
+            .header h1 { 
+              font-size: 24px; 
+              font-weight: bold; 
+              margin: 0 0 10px 0;
+              text-transform: uppercase;
+            }
+            .header h2 { 
+              font-size: 18px; 
+              font-weight: bold; 
+              margin: 0 0 5px 0;
+              color: #2563eb;
+            }
+            .header p { 
+              margin: 5px 0; 
+              font-size: 14px;
+            }
+            .summary { 
+              background-color: #f3f4f6; 
+              padding: 20px; 
+              border-radius: 8px; 
+              margin-bottom: 30px;
+              border: 2px solid #e5e7eb;
+            }
+            .summary h3 { 
+              margin-top: 0; 
+              color: #2563eb; 
+              font-size: 18px;
+              text-transform: uppercase;
+              border-bottom: 2px solid #2563eb;
+              padding-bottom: 10px;
+            }
+            .summary-grid { 
+              display: grid; 
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+              gap: 20px; 
+              margin-top: 20px;
+            }
+            .summary-item { 
+              text-align: center; 
+              background: white;
+              padding: 15px;
+              border-radius: 8px;
+              border: 1px solid #e5e7eb;
+            }
+            .summary-number { 
+              font-size: 28px; 
+              font-weight: bold; 
+              color: #2563eb; 
+              margin-bottom: 5px;
+            }
+            .summary-label { 
+              font-size: 14px; 
+              color: #6b7280; 
+              font-weight: 500;
+            }
+            table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              margin-top: 30px;
+              font-size: 12px;
+            }
+            th, td { 
+              border: 1px solid #ddd; 
+              padding: 10px; 
+              text-align: left; 
+              vertical-align: top;
+            }
+            th { 
+              background-color: #f9fafb; 
+              font-weight: bold;
+              text-transform: uppercase;
+              font-size: 11px;
+              color: #374151;
+            }
+            .status { 
+              padding: 4px 8px; 
+              border-radius: 4px; 
+              font-size: 11px; 
+              font-weight: bold;
+              text-transform: uppercase;
+            }
+            .status-pending { background-color: #fef3c7; color: #92400e; }
+            .status-proses { background-color: #dbeafe; color: #1e40af; }
+            .status-selesai { background-color: #d1fae5; color: #065f46; }
+            .attachment-link {
+              display: inline-block;
+              background-color: #2563eb;
+              color: white;
+              padding: 5px 10px;
+              border-radius: 4px;
+              text-decoration: none;
+              font-size: 11px;
+              font-weight: bold;
+              margin: 2px;
+              border: 1px solid #1d4ed8;
+            }
+            .footer { 
+              margin-top: 40px; 
+              text-align: center; 
+              font-size: 12px; 
+              color: #6b7280;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
+            .footer-content {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 10px;
+            }
+            .footer-left, .footer-right {
+              flex: 1;
+              min-width: 200px;
+            }
+            .page-break { page-break-before: always; }
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+              .page-break { page-break-before: always; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo-container">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iIzE2NzM0NyIvPgo8cGF0aCBkPSJNNDAgMTVDMjUuOTYgMTUgMTUgMjUuOTYgMTUgNDBDMTUgNTQuMDQgMjUuOTYgNjUgNDAgNjVDNTQuMDQgNjUgNjUgNTQuMDQgNjUgNDBDNjUgMjUuOTYgNTQuMDQgMTUgNDAgMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMzAgMzVIMzVWNDVIMzBWMzVaIiBmaWxsPSIjMTY3MzQ3Ii8+CjxwYXRoIGQ9Ik0zNSA0MEg0MFY0NUgzNVY0MFoiIGZpbGw9IiMxNjczNDciLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDEwQzE0LjQ4IDEwIDEwIDE0LjQ4IDEwIDIwQzEwIDI1LjUyIDE0LjQ4IDMwIDIwIDMwQzI1LjUyIDMwIDMwIDI1LjUyIDMwIDIwQzMwIDE0LjQ4IDI1LjUyIDEwIDIwIDEwWiIgZmlsbD0iIzE2NzM0NyIvPgo8cGF0aCBkPSJNMTUgMjVIMjVWMzBIMTVWMjVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+" alt="Logo Desa Moncongloe Bulu" class="logo">
+              <div>
+                <h1>LAPORAN ${activeTab === 'pengaduan' ? 'PENGADUAN' : 'ASPIRASI'} WARGA</h1>
+                <h2>Desa Moncongloe Bulu</h2>
+                <p>Kecamatan Moncongloe, Kabupaten Maros, Sulawesi Selatan</p>
+                <p>Kode Pos: 90564</p>
+                <p><strong>Periode: ${getPeriodName(downloadPeriod)}</strong></p>
+                <p><strong>Tanggal: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary">
+            <h3>RINGKASAN STATISTIK</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.length}</div>
+                <div class="summary-label">Total Laporan</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.filter(l => l.status === 'pending').length}</div>
+                <div class="summary-label">Menunggu</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.filter(l => l.status === 'proses').length}</div>
+                <div class="summary-label">Proses</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.filter(l => l.status === 'selesai').length}</div>
+                <div class="summary-label">Selesai</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.filter(l => l.lampiran_info).length}</div>
+                <div class="summary-label">Dengan Lampiran</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">${filteredData.filter(l => l.client_ip).length}</div>
+                <div class="summary-label">Dengan IP Address</div>
+              </div>
+            </div>
+            <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 12px; color: #92400e;">
+              <strong>📝 Catatan Penting:</strong> Untuk melihat gambar lampiran dengan benar, buka file PDF ini di browser web (Chrome, Firefox, Safari, dll). Gambar tidak akan terlihat jika dibuka di aplikasi PDF desktop.
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>ID</th>
+                <th>Tanggal</th>
+                <th>Pelapor</th>
+                <th>Judul</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>IP Address</th>
+                <th>Lampiran</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredData.map((l, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${l.id}</td>
+                  <td>${l.tanggal_pengaduan ? new Date(l.tanggal_pengaduan).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
+                  <td>${l.nama || 'Anonim'}</td>
+                  <td>${l.judul}</td>
+                  <td>${l.kategori}</td>
+                  <td><span class="status status-${l.status || 'pending'}">${l.status === 'pending' ? 'MENUNGGU' : l.status === 'proses' ? 'PROSES' : l.status === 'selesai' ? 'SELESAI' : l.status}</span></td>
+                  <td>${l.client_ip || '-'}</td>
+                  <td>
+                    ${l.lampiran_data_url ? `
+                      <div style="text-align: center;">
+                        <div style="margin-bottom: 5px; font-weight: bold; color: #2563eb;">${l.lampiran_info || 'Lampiran'}</div>
+                        <div style="font-size: 10px; color: #666; margin-bottom: 10px;">
+                          ${Math.round(l.lampiran_data_url.length / 1024)} KB • ${l.lampiran_type || 'Image'}
+                        </div>
+                        <a href="${l.lampiran_data_url}" target="_blank" class="attachment-link">Lihat Gambar</a>
+                        <div style="font-size: 9px; color: #9ca3af; margin-top: 5px;">
+                          * Klik untuk melihat di browser
+                        </div>
+                      </div>
+                    ` : '-'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="footer-content">
+              <div className="flex-1 text-left">
+                <p><strong>Dokumen ini dibuat secara otomatis pada:</strong></p>
+                <p>${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p>${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
+              </div>
+              <div className="flex-1 text-right">
+                <p>© 2025 Desa Moncongloe Bulu</p>
+                <p>Sistem Pengaduan Warga</p>
+                <p style="font-size: 10px; color: #9ca3af; margin-top: 5px;">
+                  * Untuk melihat gambar lampiran, buka file PDF ini di browser web
+                </p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Create a new window with the PDF content
+      const newWindow = window.open('', '_blank');
+      newWindow.document.write(pdfContent);
+      newWindow.document.close();
+      
+      // Wait for content to load then print
+      newWindow.onload = function() {
+        newWindow.print();
+      };
+      
+      showNotification('success', `Berhasil membuka ${filteredData.length} laporan ${activeTab} periode ${getPeriodName(downloadPeriod)} untuk print!`);
+    } catch (error) {
+      console.error('Error downloading bulk reports:', error);
+      showNotification('error', 'Gagal membuka laporan.');
+    }
   };
 
   // Animation variants
@@ -571,8 +1172,41 @@ function LaporanPengaduan() {
           className="mb-6"
           variants={itemVariants}
         >
-          <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
-          <p className="text-text-secondary mt-1">Kelola dan pantau laporan pengaduan dan aspirasi warga</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
+              <p className="text-text-secondary mt-1">Kelola dan pantau laporan pengaduan dan aspirasi warga</p>
+            </div>
+            <div className="flex items-center space-x-3">
+              {/* Filter Periode Download */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-gray-700">Periode:</label>
+                <select
+                  value={downloadPeriod}
+                  onChange={(e) => setDownloadPeriod(e.target.value)}
+                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  <option value="all">Semua</option>
+                  <option value="weekly">Mingguan</option>
+                  <option value="monthly">Bulanan</option>
+                  <option value="yearly">Tahunan</option>
+                </select>
+              </div>
+              
+              {/* Tombol Download */}
+              <motion.button
+                onClick={() => downloadBulkReports(activeTab === 'pengaduan' ? laporanPengaduan : laporanAspirasi)}
+                className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download {activeTab === 'pengaduan' ? 'Pengaduan' : 'Aspirasi'} {getPeriodName(downloadPeriod)}
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
 
         {/* Navigasi Tab dengan gaya baru */}

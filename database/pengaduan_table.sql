@@ -27,9 +27,6 @@ CREATE TABLE pengaduan (
   session_id TEXT,
   form_submission_time TIMESTAMP WITH TIME ZONE,
   form_filling_duration INTEGER, -- dalam milidetik
-  verification_status TEXT DEFAULT 'unverified' CHECK (verification_status IN ('unverified', 'verified', 'failed')),
-  verification_notes TEXT,
-  risk_score INTEGER DEFAULT 0, -- 0-100, semakin tinggi semakin berisiko fiktif
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -155,31 +152,24 @@ ALTER TABLE pengaduan
 ADD CONSTRAINT check_lampiran_size 
 CHECK (lampiran_size IS NULL OR lampiran_size >= 0);
 
--- Tambahkan constraint untuk validasi risk score
-ALTER TABLE pengaduan 
-ADD CONSTRAINT check_risk_score 
-CHECK (risk_score >= 0 AND risk_score <= 100);
-
 -- Tambahkan constraint untuk validasi form filling duration
 ALTER TABLE pengaduan 
 ADD CONSTRAINT check_form_filling_duration 
 CHECK (form_filling_duration IS NULL OR form_filling_duration >= 0);
 
 -- Buat index untuk query yang sering digunakan
-CREATE INDEX IF NOT EXISTS idx_pengaduan_risk_score ON pengaduan(risk_score);
-CREATE INDEX IF NOT EXISTS idx_pengaduan_verification_status ON pengaduan(verification_status);
 CREATE INDEX IF NOT EXISTS idx_pengaduan_tanggal_kejadian ON pengaduan(tanggal_kejadian);
 CREATE INDEX IF NOT EXISTS idx_pengaduan_whatsapp ON pengaduan(whatsapp);
+CREATE INDEX IF NOT EXISTS idx_pengaduan_client_ip ON pengaduan(client_ip);
 
--- Buat function untuk mendapatkan pengaduan berdasarkan risk score
-CREATE OR REPLACE FUNCTION get_high_risk_pengaduan(threshold INTEGER DEFAULT 50)
+-- Buat function untuk mendapatkan pengaduan berdasarkan IP address
+CREATE OR REPLACE FUNCTION get_pengaduan_by_ip(ip_address TEXT)
 RETURNS TABLE (
   id UUID,
   nama TEXT,
   judul TEXT,
-  risk_score INTEGER,
-  verification_status TEXT,
-  created_at TIMESTAMP WITH TIME ZONE
+  client_ip TEXT,
+  tanggal_pengaduan TIMESTAMP WITH TIME ZONE
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -187,12 +177,11 @@ BEGIN
     p.id,
     p.nama,
     p.judul,
-    p.risk_score,
-    p.verification_status,
-    p.created_at
+    p.client_ip,
+    p.tanggal_pengaduan
   FROM pengaduan p
-  WHERE p.risk_score >= threshold
-  ORDER BY p.risk_score DESC, p.created_at DESC;
+  WHERE p.client_ip = ip_address
+  ORDER BY p.tanggal_pengaduan DESC;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -209,7 +198,7 @@ RETURNS TABLE (
   proses_count BIGINT,
   selesai_count BIGINT,
   with_lampiran BIGINT,
-  avg_risk_score NUMERIC
+  with_ip_address BIGINT
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -221,7 +210,7 @@ BEGIN
     COUNT(CASE WHEN status = 'proses' THEN 1 END) as proses_count,
     COUNT(CASE WHEN status = 'selesai' THEN 1 END) as selesai_count,
     COUNT(CASE WHEN lampiran_data_url IS NOT NULL THEN 1 END) as with_lampiran,
-    ROUND(AVG(risk_score), 2) as avg_risk_score
+    COUNT(CASE WHEN client_ip IS NOT NULL THEN 1 END) as with_ip_address
   FROM pengaduan
   WHERE tanggal_pengaduan::DATE BETWEEN start_date AND end_date;
 END;
@@ -246,13 +235,6 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE VIEW pengaduan_dashboard AS
 SELECT 
   p.*,
-  CASE 
-    WHEN p.risk_score >= 70 THEN 'Sangat Tinggi'
-    WHEN p.risk_score >= 50 THEN 'Tinggi'
-    WHEN p.risk_score >= 30 THEN 'Sedang'
-    WHEN p.risk_score >= 10 THEN 'Rendah'
-    ELSE 'Sangat Rendah'
-  END as risk_level,
   CASE 
     WHEN p.lampiran_size IS NULL THEN 'Tidak ada'
     WHEN p.lampiran_size < 1024 THEN 'Kecil (< 1KB)'
@@ -280,8 +262,6 @@ RETURNS TABLE (
   status TEXT,
   tanggal_pengaduan TEXT,
   tanggal_ditangani TEXT,
-  risk_score INTEGER,
-  verification_status TEXT,
   lampiran_info TEXT,
   lampiran_size INTEGER
 ) AS $$
@@ -298,8 +278,6 @@ BEGIN
     p.status,
     p.tanggal_pengaduan::TEXT,
     p.tanggal_ditangani::TEXT,
-    p.risk_score,
-    p.verification_status,
     p.lampiran_info,
     p.lampiran_size
   FROM pengaduan p
@@ -307,73 +285,5 @@ BEGIN
     AND (end_date IS NULL OR p.tanggal_pengaduan::DATE <= end_date)
     AND (status_filter IS NULL OR p.status = status_filter)
   ORDER BY p.tanggal_pengaduan DESC;
-END;
-$$ LANGUAGE plpgsql;
-
--- Buat trigger untuk auto-update verification status
-CREATE OR REPLACE FUNCTION update_verification_status()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Auto-verify jika ada kontak info dan bukan anonim
-  IF NEW.email IS NOT NULL OR NEW.whatsapp IS NOT NULL THEN
-    IF NEW.nama != 'Anonim' THEN
-      NEW.verification_status = 'verified';
-    END IF;
-  END IF;
-  
-  -- Auto-verify jika risk score rendah
-  IF NEW.risk_score < 20 THEN
-    NEW.verification_status = 'verified';
-  END IF;
-  
-  -- Mark as failed jika risk score sangat tinggi
-  IF NEW.risk_score > 80 THEN
-    NEW.verification_status = 'failed';
-  END IF;
-  
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_update_verification_status
-  BEFORE INSERT OR UPDATE ON pengaduan
-  FOR EACH ROW
-  EXECUTE FUNCTION update_verification_status();
-
--- Buat function untuk mendapatkan rekomendasi aksi berdasarkan risk score
-CREATE OR REPLACE FUNCTION get_action_recommendation(pengaduan_id UUID)
-RETURNS TEXT AS $$
-DECLARE
-  risk_score_val INTEGER;
-  verification_status_val TEXT;
-  has_contact BOOLEAN;
-  recommendation TEXT;
-BEGIN
-  SELECT risk_score, verification_status, 
-         (email IS NOT NULL OR whatsapp IS NOT NULL)
-  INTO risk_score_val, verification_status_val, has_contact
-  FROM pengaduan 
-  WHERE id = pengaduan_id;
-  
-  IF NOT FOUND THEN
-    RETURN 'Pengaduan tidak ditemukan';
-  END IF;
-  
-  -- Generate recommendation based on risk factors
-  IF risk_score_val >= 70 THEN
-    recommendation := 'Segera review manual - Risk score sangat tinggi';
-  ELSIF risk_score_val >= 50 THEN
-    recommendation := 'Perlu verifikasi tambahan - Risk score tinggi';
-  ELSIF verification_status_val = 'failed' THEN
-    recommendation := 'Tolak pengaduan - Status verifikasi gagal';
-  ELSIF NOT has_contact THEN
-    recommendation := 'Minta informasi kontak untuk verifikasi';
-  ELSIF verification_status_val = 'verified' THEN
-    recommendation := 'Proses normal - Status terverifikasi';
-  ELSE
-    recommendation := 'Review manual diperlukan';
-  END IF;
-  
-  RETURN recommendation;
 END;
 $$ LANGUAGE plpgsql; 
