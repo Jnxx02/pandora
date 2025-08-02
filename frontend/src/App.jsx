@@ -131,6 +131,23 @@ function AdminHeader({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebar
                   {!sidebarCollapsed && <span className="font-medium">{link.label}</span>}
                 </Link>
               ))}
+              
+              {/* Kembali ke Website Button */}
+              <div className="pt-4 border-t border-white/20">
+                <Link
+                  to="/"
+                  className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-gray-300 hover:bg-gray-800 hover:text-white ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+                  onClick={() => setSidebarOpen(false)}
+                  title={sidebarCollapsed ? 'Kembali ke Website' : ''}
+                >
+                  <div className={`${sidebarCollapsed ? 'lg:w-6 lg:h-6' : 'w-5 h-5'}`}>
+                    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                  </div>
+                  {!sidebarCollapsed && <span className="font-medium">Lihat Website</span>}
+                </Link>
+              </div>
             </nav>
 
             {/* Footer */}

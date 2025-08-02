@@ -5,8 +5,18 @@ import { motion } from 'framer-motion';
 
 const EditStatistik = () => {
   const [statistik, setStatistik] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const navigate = useNavigate();
   const { statistik: contextStatistik, refetchStatistik } = useStatistik();
+
+  // Fungsi untuk menampilkan notifikasi
+  const showNotification = (type, message) => {
+    setNotification({ show: true, type, message });
+    setTimeout(() => {
+      setNotification({ show: false, type: '', message: '' });
+    }, 3000);
+  };
 
   // Fungsi untuk mengurutkan statistik sesuai urutan yang diminta
   const sortStatistik = (data) => {
@@ -46,24 +56,56 @@ const EditStatistik = () => {
   const handleSave = async () => {
     const hasEmptyLabel = statistik.some(item => !item.label || item.label.trim() === '');
     if (hasEmptyLabel) {
-      alert('Setiap item statistik harus memiliki "Label". Kolom label tidak boleh kosong.');
+      showNotification('error', 'Setiap item statistik harus memiliki "Label". Kolom label tidak boleh kosong.');
       return;
     }
+
+    setIsSaving(true);
 
     try {
       // Urutkan data sebelum menyimpan
       const sortedData = sortStatistik(statistik);
       
-      // Simulasi penyimpanan ke localStorage karena tidak ada API endpoint
+      // Gunakan URL yang dinamis berdasarkan environment
+      const apiUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://pandora-vite.vercel.app/api/statistik'
+        : 'http://localhost:3001/api/statistik';
+      
+      // POST data ke backend
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sortedData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Simpan juga ke localStorage sebagai backup
       localStorage.setItem('statistik', JSON.stringify(sortedData));
       
+      // Refresh data dari context
       await refetchStatistik();
 
-      alert('Data statistik berhasil disimpan!');
-      navigate('/admin/dashboard');
+      // Tampilkan notifikasi sukses
+      showNotification('success', result.message || 'Data statistik berhasil disimpan ke database!');
+      
+      // Navigate setelah delay singkat agar user bisa lihat notifikasi
+      setTimeout(() => {
+        navigate('/admin/dashboard');
+      }, 1500);
     } catch (error) {
       console.error("Gagal menyimpan statistik:", error);
-      alert('Terjadi kesalahan saat menyimpan data statistik.');
+      
+      // Tampilkan notifikasi error
+      showNotification('error', `Gagal menyimpan data statistik! Error: ${error.message}. Data hanya disimpan secara lokal.`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -105,6 +147,33 @@ const EditStatistik = () => {
       variants={pageVariants}
       transition={pageTransition}
     >
+      {/* Custom Notification */}
+      {notification.show && (
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            {notification.type === 'success' ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            )}
+            <span className="font-medium">{notification.message}</span>
+          </div>
+        </motion.div>
+      )}
+
       <motion.div 
         className="mb-6"
         variants={itemVariants}
@@ -156,14 +225,29 @@ const EditStatistik = () => {
           className="mt-6 flex flex-col md:flex-row gap-4"
           variants={itemVariants}
         >
-          {/* GANTI: Tombol simpan dengan warna secondary dan primary */}
+          {/* GANTI: Tombol simpan dengan loading state */}
           <motion.button
             onClick={handleSave}
-            className="bg-secondary text-white px-6 py-2 rounded-md w-full md:w-auto hover:bg-primary transition font-semibold"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            disabled={isSaving}
+            className={`px-6 py-2 rounded-md w-full md:w-auto font-semibold transition ${
+              isSaving 
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-secondary text-white hover:bg-primary'
+            }`}
+            whileHover={!isSaving ? { scale: 1.02 } : {}}
+            whileTap={!isSaving ? { scale: 0.98 } : {}}
           >
-            Simpan Perubahan
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Menyimpan...
+              </span>
+            ) : (
+              'Simpan Perubahan'
+            )}
           </motion.button>
         </motion.div>
       </motion.div>
