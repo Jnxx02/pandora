@@ -28,6 +28,27 @@ export const StatistikProvider = ({ children }) => {
     { label: 'Moncongloe Bulu', value: '550', icon: null }
   ];
 
+  // Fungsi untuk mengurutkan statistik sesuai urutan yang diminta
+  const sortStatistik = (data) => {
+    const orderMap = {
+      'Penduduk': 1,
+      'Laki-Laki': 2,
+      'Perempuan': 3,
+      'Kepala Keluarga': 4,
+      'Diccekang': 5,
+      'Tamalate': 6,
+      'Tammu-Tammu': 7,
+      'Tompo Balang': 8,
+      'Moncongloe Bulu': 9
+    };
+
+    return [...data].sort((a, b) => {
+      const orderA = orderMap[a.label] || 999;
+      const orderB = orderMap[b.label] || 999;
+      return orderA - orderB;
+    });
+  };
+
   const fetchStatistik = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -51,10 +72,12 @@ export const StatistikProvider = ({ children }) => {
       
       // Jika data kosong dari backend, gunakan default
       if (data && data.length > 0) {
-        setStatistik(data);
+        // Urutkan data sesuai urutan yang diminta
+        const sortedData = sortStatistik(data);
+        setStatistik(sortedData);
       } else {
         console.log('📊 Backend returned empty data, using default statistik');
-        setStatistik(defaultStatistik);
+        setStatistik(sortStatistik(defaultStatistik));
       }
     } catch (error) {
       console.error("Gagal mengambil statistik dari backend:", error);
@@ -62,7 +85,7 @@ export const StatistikProvider = ({ children }) => {
       
       // Gunakan data default jika backend tidak tersedia
       console.log('📊 Using default statistik data for development');
-      setStatistik(defaultStatistik);
+      setStatistik(sortStatistik(defaultStatistik));
     } finally {
       setLoading(false);
     }

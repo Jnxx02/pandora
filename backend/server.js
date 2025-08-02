@@ -18,8 +18,8 @@ try {
   
   // Check if Supabase is properly configured
   if (supabaseUrl && supabaseKey && 
-      supabaseUrl !== 'https://kuykcpbtferzhzrqatac.supabase.co' && 
-      supabaseKey !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eWtjcGJ0ZmVyemh6cnFhdGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MTc0MjUsImV4cCI6MjA2OTI5MzQyNX0.9yqGq8dbepGXLc6fxqgKTz2Vdr80RB254y2u9wH7MBI') {
+      supabaseUrl === 'https://kuykcpbtferzhzrqatac.supabase.co' && 
+      supabaseKey === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eWtjcGJ0ZmVyemh6cnFhdGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MTc0MjUsImV4cCI6MjA2OTI5MzQyNX0.9yqGq8dbepGXLc6fxqgKTz2Vdr80RB254y2u9wH7MBI') {
     supabase = createClient(supabaseUrl, supabaseKey);
     supabaseStatus = 'configured';
     console.log('✅ Supabase client initialized successfully');
@@ -34,8 +34,10 @@ try {
 
 // CORS configuration untuk development
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
-  credentials: true
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
@@ -62,7 +64,29 @@ app.get('/api/statistik', async (req, res) => {
         throw error;
       }
 
-      res.status(200).json(data || []);
+      // Urutkan data sesuai urutan yang diminta
+      const sortStatistik = (data) => {
+        const orderMap = {
+          'Penduduk': 1,
+          'Laki-Laki': 2,
+          'Perempuan': 3,
+          'Kepala Keluarga': 4,
+          'Diccekang': 5,
+          'Tamalate': 6,
+          'Tammu-Tammu': 7,
+          'Tompo Balang': 8,
+          'Moncongloe Bulu': 9
+        };
+
+        return [...data].sort((a, b) => {
+          const orderA = orderMap[a.label] || 999;
+          const orderB = orderMap[b.label] || 999;
+          return orderA - orderB;
+        });
+      };
+
+      const sortedData = sortStatistik(data || []);
+      res.status(200).json(sortedData);
     } else {
       // Fallback: return default data untuk development
       console.log('📊 Returning development statistik data');
