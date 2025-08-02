@@ -8,32 +8,51 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = 3001;
 
-// Inisialisasi Supabase Client dengan error handling
+// Inisialisasi Supabase Client dengan error handling yang lebih baik
 let supabase = null;
+let supabaseStatus = 'not_configured';
+
 try {
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_ANON_KEY;
   
   // Check if Supabase is properly configured
   if (supabaseUrl && supabaseKey && 
-      supabaseUrl !== 'https://kuykcpbtferzhzrqatac.supabase.co' && 
-      supabaseKey !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eWtjcGJ0ZmVyemh6cnFhdGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MTc0MjUsImV4cCI6MjA2OTI5MzQyNX0.9yqGq8dbepGXLc6fxqgKTz2Vdr80RB254y2u9wH7MBI') {
+      supabaseUrl !== 'https://your-project.supabase.co' && 
+      supabaseKey !== 'your-anon-key-here') {
     supabase = createClient(supabaseUrl, supabaseKey);
+    supabaseStatus = 'configured';
     console.log('✅ Supabase client initialized successfully');
   } else {
-    console.log('⚠️  Supabase not configured, using local fallback');
+    console.log('⚠️  Supabase not configured, using local fallback mode');
+    supabaseStatus = 'not_configured';
   }
 } catch (error) {
   console.log('⚠️  Failed to initialize Supabase client:', error.message);
+  supabaseStatus = 'error';
 }
 
-app.use(cors());
+// CORS configuration untuk development
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+  credentials: true
+}));
 app.use(express.json());
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    supabase: supabaseStatus,
+    message: 'Backend server is running'
+  });
+});
 
 // API endpoint untuk MENGAMBIL (GET) statistik
 app.get('/api/statistik', async (req, res) => {
   try {
-    if (supabase) {
+    if (supabase && supabaseStatus === 'configured') {
       // Use Supabase if available
       const { data, error } = await supabase
         .from('statistik')
@@ -43,11 +62,22 @@ app.get('/api/statistik', async (req, res) => {
         throw error;
       }
 
-      res.status(200).json(data);
+      res.status(200).json(data || []);
     } else {
-      // Fallback: return empty array or default data
-      console.log('📊 Returning fallback statistik data');
-      res.status(200).json([]);
+      // Fallback: return default data untuk development
+      console.log('📊 Returning development statistik data');
+      const defaultData = [
+        { label: 'Penduduk', value: '3.820', icon: null },
+        { label: 'Laki-Laki', value: '1.890', icon: null },
+        { label: 'Perempuan', value: '1.930', icon: null },
+        { label: 'Kepala Keluarga', value: '1.245', icon: null },
+        { label: 'Diccekang', value: '850', icon: null },
+        { label: 'Tamalate', value: '920', icon: null },
+        { label: 'Tammu-Tammu', value: '780', icon: null },
+        { label: 'Tompo Balang', value: '720', icon: null },
+        { label: 'Moncongloe Bulu', value: '550', icon: null }
+      ];
+      res.status(200).json(defaultData);
     }
   } catch (error) {
     console.error('Error fetching statistik from Supabase:', error);
@@ -64,7 +94,7 @@ app.post('/api/statistik', async (req, res) => {
       return res.status(400).json({ message: 'Data yang dikirim harus berupa array.' });
     }
 
-    if (supabase) {
+    if (supabase && supabaseStatus === 'configured') {
       // Use Supabase if available
       // Strategi Sinkronisasi: Hapus semua, lalu masukkan semua.
       // Ini memastikan data di database sama persis dengan yang dikirim dari UI, termasuk penghapusan.
@@ -101,8 +131,10 @@ if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
     console.log(`📊 API endpoints:`);
+    console.log(`   GET  /api/health - Health check`);
     console.log(`   GET  /api/statistik - Get statistik data`);
     console.log(`   POST /api/statistik - Save statistik data`);
+    console.log(`🔧 Supabase Status: ${supabaseStatus}`);
   });
 }
 
