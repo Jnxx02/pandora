@@ -1,8 +1,34 @@
 {
-  "rewrites": [
+  "redirects": [
+    {
+      "source": "/admin/(.*)",
+      "destination": "/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/berita/(.*)",
+      "destination": "/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/profil",
+      "destination": "/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/pengaduan",
+      "destination": "/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/sejarah",
+      "destination": "/index.html",
+      "permanent": false
+    },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/index.html",
+      "permanent": false
     }
   ],
   "buildCommand": "npm run build",
