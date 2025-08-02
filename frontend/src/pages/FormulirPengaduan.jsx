@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePengaduan } from '../context/PengaduanContext';
 import CustomNotification from '../components/CustomNotification';
@@ -38,36 +38,18 @@ const FormulirHeader = () => (
 
 const FormulirPengaduan = () => {
     const { addPengaduan } = usePengaduan();
-    const [klasifikasi, setKlasifikasi] = useState('pengaduan');
     const [isAnonim, setIsAnonim] = useState(false);
-    const [lampiran, setLampiran] = useState(null);
-    const [lampiranDataUrl, setLampiranDataUrl] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [notification, setNotification] = useState({ show: false, type: '', message: '' });
+    const [klasifikasi, setKlasifikasi] = useState('pengaduan');
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [showTermsModal, setShowTermsModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [lampiran, setLampiran] = useState(null);
+    const [lampiranDataUrl, setLampiranDataUrl] = useState(null);
+    const [customKategori, setCustomKategori] = useState('');
+    const [selectedKategori, setSelectedKategori] = useState('');
+    const [notification, setNotification] = useState({ show: false, type: '', message: '' });
     const [deviceInfo, setDeviceInfo] = useState({});
-    const [captchaQuestion, setCaptchaQuestion] = useState({ question: '', answer: '' });
     const navigate = useNavigate();
-
-    // Fungsi untuk generate captcha dinamis
-    const generateCaptcha = () => {
-        const questions = [
-            { question: "Berapa hasil dari 5 + 3?", answer: "8" },
-            { question: "Berapa hasil dari 10 - 4?", answer: "6" },
-            { question: "Berapa hasil dari 2 x 6?", answer: "12" },
-            { question: "Berapa hasil dari 15 ÷ 3?", answer: "5" },
-            { question: "Berapa hasil dari 7 + 5?", answer: "12" },
-            { question: "Berapa hasil dari 20 - 8?", answer: "12" },
-            { question: "Berapa hasil dari 3 x 4?", answer: "12" },
-            { question: "Berapa hasil dari 18 ÷ 2?", answer: "9" },
-            { question: "Berapa hasil dari 6 + 9?", answer: "15" },
-            { question: "Berapa hasil dari 25 - 7?", answer: "18" }
-        ];
-        
-        const randomIndex = Math.floor(Math.random() * questions.length);
-        setCaptchaQuestion(questions[randomIndex]);
-    };
 
     // Fungsi untuk mendapatkan informasi device
     const getDeviceInfo = () => {
@@ -130,6 +112,12 @@ const FormulirPengaduan = () => {
                 return;
             }
 
+            // Validasi kategori custom
+            if (data.kategori === 'Lainnya' && !customKategori.trim()) {
+                showNotification('error', 'Silakan isi kategori lainnya!');
+                return;
+            }
+
             // Validasi tanggal kejadian
             if (data.tanggal) {
               const selectedDate = new Date(data.tanggal);
@@ -153,13 +141,6 @@ const FormulirPengaduan = () => {
                 return;
             }
 
-            // Validasi captcha
-            if (data.captcha !== captchaQuestion.answer) {
-                showNotification('error', 'Jawaban captcha salah! Silakan coba lagi.');
-                generateCaptcha(); // Generate captcha baru
-                return;
-            }
-
             // Tambahan tracking untuk deteksi laporan fiktif
             const trackingData = {
                 deviceInfo: {
@@ -173,10 +154,12 @@ const FormulirPengaduan = () => {
                 sessionId: sessionStorage.getItem('sessionId') || Date.now().toString(),
                 formSubmissionTime: new Date().toISOString(),
                 formFillingDuration: Date.now() - (window.formStartTime || Date.now()),
-                captchaQuestion: captchaQuestion.question,
                 hasContactInfo: !!(data.email || data.whatsapp),
                 isAnonymous: isAnonim
             };
+
+            // Tentukan kategori yang akan disimpan
+            const finalKategori = data.kategori === 'Lainnya' ? customKategori.trim() : data.kategori;
 
             const pengaduanData = {
                 nama: isAnonim ? 'Anonim' : data.nama,
@@ -186,9 +169,9 @@ const FormulirPengaduan = () => {
                 judul: data.judul,
                 isi: data.isi,
                 tanggal_kejadian: data.tanggal || null,
-                kategori: data.kategori,
+                kategori: finalKategori,
                 lampiran_info: lampiran ? lampiran.name : null,
-                lampiran_data_url: lampiranDataUrl || null, // Remove substring limitation
+                lampiran_data_url: lampiranDataUrl || null,
                 status: 'pending',
                 // Tracking data untuk deteksi laporan fiktif
                 tracking: trackingData
@@ -213,9 +196,10 @@ const FormulirPengaduan = () => {
             setIsAnonim(false);
             setKlasifikasi('pengaduan');
             setLampiran(null);
-            setLampiranDataUrl('');
+            setLampiranDataUrl(null);
             setAgreedToTerms(false);
-            generateCaptcha(); // Generate captcha baru untuk next submission
+            setSelectedKategori('');
+            setCustomKategori('');
             
             // Navigate back after delay
             setTimeout(() => {
@@ -303,7 +287,7 @@ const FormulirPengaduan = () => {
                     showNotification('error', 'Gagal memproses gambar. Silakan coba lagi.');
                     e.target.value = '';
                     setLampiran(null);
-                    setLampiranDataUrl('');
+                    setLampiranDataUrl(null);
                 }
             };
             
@@ -311,7 +295,7 @@ const FormulirPengaduan = () => {
                 showNotification('error', 'Gagal membaca file. Silakan coba lagi.');
                 e.target.value = '';
                 setLampiran(null);
-                setLampiranDataUrl('');
+                setLampiranDataUrl(null);
             };
             
             reader.readAsDataURL(file);
@@ -328,12 +312,11 @@ const FormulirPengaduan = () => {
     ];
 
     // Set session ID dan start time saat komponen mount
-    React.useEffect(() => {
+    useEffect(() => {
         if (!sessionStorage.getItem('sessionId')) {
             sessionStorage.setItem('sessionId', Date.now().toString());
         }
         window.formStartTime = Date.now();
-        generateCaptcha(); // Generate captcha saat komponen mount
     }, []);
 
     return (
@@ -570,7 +553,8 @@ const FormulirPengaduan = () => {
                                     id="kategori"
                                     name="kategori"
                                     className="mt-1 block w-full rounded-md border-neutral py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                                    defaultValue=""
+                                    value={selectedKategori}
+                                    onChange={(e) => setSelectedKategori(e.target.value)}
                                     required
                                 >
                                     <option value="" disabled>Pilih kategori...</option>
@@ -578,6 +562,17 @@ const FormulirPengaduan = () => {
                                         <option key={kat} value={kat}>{kat}</option>
                                     ))}
                                 </select>
+                                {selectedKategori === "Lainnya" && (
+                                    <input
+                                        type="text"
+                                        name="customKategori"
+                                        className="mt-2 block w-full rounded-md border-neutral px-3 py-2 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary sm:text-sm"
+                                        placeholder="Masukkan kategori lainnya"
+                                        value={customKategori}
+                                        onChange={(e) => setCustomKategori(e.target.value)}
+                                        required={selectedKategori === "Lainnya"}
+                                    />
+                                )}
                             </div>
                         </div>
 
@@ -620,74 +615,13 @@ const FormulirPengaduan = () => {
                                         </div>
                                         <button 
                                             type="button" 
-                                            onClick={() => { setLampiran(null); setLampiranDataUrl(''); }} 
+                                            onClick={() => { setLampiran(null); setLampiranDataUrl(null); }} 
                                             className="text-red-500 hover:text-red-700 font-bold text-lg leading-none p-1 rounded-full hover:bg-red-50 transition-colors duration-200"
                                         >
                                             &times;
                                         </button>
                                     </div>
                                 )}
-                            </div>
-                        </div>
-
-                        {/* Section 3.5: Verifikasi Manusia */}
-                        <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                                Verifikasi Keamanan
-                            </h3>
-                            
-                            <div className="bg-white p-4 rounded-md border border-purple-200">
-                                <p className="text-sm text-gray-700 mb-3">
-                                    Untuk memastikan Anda adalah manusia, silakan jawab pertanyaan berikut:
-                                </p>
-                                
-                                <div className="mb-4">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            {captchaQuestion.question} <span className="text-red-500">*</span>
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={generateCaptcha}
-                                            className="text-purple-600 hover:text-purple-800 p-1 rounded-full hover:bg-purple-50 transition-colors duration-200"
-                                            title="Ganti pertanyaan"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <input
-                                        type="number"
-                                        name="captcha"
-                                        className="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 sm:text-sm"
-                                        placeholder="Masukkan jawaban"
-                                        required
-                                        min="0"
-                                        max="50"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Pertanyaan matematika sederhana untuk mencegah spam dan laporan otomatis
-                                    </p>
-                                </div>
-
-                                <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200">
-                                    <div className="flex items-start">
-                                        <svg className="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                        </svg>
-                                        <div className="text-sm text-yellow-800">
-                                            <p className="font-medium mb-1">Mengapa Verifikasi Ini Diperlukan?</p>
-                                            <p className="text-xs">
-                                                Verifikasi ini membantu kami mencegah laporan palsu dan spam yang dapat mengganggu proses penanganan laporan yang sah. 
-                                                Setiap laporan yang masuk akan diproses dengan serius.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
