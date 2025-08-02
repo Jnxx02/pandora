@@ -18,8 +18,8 @@ try {
   
   // Check if Supabase is properly configured
   if (supabaseUrl && supabaseKey && 
-      supabaseUrl !== 'https://your-project.supabase.co' && 
-      supabaseKey !== 'your-anon-key-here') {
+      supabaseUrl !== 'https://kuykcpbtferzhzrqatac.supabase.co' && 
+      supabaseKey !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eWtjcGJ0ZmVyemh6cnFhdGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MTc0MjUsImV4cCI6MjA2OTI5MzQyNX0.9yqGq8dbepGXLc6fxqgKTz2Vdr80RB254y2u9wH7MBI') {
     supabase = createClient(supabaseUrl, supabaseKey);
     supabaseStatus = 'configured';
     console.log('✅ Supabase client initialized successfully');
