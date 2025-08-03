@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDesa } from '../context/DesaContext';
 import { useStatistik } from '../context/StatistikContext';
 import { usePrasarana } from '../context/PrasaranaContext';
+import BareVideoPlayer from '../components/BareVideoPlayer';
 
 // Data ini bisa dipindahkan ke context atau file data terpusat jika diperlukan di halaman lain
 const batasWilayah = [
@@ -121,16 +122,11 @@ const Profil = () => {
 
         {/* Video Dokumenter */}
         <section className="w-full mb-16">
-          <div className="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg mb-4">
-            <iframe
-              src="https://www.instagram.com/kknt114_moncongloebulu/reel/DM40roth5pH/" // Ganti dengan URL video/playlist YouTube yang relevan
-              title="Video Dokumenter Desa Moncongloe Bulu"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            ></iframe>
-          </div>
+          <BareVideoPlayer
+            youtubeUrl="https://youtu.be/j0fxF3xriEA" // Ganti dengan URL YouTube yang sesuai
+            title="Video Dokumenter Desa Moncongloe Bulu"
+            className="mb-4"
+          />
           <p className="text-center text-primary italic">
             Video perkenalan singkat mengenai Desa Moncongloe Bulu, meliputi potensi, kegiatan, dan kehidupan masyarakatnya.
           </p>
