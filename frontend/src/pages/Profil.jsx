@@ -76,6 +76,8 @@ const Profil = () => {
   const [isOrbitrasiOpen, setOrbitrasiOpen] = useState(false);
   const [isBatasOpen, setBatasOpen] = useState(false);
   const [openOrganisasi, setOpenOrganisasi] = useState({});
+  const [sotkStaffOpen, setSotkStaffOpen] = useState(false);
+  const [sotkDusunOpen, setSotkDusunOpen] = useState(false);
 
   const { statistik } = useStatistik();
   const { prasarana } = usePrasarana();
@@ -155,27 +157,268 @@ const Profil = () => {
         </section>
 
 
-        {/* Struktur Organisasi */}
-        <section className="w-full mb-16">
-          <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">SOTK Pemerintah Desa</h2>
-          <img 
-            src="https://upload.wikimedia.org/wikipedia/id/thumb/f/fe/Desa_Moncongloe_Bulu.jpg/500px-Desa_Moncongloe_Bulu.jpg" // Pastikan gambar ada di folder `public/images`
-            alt="Struktur Organisasi Desa Moncongloe Bulu" 
-            className="w-full h-auto rounded-lg shadow-md border"
-          />
-          <div className="text-center mt-4">
+          {/* SOTK Pemerintah Desa */}
+          <section className="w-full mb-16">
+            <div className="mb-12">
+            <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">SOTK Pemerintah Desa</h2>
+          
+          {/* Staff Kantor Desa */}
+          <div className="mb-8">
+            <h3 className="text-lg sm:text-2xl font-bold text-secondary mb-6 text-center">Staff Kantor Desa</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              {/* Kepala Desa */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-red-200">
+                    <img 
+                      src="/images/pengurus/kepala-desa.jpg" 
+                      alt="Kepala Desa Muhammad Tahir"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23dc2626'%3E%3Cpath d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'/%3E%3C/svg%3E";
+                      }}
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Kepala Desa</h3>
+                  <p className="text-secondary text-sm mb-3">Muhammad Tahir</p>
+                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    Periode 2021-2027
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekretaris Desa */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-blue-200">
+                    <img 
+                      src="/images/pengurus/sekretaris-desa.jpg" 
+                      alt="Sekretaris Desa Abd Rasyid"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'/%3E%3C/svg%3E";
+                      }}
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Sekretaris Desa</h3>
+                  <p className="text-secondary text-sm mb-3">Abd Rasyid, S.Pd</p>
+                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    PNS
+                  </div>
+                </div>
+              </div>
+
+              {/* Bendahara Desa */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-teal-200">
+                    <img 
+                      src="/images/pengurus/bendahara-desa.jpg" 
+                      alt="Bendahara Desa Bendahara Desa"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2314b8a6'%3E%3Cpath d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'/%3E%3C/svg%3E";
+                      }}
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Bendahara Desa</h3>
+                  <p className="text-secondary text-sm mb-3">Bendahara Desa</p>
+                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    Non-PNS
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Button Lihat Selengkapnya */}
+            <div className="text-center">
+              <button 
+                onClick={() => setSotkStaffOpen(!sotkStaffOpen)}
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Lihat Struktur Lengkap
+              </button>
+            </div>
+
+            {/* Struktur Lengkap (Hidden by default) */}
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${sotkStaffOpen ? 'max-h-[50rem] mt-6' : 'max-h-0'}`}>
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80">
+                <h4 className="text-lg font-bold text-primary mb-4 text-center">Struktur Organisasi Lengkap</h4>
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/id/thumb/f/fe/Desa_Moncongloe_Bulu.jpg/500px-Desa_Moncongloe_Bulu.jpg" 
+                  alt="Struktur Organisasi Desa Moncongloe Bulu"
+                  className="w-full h-auto rounded-lg shadow-md border"
+                />
+                <p className="text-sm text-gray-600 mt-3 text-center">
+                  Struktur Organisasi Tata Kerja Pemerintah Desa Moncongloe Bulu
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Kepala Dusun */}
+          <div className="mb-8">
+            <h3 className="text-lg sm:text-2xl font-bold text-secondary mb-6 text-center">Kepala Dusun & Jadwal Piket</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {/* Dusun Diccekang */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                      <img 
+                        src="/images/pengurus/kepala-dusun-diccekang.jpg" 
+                        alt="Kepala Dusun Diccekang Burhanuddin"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Diccekang</h3>
+                    <p className="text-secondary text-xs mb-2">Burhanuddin</p>
+                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
+                      Kepala Dusun
+                    </div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      📞 082195062335
+                    </div>
+                    <div className="text-xs text-blue-600 font-semibold mt-1">
+                      📅 Senin (Piket)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dusun Tamalate */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                      <img 
+                        src="/images/pengurus/kepala-dusun-tamalate.jpg" 
+                        alt="Kepala Dusun Tamalate Syaripuddin"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tamalate</h3>
+                    <p className="text-secondary text-xs mb-2">Syaripuddin</p>
+                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
+                      Kepala Dusun
+                    </div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      📞 082346543919
+                    </div>
+                    <div className="text-xs text-blue-600 font-semibold mt-1">
+                      📅 Selasa (Piket)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dusun Moncongloe Bulu */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                      <img 
+                        src="/images/pengurus/kepala-dusun-moncongloe-bulu.jpg" 
+                        alt="Kepala Dusun M. Loe Bulu Rahman"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-bold text-primary mb-1">Dusun M. Loe Bulu</h3>
+                    <p className="text-secondary text-xs mb-2">Rahman</p>
+                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
+                      Kepala Dusun
+                    </div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      📞 082292363982
+                    </div>
+                    <div className="text-xs text-blue-600 font-semibold mt-1">
+                      📅 Rabu (Piket)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dusun Tammu-Tammu */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                      <img 
+                        src="/images/pengurus/kepala-dusun-tammu-tammu.jpg" 
+                        alt="Kepala Dusun Tammu-Tammu Fery Andayani"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tammu-Tammu</h3>
+                    <p className="text-secondary text-xs mb-2">Fery Andayani</p>
+                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
+                      Kepala Dusun
+                    </div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      📞 082292124166
+                    </div>
+                    <div className="text-xs text-blue-600 font-semibold mt-1">
+                      📅 Kamis (Piket)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dusun Tompo Balang */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                      <img 
+                        src="/images/pengurus/kepala-dusun-tompo-balang.jpg" 
+                        alt="Kepala Dusun Tompo Balang Hasbi"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                        }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tompo Balang</h3>
+                    <p className="text-secondary text-xs mb-2">Hasbi</p>
+                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
+                      Kepala Dusun
+                    </div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      📞 085299259991
+                    </div>
+                    <div className="text-xs text-blue-600 font-semibold mt-1">
+                      📅 Jum'at (Piket)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Download Button */}
+          <div className="text-center">
             <a 
-              href="/dokumen/struktur-organisasi.pdf" // Pastikan file ada di folder `public/dokumen`
-              download="Struktur Organisasi Desa Moncongloe Bulu.pdf"
+              href="/dokumen/sotk-desa-moncongloe-bulu.pdf" // Pastikan file ada di folder `public/dokumen`
+              download="SOTK Desa Moncongloe Bulu.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition"
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
-              Unduh Struktur (PDF)
+              Unduh SOTK (PDF)
             </a>
+            <p className="text-sm text-gray-500 mt-3">
+              Struktur Organisasi Tata Kerja Pemerintah Desa Moncongloe Bulu
+            </p>
           </div>
         </section>
 
@@ -431,4 +674,4 @@ const Profil = () => {
   );
 };
 
-export default Profil; 
+export default Profil;
