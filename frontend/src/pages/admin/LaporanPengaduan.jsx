@@ -34,7 +34,7 @@ const DetailModal = ({ laporan, onClose }) => {
     >
       {/* Konten Modal dengan gaya baru */}
       <motion.div 
-        className="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-2/3 lg:w-1/2 max-h-[80vh] overflow-y-auto relative"
+        className="bg-white rounded-lg shadow-xl p-4 sm:p-6 w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] sm:max-h-[80vh] overflow-y-auto relative"
         onClick={e => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -59,21 +59,24 @@ const DetailModal = ({ laporan, onClose }) => {
 
         <div className="space-y-4">
           {/* Informasi Pelapor */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Informasi Pelapor</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="font-medium">Nama:</span> {laporan.nama || 'Anonim'}
+          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Informasi Pelapor</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Nama:</span> 
+                <span className="text-gray-900 sm:ml-2">{laporan.nama || 'Anonim'}</span>
               </div>
-              <div>
-                <span className="font-medium">Email:</span> {laporan.email || '-'}
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Email:</span> 
+                <span className="text-gray-900 sm:ml-2 break-all">{laporan.email || '-'}</span>
               </div>
-              <div>
-                <span className="font-medium">WhatsApp:</span> {laporan.whatsapp || '-'}
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">WhatsApp:</span> 
+                <span className="text-gray-900 sm:ml-2">{laporan.whatsapp || '-'}</span>
               </div>
-              <div>
-                <span className="font-medium">Status:</span> 
-                <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Status:</span> 
+                <span className={`sm:ml-2 px-2 py-1 rounded-full text-xs font-medium mt-1 sm:mt-0 ${
                   laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                   laporan.status === 'selesai' ? 'bg-green-100 text-green-800' :
                   'bg-gray-100 text-gray-800'
@@ -86,49 +89,53 @@ const DetailModal = ({ laporan, onClose }) => {
           </div>
 
           {/* Detail Laporan */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Detail Laporan</h4>
-            <div className="space-y-2 text-sm">
-              <div>
-                <span className="font-medium">Klasifikasi:</span> {laporan.klasifikasi}
+          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Detail Laporan</h4>
+            <div className="space-y-2 text-xs sm:text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Klasifikasi:</span> 
+                <span className="text-gray-900 sm:ml-2">{laporan.klasifikasi}</span>
               </div>
-              <div>
-                <span className="font-medium">Kategori:</span> {laporan.kategori}
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Kategori:</span> 
+                <span className="text-gray-900 sm:ml-2">{laporan.kategori}</span>
               </div>
-              <div>
-                <span className="font-medium">Tanggal Kejadian:</span> {formatDate(laporan.tanggal_kejadian)}
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Tanggal Kejadian:</span> 
+                <span className="text-gray-900 sm:ml-2">{formatDate(laporan.tanggal_kejadian)}</span>
               </div>
-              <div>
-                <span className="font-medium">Tanggal Pengaduan:</span> {formatDate(laporan.tanggal_pengaduan)}
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Tanggal Pengaduan:</span> 
+                <span className="text-gray-900 sm:ml-2">{formatDate(laporan.tanggal_pengaduan)}</span>
               </div>
-              <div className="info-row">
-                  <div className="info-label">Tanggal Ditangani:</div>
-                  <div className="info-value">
-                    {laporan.tanggal_ditangani ? formatDate(laporan.tanggal_ditangani) : 'Belum ditangani'}
-                  </div>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">IP Address:</span>
-                  <span className="ml-2 text-gray-900">{laporan.client_ip || 'Tidak tersedia'}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">User Agent:</span>
-                  <span className="ml-2 text-gray-900">{laporan.user_agent ? laporan.user_agent.substring(0, 100) + '...' : 'Tidak tersedia'}</span>
-                </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">Tanggal Ditangani:</span>
+                <span className="text-gray-900 sm:ml-2">
+                  {laporan.tanggal_ditangani ? formatDate(laporan.tanggal_ditangani) : 'Belum ditangani'}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="font-medium text-gray-600">IP Address:</span>
+                <span className="text-gray-900 sm:ml-2 break-all">{laporan.client_ip || 'Tidak tersedia'}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-start">
+                <span className="font-medium text-gray-600">User Agent:</span>
+                <span className="text-gray-900 sm:ml-2 break-all">{laporan.user_agent ? laporan.user_agent.substring(0, 100) + '...' : 'Tidak tersedia'}</span>
+              </div>
             </div>
           </div>
 
           {/* Isi Laporan */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Isi Laporan</h4>
-            <p className="text-text-main whitespace-pre-wrap">{laporan.isi}</p>
+          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Isi Laporan</h4>
+            <p className="text-text-main whitespace-pre-wrap text-xs sm:text-sm leading-relaxed">{laporan.isi}</p>
           </div>
 
           {/* Lampiran */}
           {laporan.lampiran_data_url && (
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-800 mb-3 flex items-center text-sm sm:text-base">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                 </svg>
                 Lampiran
@@ -138,14 +145,14 @@ const DetailModal = ({ laporan, onClose }) => {
                 {/* File Info */}
                 <div className="flex items-center justify-between bg-white p-3 rounded-md border">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{laporan.lampiran_info || 'Lampiran'}</p>
-                      <p className="text-sm text-gray-500">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{laporan.lampiran_info || 'Lampiran'}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">
                         {Math.round(laporan.lampiran_data_url.length / 1024)} KB • {laporan.lampiran_type || 'Image'}
                       </p>
                     </div>
@@ -153,7 +160,7 @@ const DetailModal = ({ laporan, onClose }) => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex space-x-2">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <button
                     onClick={() => {
                       try {
@@ -178,9 +185,9 @@ const DetailModal = ({ laporan, onClose }) => {
                         alert('Gambar tidak dapat diakses.');
                       }
                     }}
-                    className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center"
+                    className="flex-1 bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm hover:bg-blue-600 transition-colors flex items-center justify-center"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Download
@@ -228,9 +235,9 @@ const DetailModal = ({ laporan, onClose }) => {
                         alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
                       }
                     }}
-                    className="flex-1 bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center justify-center"
+                    className="flex-1 bg-green-500 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm hover:bg-green-600 transition-colors flex items-center justify-center"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
@@ -242,11 +249,11 @@ const DetailModal = ({ laporan, onClose }) => {
                 {laporan.lampiran_data_url.length > 500000 && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                     <div className="flex">
-                      <svg className="w-5 h-5 text-yellow-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                       </svg>
                       <div>
-                        <p className="text-sm text-yellow-800">
+                        <p className="text-xs sm:text-sm text-yellow-800">
                           <strong>File besar:</strong> Gunakan tombol Download untuk mengunduh file dengan ukuran optimal.
                         </p>
                       </div>
@@ -259,9 +266,9 @@ const DetailModal = ({ laporan, onClose }) => {
 
           {/* Catatan Admin */}
           {laporan.catatan_admin && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Catatan Admin</h4>
-              <p className="text-blue-700">{laporan.catatan_admin}</p>
+            <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">Catatan Admin</h4>
+              <p className="text-blue-700 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{laporan.catatan_admin}</p>
             </div>
           )}
         </div>
@@ -528,68 +535,80 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <table className="min-w-full bg-white">
-        {/* Header tabel dengan warna neutral dan teks secondary */}
-        <thead className="bg-neutral/60">
-          <tr>
-            <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">ID</th>
-            <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Tanggal</th>
-            <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Pelapor</th>
-            <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Judul</th>
-            <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Kategori</th>
-            <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Status</th>
-            <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Lampiran</th>
-            <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((laporan, index) => (
-              // Baris tabel dengan warna teks yang sesuai
-              <motion.tr 
-                key={laporan.id} 
-                className="hover:bg-neutral/40 transition-colors"
+      {/* Mobile Card View */}
+      <div className="md:hidden">
+        {data.length > 0 ? (
+          <div className="space-y-4 p-4">
+            {data.map((laporan, index) => (
+              <motion.div 
+                key={laporan.id}
+                className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <td className="py-3 px-4 border-b border-neutral text-text-secondary text-sm">{laporan.id}</td>
-                <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{formatDate(laporan.tanggal_pengaduan)}</td>
-                <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">
-                  <div>
-                    <div className="font-medium">{laporan.nama || 'Anonim'}</div>
-                    <div className="text-xs text-text-secondary">
-                      {laporan.email && `${laporan.email}`}
-                      {laporan.email && laporan.whatsapp && ' / '}
-                      {laporan.whatsapp && `${laporan.whatsapp}`}
-                    </div>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm mb-1">{laporan.judul}</h3>
+                    <p className="text-xs text-gray-500">No: {index + 1}</p>
                   </div>
-                </td>
-                <td className="py-3 px-4 border-b border-neutral text-text-main font-semibold text-sm max-w-xs truncate">{laporan.judul}</td>
-                <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{laporan.kategori}</td>
-                <td className="py-3 px-4 border-b border-neutral text-center">
-                  <select
-                    value={laporan.status || 'pending'}
-                    onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
-                    className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                      laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                      laporan.status === 'selesai' ? 'bg-green-100 text-green-800 border-green-200' :
-                      'bg-gray-100 text-gray-800 border-gray-200'
-                    }`}
-                  >
-                    <option value="pending">Menunggu</option>
-                    <option value="proses">Proses</option>
-                    <option value="selesai">Selesai</option>
-                  </select>
-                </td>
-                <td className="py-3 px-4 border-b border-neutral text-center">
-                  {laporan.lampiran_data_url ? (
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-2">
+                    <select
+                      value={laporan.status || 'pending'}
+                      onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
+                      className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                        laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                        laporan.status === 'selesai' ? 'bg-green-100 text-green-800 border-green-200' :
+                        'bg-gray-100 text-gray-800 border-gray-200'
+                      }`}
+                    >
+                      <option value="pending">Menunggu</option>
+                      <option value="proses">Proses</option>
+                      <option value="selesai">Selesai</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tanggal:</span>
+                    <span className="text-gray-900">{formatDate(laporan.tanggal_pengaduan)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Pelapor:</span>
+                    <span className="text-gray-900">{laporan.nama || 'Anonim'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Kategori:</span>
+                    <span className="text-gray-900">{laporan.kategori}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Isi Laporan:</span>
+                    <span className="text-gray-900 text-xs truncate max-w-48">{laporan.isi || '-'}</span>
+                  </div>
+                  {laporan.email && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Email:</span>
+                      <span className="text-gray-900 text-xs truncate max-w-32">{laporan.email}</span>
+                    </div>
+                  )}
+                  {laporan.whatsapp && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">WhatsApp:</span>
+                      <span className="text-gray-900">{laporan.whatsapp}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Lampiran Info */}
+                {laporan.lampiran_data_url && (
+                  <div className="mt-3 p-2 bg-green-50 rounded-md">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
                         <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                         </svg>
-                        <span className="text-xs text-green-600 font-medium">Ada</span>
+                        <span className="text-xs text-green-700 font-medium">Ada Lampiran</span>
                       </div>
                       <div className="flex space-x-1">
                         <button
@@ -670,49 +689,235 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                         </button>
                       </div>
                     </div>
-                  ) : (
-                    <span className="text-xs text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="py-3 px-4 border-b border-neutral text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    {/* Tombol "Lihat" dengan gaya baru */}
-                    <motion.button
-                      onClick={() => onShowDetail(laporan)}
-                      className="bg-white text-primary border-2 border-primary px-2 py-1 rounded-md text-xs hover:bg-primary hover:text-white transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex space-x-2 mt-3">
+                  <motion.button
+                    onClick={() => onShowDetail(laporan)}
+                    className="flex-1 bg-white text-primary border-2 border-primary px-3 py-2 rounded-md text-xs hover:bg-primary hover:text-white transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Detail
+                  </motion.button>
+                  <motion.button
+                    onClick={() => onDelete(laporan.id)}
+                    className="flex-1 bg-red-500 text-white px-3 py-2 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Hapus
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+                     <div className="text-center py-8 text-text-secondary">
+             <div className="flex flex-col items-center space-y-2">
+               <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+               </svg>
+               <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
+             </div>
+           </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block">
+        <table className="min-w-full bg-white">
+          {/* Header tabel dengan warna neutral dan teks secondary */}
+          <thead className="bg-neutral/60">
+            <tr>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">No</th>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Tanggal</th>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Pelapor</th>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Judul Laporan</th>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Isi Laporan</th>
+              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Kategori</th>
+              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Status</th>
+              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">IP Address</th>
+              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Lampiran</th>
+              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((laporan, index) => (
+                // Baris tabel dengan warna teks yang sesuai
+                <motion.tr 
+                  key={laporan.id} 
+                  className="hover:bg-neutral/40 transition-colors"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <td className="py-3 px-4 border-b border-neutral text-text-secondary text-sm">{index + 1}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{formatDate(laporan.tanggal_pengaduan)}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">
+                    <div>
+                      <div className="font-medium">{laporan.nama || 'Anonim'}</div>
+                      <div className="text-xs text-text-secondary">
+                        {laporan.email && `${laporan.email}`}
+                        {laporan.email && laporan.whatsapp && ' / '}
+                        {laporan.whatsapp && `${laporan.whatsapp}`}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 border-b border-neutral text-text-main font-semibold text-sm max-w-xs truncate">{laporan.judul}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm max-w-xs truncate">{laporan.isi || '-'}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{laporan.kategori}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-center">
+                    <select
+                      value={laporan.status || 'pending'}
+                      onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
+                      className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                        laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                        laporan.status === 'selesai' ? 'bg-green-100 text-green-800 border-green-200' :
+                        'bg-gray-100 text-gray-800 border-gray-200'
+                      }`}
                     >
-                      Detail
-                    </motion.button>
-                    {/* Tombol "Hapus" dengan warna dari palet */}
-                    <motion.button
-                      onClick={() => onDelete(laporan.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Hapus
-                    </motion.button>
+                      <option value="pending">Menunggu</option>
+                      <option value="proses">Proses</option>
+                      <option value="selesai">Selesai</option>
+                    </select>
+                  </td>
+                  <td className="py-3 px-4 border-b border-neutral text-center text-text-main text-sm">{laporan.client_ip || '-'}</td>
+                  <td className="py-3 px-4 border-b border-neutral text-center">
+                    {laporan.lampiran_data_url ? (
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="flex items-center space-x-1">
+                          <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                          </svg>
+                          <span className="text-xs text-green-600 font-medium">Ada</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => {
+                              try {
+                                const newWindow = window.open();
+                                newWindow.document.write(`
+                                  <html>
+                                    <head>
+                                      <title>Preview Lampiran</title>
+                                      <style>
+                                        body { margin: 0; padding: 20px; background: #f5f5f5; font-family: Arial, sans-serif; }
+                                        img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                        .container { text-align: center; max-width: 800px; margin: 0 auto; }
+                                        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                                        .info { background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; text-align: left; }
+                                        .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                        .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                      </style>
+                                    </head>
+                                    <body>
+                                      <div class="container">
+                                        <div class="header">
+                                          <h2>Preview Lampiran</h2>
+                                          <div class="info">
+                                            <strong>File:</strong> ${laporan.lampiran_info}<br>
+                                            <strong>Ukuran:</strong> ${Math.round(laporan.lampiran_data_url.length / 1024)} KB<br>
+                                            <strong>Tipe:</strong> ${laporan.lampiran_type || 'Image'}
+                                          </div>
+                                        </div>
+                                        <div class="loading">Memuat gambar...</div>
+                                        <img src="${laporan.lampiran_data_url}" alt="Lampiran" 
+                                          onload="document.querySelector('.loading').style.display='none';"
+                                          onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
+                                      </div>
+                                    </body>
+                                  </html>
+                                `);
+                                newWindow.document.close();
+                              } catch (error) {
+                                console.error('Error opening image:', error);
+                                alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                              }
+                            }}
+                            className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                            title="Lihat lampiran"
+                          >
+                            Lihat
+                          </button>
+                          <button
+                            onClick={() => {
+                              try {
+                                fetch(laporan.lampiran_data_url)
+                                  .then(response => response.blob())
+                                  .then(blob => {
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = laporan.lampiran_info || 'lampiran.jpg';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    window.URL.revokeObjectURL(url);
+                                    document.body.removeChild(a);
+                                  })
+                                  .catch(error => {
+                                    console.error('Error downloading image:', error);
+                                    alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                                  });
+                              } catch (error) {
+                                console.error('Error with image URL:', error);
+                                alert('Gambar tidak dapat diakses.');
+                              }
+                            }}
+                            className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors"
+                            title="Download lampiran"
+                          >
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 border-b border-neutral text-center">
+                    <div className="flex items-center justify-center space-x-2">
+                      {/* Tombol "Lihat" dengan gaya baru */}
+                      <motion.button
+                        onClick={() => onShowDetail(laporan)}
+                        className="bg-white text-primary border-2 border-primary px-2 py-1 rounded-md text-xs hover:bg-primary hover:text-white transition-colors"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Detail
+                      </motion.button>
+                      {/* Tombol "Hapus" dengan warna dari palet */}
+                      <motion.button
+                        onClick={() => onDelete(laporan.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Hapus
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))
+            ) : (
+              <tr>
+                {/* Teks menggunakan warna 'text-text-secondary' */}
+                                 <td colSpan="10" className="text-center py-8 text-text-secondary">
+                  <div className="flex flex-col items-center space-y-2">
+                    <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
                   </div>
                 </td>
-              </motion.tr>
-            ))
-          ) : (
-            <tr>
-              {/* Teks menggunakan warna 'text-text-secondary' */}
-              <td colSpan="8" className="text-center py-8 text-text-secondary">
-                <div className="flex flex-col items-center space-y-2">
-                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <p>Belum ada data untuk kategori ini.</p>
-                </div>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </motion.div>
   );
 };
@@ -1004,9 +1209,11 @@ function LaporanPengaduan() {
                 <h2>Desa Moncongloe Bulu</h2>
                 <p>Kecamatan Moncongloe, Kabupaten Maros, Sulawesi Selatan</p>
                 <p>Kode Pos: 90564</p>
-                <p><strong>Periode: ${getPeriodName(downloadPeriod)}</strong></p>
-                <p><strong>Tanggal: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong></p>
               </div>
+            </div>
+            <div style="text-align: right; margin-top: 15px; font-size: 12px; color: #666;">
+              <p><strong>Periode:</strong> ${getPeriodName(downloadPeriod)}</p>
+              <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
           </div>
 
@@ -1038,7 +1245,7 @@ function LaporanPengaduan() {
                 <div class="summary-label">Dengan IP Address</div>
               </div>
             </div>
-            <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 12px; color: #92400e;">
+            <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-top: 20px; font-size: 12px; color: #92400e; text-align: left;">
               <strong>📝 Catatan Penting:</strong> Untuk melihat gambar lampiran dengan benar, buka file PDF ini di browser web (Chrome, Firefox, Safari, dll). Gambar tidak akan terlihat jika dibuka di aplikasi PDF desktop.
             </div>
           </div>
@@ -1047,10 +1254,10 @@ function LaporanPengaduan() {
             <thead>
               <tr>
                 <th>No.</th>
-                <th>ID</th>
                 <th>Tanggal</th>
                 <th>Pelapor</th>
-                <th>Judul</th>
+                <th>Judul Laporan</th>
+                <th>Isi Laporan</th>
                 <th>Kategori</th>
                 <th>Status</th>
                 <th>IP Address</th>
@@ -1061,10 +1268,10 @@ function LaporanPengaduan() {
               ${filteredData.map((l, index) => `
                 <tr>
                   <td>${index + 1}</td>
-                  <td>${l.id}</td>
                   <td>${l.tanggal_pengaduan ? new Date(l.tanggal_pengaduan).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</td>
                   <td>${l.nama || 'Anonim'}</td>
                   <td>${l.judul}</td>
+                  <td style="max-width: 200px; word-wrap: break-word;">${l.isi || '-'}</td>
                   <td>${l.kategori}</td>
                   <td><span class="status status-${l.status || 'pending'}">${l.status === 'pending' ? 'MENUNGGU' : l.status === 'proses' ? 'PROSES' : l.status === 'selesai' ? 'SELESAI' : l.status}</span></td>
                   <td>${l.client_ip || '-'}</td>
@@ -1089,18 +1296,17 @@ function LaporanPengaduan() {
 
           <div class="footer">
             <div class="footer-content">
-              <div className="flex-1 text-left">
-                <p><strong>Dokumen ini dibuat secara otomatis pada:</strong></p>
-                <p>${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <p>${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
+              <div className="flex-1 text-center">
+                <p><strong>Dokumen ini dibuat secara otomatis pada:</strong> ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
               </div>
-              <div className="flex-1 text-right">
-                <p>© 2025 Desa Moncongloe Bulu</p>
-                <p>Sistem Pengaduan Warga</p>
-                <p style="font-size: 10px; color: #9ca3af; margin-top: 5px;">
-                  * Untuk melihat gambar lampiran, buka file PDF ini di browser web
-                </p>
-              </div>
+            </div>
+            <div style="text-align: left; margin-top: 10px; font-size: 10px; color: #9ca3af;">
+              <p>* Untuk melihat gambar lampiran, buka file PDF ini di browser web</p>
+            </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd;">
+              <p>© 2025 Desa Moncongloe Bulu</p>
+              <p>Sistem Pengaduan Warga</p>
             </div>
           </div>
         </body>
@@ -1155,7 +1361,7 @@ function LaporanPengaduan() {
 
   return (
     <motion.div 
-      className="py-10 max-w-7xl mx-auto bg-neutral min-h-screen px-4"
+      className="py-6 sm:py-10 max-w-7xl mx-auto bg-neutral min-h-screen px-3 sm:px-4"
       initial="initial"
       animate="in"
       exit="out"
@@ -1163,28 +1369,28 @@ function LaporanPengaduan() {
       transition={pageTransition}
     >
       <motion.div 
-        className="bg-white rounded-xl shadow p-6 border border-neutral/50"
+        className="bg-white rounded-xl shadow p-4 sm:p-6 border border-neutral/50"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <motion.div 
-          className="mb-6"
+          className="mb-4 sm:mb-6"
           variants={itemVariants}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
             <div>
-              <h2 className="text-2xl font-bold text-secondary">Laporan Warga</h2>
-              <p className="text-text-secondary mt-1">Kelola dan pantau laporan pengaduan dan aspirasi warga</p>
+              <h2 className="text-xl lg:text-2xl font-bold text-secondary">Laporan Warga</h2>
+              <p className="text-text-secondary mt-1 text-sm lg:text-base">Kelola dan pantau laporan pengaduan dan aspirasi warga</p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
               {/* Filter Periode Download */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Periode:</label>
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Periode:</label>
                 <select
                   value={downloadPeriod}
                   onChange={(e) => setDownloadPeriod(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent flex-1 sm:flex-none"
                 >
                   <option value="all">Semua</option>
                   <option value="weekly">Mingguan</option>
@@ -1196,14 +1402,15 @@ function LaporanPengaduan() {
               {/* Tombol Download */}
               <motion.button
                 onClick={() => downloadBulkReports(activeTab === 'pengaduan' ? laporanPengaduan : laporanAspirasi)}
-                className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center"
+                className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 transition-colors flex items-center justify-center w-full sm:w-auto"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Download {activeTab === 'pengaduan' ? 'Pengaduan' : 'Aspirasi'} {getPeriodName(downloadPeriod)}
+                <span className="hidden sm:inline">Download {activeTab === 'pengaduan' ? 'Pengaduan' : 'Aspirasi'} {getPeriodName(downloadPeriod)}</span>
+                <span className="sm:hidden">Download {activeTab === 'pengaduan' ? 'Pengaduan' : 'Aspirasi'}</span>
               </motion.button>
             </div>
           </div>
@@ -1214,10 +1421,10 @@ function LaporanPengaduan() {
           className="border-b border-neutral"
           variants={itemVariants}
         >
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <nav className="-mb-px flex space-x-4 lg:space-x-8 overflow-x-auto pb-1" aria-label="Tabs">
             <motion.button
               onClick={() => setActiveTab('pengaduan')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`whitespace-nowrap py-3 lg:py-4 px-2 lg:px-1 border-b-2 font-medium text-xs lg:text-sm transition-colors flex-shrink-0 ${
                 activeTab === 'pengaduan'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
@@ -1225,11 +1432,13 @@ function LaporanPengaduan() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Pengaduan ({laporanPengaduan.length})
+              <span className="hidden sm:inline">Pengaduan</span>
+              <span className="sm:hidden">Pengaduan</span>
+              <span className="ml-1">({laporanPengaduan.length})</span>
             </motion.button>
             <motion.button
               onClick={() => setActiveTab('aspirasi')}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`whitespace-nowrap py-3 lg:py-4 px-2 lg:px-1 border-b-2 font-medium text-xs lg:text-sm transition-colors flex-shrink-0 ${
                 activeTab === 'aspirasi'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-text-secondary hover:text-secondary hover:border-secondary/50'
@@ -1237,7 +1446,9 @@ function LaporanPengaduan() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Aspirasi ({laporanAspirasi.length})
+              <span className="hidden sm:inline">Aspirasi</span>
+              <span className="sm:hidden">Aspirasi</span>
+              <span className="ml-1">({laporanAspirasi.length})</span>
             </motion.button>
           </nav>
         </motion.div>
@@ -1248,11 +1459,11 @@ function LaporanPengaduan() {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center space-x-2">
-              <svg className="animate-spin h-5 w-5 text-primary" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-primary" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>Memuat data...</span>
+              <span className="text-sm sm:text-base">Memuat data...</span>
             </div>
           </motion.div>
         ) : error ? (
@@ -1261,15 +1472,15 @@ function LaporanPengaduan() {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center space-x-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
-              <span>Error: {error}</span>
+              <span className="text-sm sm:text-base">Error: {error}</span>
             </div>
           </motion.div>
         ) : (
           <motion.div 
-            className="mt-6"
+            className="mt-4 sm:mt-6"
             variants={itemVariants}
           >
             {activeTab === 'pengaduan' && (
