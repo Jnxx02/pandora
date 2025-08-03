@@ -123,7 +123,7 @@ const Profil = () => {
         <section className="w-full mb-16">
           <div className="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg mb-4">
             <iframe
-              src="https://www.youtube.com/embed/videoseries?list=PL..._YOUR_PLAYLIST_ID" // Ganti dengan URL video/playlist YouTube yang relevan
+              src="https://www.instagram.com/kknt114_moncongloebulu/reel/DM40roth5pH/" // Ganti dengan URL video/playlist YouTube yang relevan
               title="Video Dokumenter Desa Moncongloe Bulu"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
