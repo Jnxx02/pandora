@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDesa } from '../context/DesaContext';
 import { useStatistik } from '../context/StatistikContext';
 import { usePrasarana } from '../context/PrasaranaContext';
@@ -26,24 +26,7 @@ const wilayahAdministrasi = [
   { nama: 'Moncongloe Bulu' },
 ];
 
-const initialPrasarana = [
-  {
-    kategori: 'Pendidikan',
-    list: ['TK/PAUD (4 Unit)', 'SD Negeri (3 Unit)', 'SMP Negeri (1 Unit)'],
-  },
-  {
-    kategori: 'Kesehatan',
-    list: ['Puskesmas Pembantu (1 Unit)', 'Poskesdes (1 Unit)', 'Posyandu (5 Unit)'],
-  },
-  {
-    kategori: 'Ibadah',
-    list: ['Masjid (8 Unit)', 'Gereja (1 Unit)'],
-  },
-  {
-    kategori: 'Umum',
-    list: ['Kantor Desa (1 Unit)', 'Pasar Desa (1 Unit)', 'Lapangan Olahraga (2 Unit)'],
-  },
-];
+
 
 const organisasi = [
   {
@@ -82,12 +65,7 @@ const misi = [
   "Menciptakan lingkungan masyarakat yang aman, tertib, dan rukun dalam kehidupan bermasyarakat.",
 ];
 
-const Section = ({ title, children, className }) => (
-  <section className={`w-full bg-white rounded-2xl shadow p-6 sm:p-8 border border-gray-200/80 mb-8 ${className}`}>
-    <h2 className="text-xl sm:text-2xl font-bold text-primary mb-6 text-center">{title}</h2>
-    {children}
-  </section>
-);
+
 
 const Profil = () => {
   const { profil } = useDesa();
@@ -100,13 +78,9 @@ const Profil = () => {
   const [openOrganisasi, setOpenOrganisasi] = useState({});
 
   const { statistik } = useStatistik();
-  const { prasarana, setPrasarana } = usePrasarana();
+  const { prasarana } = usePrasarana();
 
-  useEffect(() => {
-    // Data prasarana sudah di-context, jadi tidak perlu load dari localStorage lagi
-    // Namun, jika ada kebutuhan untuk mengubah data prasarana dari context,
-    // Anda bisa menambahkan logika di sini.
-  }, []);
+
 
   const toggleOrganisasi = (nama) => {
     setOpenOrganisasi(prev => ({ ...prev, [nama]: !prev[nama] }));
