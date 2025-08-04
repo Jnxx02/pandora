@@ -379,12 +379,12 @@ function Header() {
           {open ? <span>&#10005;</span> : <span>&#9776;</span>}
         </button>
         {/* Desktop Menu + Login/Logout (right aligned) */}
-        <div className="hidden md:flex flex-row flex-grow justify-end items-center gap-4">
-          <nav className="flex flex-row gap-6 text-base font-medium">
+        <div className="hidden md:flex flex-row flex-grow justify-end items-center gap-6 ml-auto">
+          <nav className="flex flex-row gap-6 text-base font-medium items-center">
             {navLinks.map(link => link.subLinks ? (
               <div
                 key={link.label}
-                className="relative"
+                className="relative flex items-center"
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
@@ -416,7 +416,7 @@ function Header() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`py-2 px-3 rounded transition-colors ${
+                className={`flex items-center py-2 px-3 rounded transition-colors ${
                   location.pathname === link.to
                     ? isTransparent
                       ? 'font-bold text-white bg-black/20 border border-black/30 px-3 py-1 rounded'

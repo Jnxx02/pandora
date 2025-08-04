@@ -106,15 +106,15 @@ const DokumentasiKKN = () => {
         <div className="min-h-screen bg-neutral">
             {/* Success Message */}
             {showSuccessMessage && (
-                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
-                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-md">
+                    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>{location.state?.message || 'Dokumentasi berhasil ditambahkan!'}</span>
+                        <span className="flex-1">{location.state?.message || 'Dokumentasi berhasil ditambahkan!'}</span>
                         <button
                             onClick={() => setShowSuccessMessage(false)}
-                            className="ml-4 text-green-500 hover:text-green-700"
+                            className="text-green-500 hover:text-green-700 flex-shrink-0"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -124,15 +124,15 @@ const DokumentasiKKN = () => {
                 </div>
             )}
             
-            <main className="py-6 px-4 sm:px-6">
+            <main className="py-4 sm:py-6 px-4 sm:px-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4">
+                    <div className="text-center mb-6 sm:mb-8">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-3 sm:mb-4">
                             Dokumentasi KKN
                         </h1>
-                        <p className="text-text-secondary text-lg max-w-3xl mx-auto mb-6">
-                            Kumpulan hasil karya mahasiswa KKN-T 114 Moncongloe Bulu berupa modul, buku panduan, dan template spreadsheet untuk kemajuan desa. Saat ini tersedia template BUMDes yang sudah siap digunakan.
+                        <p className="text-text-secondary text-base sm:text-lg max-w-3xl mx-auto mb-4 sm:mb-6 px-2">
+                            Kumpulan hasil karya mahasiswa yang berupa modul, buku panduan, dan template spreadsheet untuk kemajuan desa.
                         </p>
                         
                         {/* Admin Action Button */}
@@ -140,9 +140,9 @@ const DokumentasiKKN = () => {
                             <div className="flex justify-center">
                                 <button
                                     onClick={() => navigate('/admin/dokumentasi/tambah')}
-                                    className="bg-secondary text-white px-6 py-3 rounded-lg hover:bg-primary transition-colors duration-200 flex items-center gap-2 shadow-lg"
+                                    className="bg-secondary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-primary transition-colors duration-200 flex items-center gap-2 shadow-lg text-sm sm:text-base"
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
                                     Tambah Dokumentasi
@@ -152,17 +152,17 @@ const DokumentasiKKN = () => {
                     </div>
 
                     {/* Search and Filter Section */}
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                        <div className="flex flex-col md:flex-row gap-4">
+                    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
+                        <div className="flex flex-col gap-4">
                             {/* Search Bar */}
-                            <div className="flex-1">
+                            <div className="w-full">
                                 <div className="relative">
                                     <input
                                         type="text"
                                         placeholder="Cari dokumentasi..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-base"
                                     />
                                     <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -171,10 +171,10 @@ const DokumentasiKKN = () => {
                             </div>
 
                             {/* Category Filter */}
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                                 <button
                                     onClick={() => setActiveCategory('all')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                                         activeCategory === 'all'
                                             ? 'bg-primary text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -184,51 +184,51 @@ const DokumentasiKKN = () => {
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('modul')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                                         activeCategory === 'modul'
                                             ? 'bg-primary text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                                 >
-                                    📚 Modul
+                                    📋 Modul
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('bukuPanduan')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                                         activeCategory === 'bukuPanduan'
                                             ? 'bg-primary text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                                 >
-                                    📖 Panduan
+                                    📝 Panduan
                                 </button>
                                 <button
                                     onClick={() => setActiveCategory('template')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                                         activeCategory === 'template'
                                             ? 'bg-primary text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                                 >
-                                    📊 Template
+                                    📄 Template
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     {/* Results Count */}
-                    <div className="mb-6">
-                        <p className="text-text-secondary">
+                    <div className="mb-4 sm:mb-6">
+                        <p className="text-text-secondary text-sm sm:text-base">
                             Menampilkan {filteredData.length} dokumentasi
                         </p>
                     </div>
 
                     {/* Documentation Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {filteredData.map((item) => (
                             <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                                 {/* Thumbnail */}
-                                <div className="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                                <div className="h-40 sm:h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                                     <div className="text-white text-6xl opacity-80">
                                         {item.thumbnail_url ? (
                                             <img 
@@ -242,34 +242,28 @@ const DokumentasiKKN = () => {
                                             />
                                         ) : (
                                             <div className="text-center">
-                                                <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
                                                 </svg>
-                                                <span className="text-sm">Preview</span>
+                                                <span className="text-xs sm:text-sm">Preview</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Content */}
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold text-text-main mb-2 line-clamp-2">
+                                <div className="p-4 sm:p-6">
+                                    <h3 className="text-base sm:text-lg font-semibold text-text-main mb-2 line-clamp-2">
                                         {item.title}
                                     </h3>
-                                    <p className="text-text-secondary text-sm mb-4 line-clamp-3">
+                                    <p className="text-text-secondary text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-3">
                                         {item.description}
                                     </p>
 
                                     {/* Meta Info */}
-                                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                                        <span>Oleh: {item.author}</span>
-                                        <span>{new Date(item.created_at).toLocaleDateString('id-ID')}</span>
-                                    </div>
-
-                                    {/* Stats */}
-                                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                                        <span>📁 {item.file_size}</span>
-                                        <span>⬇️ {item.downloads} download</span>
+                                    <div className="flex items-center justify-between text-xs text-gray-500 mb-3 sm:mb-4">
+                                        <span className="truncate">Oleh: {item.author}</span>
+                                        <span className="flex-shrink-0 ml-2">{new Date(item.created_at).toLocaleDateString('id-ID')}</span>
                                     </div>
 
                                     {/* Download Button */}
@@ -285,7 +279,7 @@ const DokumentasiKKN = () => {
                                                 alert('Link download akan segera tersedia');
                                             }
                                         }}
-                                        className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors duration-200 flex items-center justify-center gap-2"
+                                        className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -299,12 +293,12 @@ const DokumentasiKKN = () => {
 
                     {/* Empty State */}
                     {filteredData.length === 0 && (
-                        <div className="text-center py-12">
-                            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="text-center py-8 sm:py-12">
+                            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">Tidak ada dokumentasi ditemukan</h3>
-                            <p className="text-gray-500">Coba ubah filter atau kata kunci pencarian Anda</p>
+                            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">Tidak ada dokumentasi ditemukan</h3>
+                            <p className="text-gray-500 text-sm sm:text-base">Coba ubah filter atau kata kunci pencarian Anda</p>
                         </div>
                     )}
                 </div>
