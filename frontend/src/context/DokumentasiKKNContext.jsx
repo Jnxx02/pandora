@@ -15,42 +15,31 @@ export const DokumentasiKKNProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Default dokumentasi data untuk development
-    const defaultDokumentasi = [
+    // Default dokumentasi data untuk development - menggunakan useMemo agar timestamp konsisten
+    const defaultDokumentasi = useMemo(() => [
         {
             id: 1,
-            title: 'Template BUMDes',
-            description: 'Template spreadsheet untuk pengelolaan BUMDes yang sudah siap digunakan',
+            title: 'Template Pembukuan Koperasi Merah Putih',
+            description: 'Template spreadsheet untuk pembukuan koperasi dengan format laporan arus kas yang terstruktur',
             category: 'template',
             author: 'KKN-T 114',
             downloads: 0,
-            file_url: '#',
+            download_url: 'https://docs.google.com/spreadsheets/d/1Y-ObJc-RytTjuqph8g-1sCDJBAGWub6h_Ws5tlV04kY/edit?gid=1160742352#gid=1160742352',
             is_active: true,
-            created_at: '2024-01-01T00:00:00Z'
+            created_at: new Date().toISOString()
         },
         {
             id: 2,
-            title: 'Modul Pelatihan UMKM',
-            description: 'Modul pelatihan untuk pengembangan usaha mikro, kecil, dan menengah',
-            category: 'modul',
+            title: 'Template Pembukuan BUMDES',
+            description: 'Template spreadsheet untuk pembukuan BUMDES yang sudah siap digunakan',
+            category: 'template',
             author: 'KKN-T 114',
             downloads: 0,
-            file_url: '#',
+            download_url: 'https://docs.google.com/spreadsheets/d/1KvX4oxlQra7IURkn4V6L8GNskuMhJUk0KMQW12uyoK4/edit?gid=919066220#gid=919066220',
             is_active: true,
-            created_at: '2024-01-01T00:00:00Z'
-        },
-        {
-            id: 3,
-            title: 'Buku Panduan Desa Digital',
-            description: 'Panduan lengkap untuk implementasi teknologi digital di desa',
-            category: 'buku_panduan',
-            author: 'KKN-T 114',
-            downloads: 0,
-            file_url: '#',
-            is_active: true,
-            created_at: '2024-01-01T00:00:00Z'
+            created_at: new Date().toISOString()
         }
-    ];
+    ], []);
 
     // Fetch semua dokumentasi
     const fetchDokumentasi = useCallback(async () => {
@@ -136,17 +125,9 @@ export const DokumentasiKKNProvider = ({ children }) => {
         }
     }, []);
 
-    // Filter dokumentasi berdasarkan kategori
-    const getDokumentasiByCategory = useCallback((category) => {
-        if (category === 'all') {
-            return dokumentasi;
-        }
-        return dokumentasi.filter(item => item.category === category);
-    }, [dokumentasi]);
-
     // Search dokumentasi
     const searchDokumentasi = useCallback((searchTerm, category = 'all') => {
-        let filtered = getDokumentasiByCategory(category);
+        let filtered = category === 'all' ? dokumentasi : dokumentasi.filter(item => item.category === category);
         
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
@@ -158,23 +139,6 @@ export const DokumentasiKKNProvider = ({ children }) => {
         }
         
         return filtered;
-    }, [getDokumentasiByCategory]);
-
-    // Group dokumentasi berdasarkan kategori
-    const dokumentasiByCategory = useMemo(() => {
-        const grouped = {
-            modul: [],
-            buku_panduan: [],
-            template: []
-        };
-
-        dokumentasi.forEach(item => {
-            if (grouped[item.category]) {
-                grouped[item.category].push(item);
-            }
-        });
-
-        return grouped;
     }, [dokumentasi]);
 
     // Initial fetch
@@ -188,9 +152,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
         error,
         refetchDokumentasi: fetchDokumentasi,
         incrementDownload,
-        getDokumentasiByCategory,
-        searchDokumentasi,
-        dokumentasiByCategory
+        searchDokumentasi
     };
 
     return (

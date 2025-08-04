@@ -6,9 +6,11 @@
     "vercel-build": "cd frontend && npm install && npm run build",
     "build": "cd frontend && npm install && npm run build",
     "dev": "cd frontend && npm run dev",
-    "install-deps": "cd frontend && npm install"
+    "dev:full": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "install-deps": "cd frontend && npm install && cd ../backend && npm install"
   },
   "dependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "concurrently": "^8.2.2"
   }
 }

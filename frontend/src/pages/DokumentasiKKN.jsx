@@ -5,10 +5,136 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const DokumentasiKKN = () => {
     const [activeCategory, setActiveCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Function untuk mendapatkan preview berdasarkan tipe file
+    const getFilePreview = (item) => {
+        // Safety check untuk item yang undefined
+        if (!item) {
+            return (
+                <div className="text-center">
+                    <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                        <path d="M14 2v6h6"/>
+                        <path d="M9 13h6"/>
+                        <path d="M9 17h6"/>
+                        <path d="M9 9h1"/>
+                    </svg>
+                    <span className="text-xs sm:text-sm">📄 File</span>
+                </div>
+            );
+        }
+
+        // Jika ada thumbnail_url, gunakan itu
+        if (item.thumbnail_url) {
+            return (
+                <img 
+                    src={item.thumbnail_url} 
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'block';
+                    }}
+                />
+            );
+        }
+
+        // Deteksi tipe file berdasarkan download_url atau file_url
+        const fileUrl = item?.download_url || item?.file_url || '';
+        const fileExtension = fileUrl ? fileUrl.split('.').pop()?.toLowerCase() : '';
+
+        // Preview berdasarkan ekstensi file
+        if (fileExtension) {
+            if (['pdf'].includes(fileExtension)) {
+                return (
+                    <div className="text-center">
+                        <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M9 13h6"/>
+                            <path d="M9 17h6"/>
+                            <path d="M9 9h1"/>
+                        </svg>
+                        <span className="text-xs sm:text-sm">📄 PDF</span>
+                    </div>
+                );
+            } else if (['xlsx', 'xls'].includes(fileExtension)) {
+                return (
+                    <div className="text-center">
+                        <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M9 13h6"/>
+                            <path d="M9 17h6"/>
+                            <path d="M9 9h1"/>
+                        </svg>
+                        <span className="text-xs sm:text-sm">📊 Excel</span>
+                    </div>
+                );
+            } else if (['docx', 'doc'].includes(fileExtension)) {
+                return (
+                    <div className="text-center">
+                        <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M9 13h6"/>
+                            <path d="M9 17h6"/>
+                            <path d="M9 9h1"/>
+                        </svg>
+                        <span className="text-xs sm:text-sm">📝 Word</span>
+                    </div>
+                );
+            } else if (['pptx', 'ppt'].includes(fileExtension)) {
+                return (
+                    <div className="text-center">
+                        <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M9 13h6"/>
+                            <path d="M9 17h6"/>
+                            <path d="M9 9h1"/>
+                        </svg>
+                        <span className="text-xs sm:text-sm">📊 PowerPoint</span>
+                    </div>
+                );
+            }
+        }
+
+        // Fallback berdasarkan kategori
+        return (
+            <div className="text-center">
+                {item?.category === 'template' ? (
+                    <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                        <path d="M14 2v6h6"/>
+                        <path d="M9 13h6"/>
+                        <path d="M9 17h6"/>
+                        <path d="M9 9h1"/>
+                    </svg>
+                ) : item?.category === 'modul' ? (
+                    <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                ) : item?.category === 'buku_panduan' ? (
+                    <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                ) : (
+                    <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                    </svg>
+                )}
+                <span className="text-xs sm:text-sm">
+                    {item.category === 'template' ? '📊 Template' : 
+                     item.category === 'modul' ? '📋 Modul' : 
+                     item.category === 'buku_panduan' ? '📝 Panduan' : 'Preview'}
+                </span>
+            </div>
+        );
+    };
     
     const { 
         dokumentasi, 
@@ -18,49 +144,7 @@ const DokumentasiKKN = () => {
         searchDokumentasi 
     } = useDokumentasiKKN();
 
-    // Check admin status
-    useEffect(() => {
-        const checkAdminStatus = () => {
-            try {
-                const adminSession = sessionStorage.getItem('adminSession');
-                if (adminSession) {
-                    const sessionData = JSON.parse(adminSession);
-                    const now = Date.now();
-                    const sessionTimeout = 30 * 60 * 1000; // 30 menit
-                    
-                    if (sessionData.isAdmin && (now - sessionData.loginTime) < sessionTimeout) {
-                        setIsAdmin(true);
-                        return;
-                    }
-                }
-                setIsAdmin(false);
-            } catch (error) {
-                console.error('Error checking admin status:', error);
-                setIsAdmin(false);
-            }
-        };
 
-        checkAdminStatus();
-        
-        // Check admin status periodically
-        const interval = setInterval(checkAdminStatus, 60000); // Check every minute
-        
-        return () => clearInterval(interval);
-    }, []);
-
-    // Check for success message from navigation
-    useEffect(() => {
-        if (location.state?.message) {
-            setShowSuccessMessage(true);
-            // Clear the message from location state
-            navigate(location.pathname, { replace: true });
-            
-            // Auto-hide success message after 5 seconds
-            setTimeout(() => {
-                setShowSuccessMessage(false);
-            }, 5000);
-        }
-    }, [location.state, navigate, location.pathname]);
 
     // Filter data berdasarkan kategori dan search term
     const getFilteredData = () => {
@@ -104,26 +188,6 @@ const DokumentasiKKN = () => {
 
     return (
         <div className="min-h-screen bg-neutral">
-            {/* Success Message */}
-            {showSuccessMessage && (
-                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-md">
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-sm">
-                        <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="flex-1">{location.state?.message || 'Dokumentasi berhasil ditambahkan!'}</span>
-                        <button
-                            onClick={() => setShowSuccessMessage(false)}
-                            className="text-green-500 hover:text-green-700 flex-shrink-0"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            )}
-            
             <main className="py-4 sm:py-6 px-4 sm:px-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
@@ -135,20 +199,7 @@ const DokumentasiKKN = () => {
                             Kumpulan hasil karya mahasiswa yang berupa modul, buku panduan, dan template spreadsheet untuk kemajuan desa.
                         </p>
                         
-                        {/* Admin Action Button */}
-                        {isAdmin && (
-                            <div className="flex justify-center">
-                                <button
-                                    onClick={() => navigate('/admin/dokumentasi/tambah')}
-                                    className="bg-secondary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-primary transition-colors duration-200 flex items-center gap-2 shadow-lg text-sm sm:text-base"
-                                >
-                                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                    Tambah Dokumentasi
-                                </button>
-                            </div>
-                        )}
+
                     </div>
 
                     {/* Search and Filter Section */}
@@ -226,54 +277,40 @@ const DokumentasiKKN = () => {
                     {/* Documentation Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {filteredData.map((item) => (
-                            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                            <div key={item?.id || Math.random()} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                                 {/* Thumbnail */}
                                 <div className="h-40 sm:h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                                     <div className="text-white text-6xl opacity-80">
-                                        {item.thumbnail_url ? (
-                                            <img 
-                                                src={item.thumbnail_url} 
-                                                alt={item.title}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.style.display = 'none';
-                                                    e.target.nextSibling.style.display = 'block';
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="text-center">
-                                                <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
-                                                </svg>
-                                                <span className="text-xs sm:text-sm">Preview</span>
-                                            </div>
-                                        )}
+                                        {getFilePreview(item)}
                                     </div>
                                 </div>
 
                                 {/* Content */}
                                 <div className="p-4 sm:p-6">
                                     <h3 className="text-base sm:text-lg font-semibold text-text-main mb-2 line-clamp-2">
-                                        {item.title}
+                                        {item?.title || 'Judul tidak tersedia'}
                                     </h3>
                                     <p className="text-text-secondary text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-3">
-                                        {item.description}
+                                        {item?.description || 'Deskripsi tidak tersedia'}
                                     </p>
 
                                     {/* Meta Info */}
                                     <div className="flex items-center justify-between text-xs text-gray-500 mb-3 sm:mb-4">
-                                        <span className="truncate">Oleh: {item.author}</span>
-                                        <span className="flex-shrink-0 ml-2">{new Date(item.created_at).toLocaleDateString('id-ID')}</span>
+                                        <span className="truncate">Oleh: {item?.author || 'Anonim'}</span>
+                                        <span className="flex-shrink-0 ml-2">{item?.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : 'Tanggal tidak tersedia'}</span>
                                     </div>
 
                                     {/* Download Button */}
                                     <button
                                         onClick={async () => {
-                                            if (item.download_url.startsWith('http')) {
+                                            const downloadUrl = item?.download_url || item?.file_url || '';
+                                            if (downloadUrl && downloadUrl.startsWith('http')) {
                                                 // Increment download count
-                                                await incrementDownload(item.id);
+                                                if (item?.id) {
+                                                    await incrementDownload(item.id);
+                                                }
                                                 // Open link
-                                                window.open(item.download_url, '_blank');
+                                                window.open(downloadUrl, '_blank');
                                             } else {
                                                 // Fallback untuk link yang belum tersedia
                                                 alert('Link download akan segera tersedia');
@@ -284,7 +321,7 @@ const DokumentasiKKN = () => {
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        {item.download_url.startsWith('http') ? 'Buka Template' : 'Download'}
+                                        {(item.download_url || item.file_url || '').startsWith('http') ? 'Buka Template' : 'Download'}
                                     </button>
                                 </div>
                             </div>
