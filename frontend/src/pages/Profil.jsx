@@ -768,6 +768,103 @@ const Profil = () => {
           </div>
         </section>
 
+        {/* Gallery Desa */}
+        <section className="w-full mb-16">
+          <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">Gallery Desa</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Gallery Item 1 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Pemandangan Desa"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Pemandangan Desa</h3>
+                  <p className="text-sm opacity-90">Keindahan alam dan pemandangan desa yang asri</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Item 2 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Kegiatan Masyarakat"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Kegiatan Masyarakat</h3>
+                  <p className="text-sm opacity-90">Aktivitas dan gotong royong warga desa</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Item 3 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Potensi Pertanian"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Potensi Pertanian</h3>
+                  <p className="text-sm opacity-90">Lahan pertanian yang subur dan produktif</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Item 4 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Infrastruktur Desa"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Infrastruktur Desa</h3>
+                  <p className="text-sm opacity-90">Fasilitas dan sarana prasarana desa</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Item 5 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Budaya dan Tradisi"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Budaya dan Tradisi</h3>
+                  <p className="text-sm opacity-90">Kearifan lokal dan adat istiadat desa</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Item 6 */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <LazyImage
+                src="/images/gallery/pemandangan-alam.JPG"
+                alt="Kehidupan Sehari-hari"
+                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  <h3 className="font-semibold text-lg">Kehidupan Sehari-hari</h3>
+                  <p className="text-sm opacity-90">Rutinitas dan aktivitas warga desa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   );
