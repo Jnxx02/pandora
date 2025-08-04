@@ -770,7 +770,7 @@ const Profil = () => {
 
         {/* Gallery Desa */}
         <section className="w-full mb-16">
-          <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">Gallery Desa</h2>
+          <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">Galeri Desa</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Gallery Item 1 */}
