@@ -165,65 +165,94 @@ const Profil = () => {
           {/* Staff Kantor Desa */}
           <div className="mb-8">
             <h3 className="text-lg sm:text-2xl font-bold text-secondary mb-6 text-center">Staff Kantor Desa</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {/* Kepala Desa */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+            
+            {/* Layout untuk 3 staff dengan posisi yang seimbang */}
+            <div className="flex flex-col lg:flex-row justify-center items-center gap-8 mb-6">
+              {/* Kepala Desa - Posisi Tengah */}
+              <div className="order-2 lg:order-1 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-red-200">
+                  <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-red-200 shadow-lg">
                     <img 
-                      src="/images/pengurus/kepala-desa.jpg" 
+                      src="https://moncongloebulu.vercel.app/images/team/muhammad%20tahir.jpeg" 
                       alt="Kepala Desa Muhammad Tahir"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23dc2626'%3E%3Cpath d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'/%3E%3C/svg%3E";
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
                       }}
                     />
+                    <div className="w-full h-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center" style={{display: 'none'}}>
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Kepala Desa</h3>
-                  <p className="text-secondary text-sm mb-3">Muhammad Tahir</p>
-                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  <h3 className="text-xl font-bold text-primary mb-2">Kepala Desa</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Muhammad Tahir</p>
+                  <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-red-50 px-4 py-2 rounded-full border border-red-200">
+                    <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
                     Periode 2021-2027
                   </div>
                 </div>
               </div>
 
-              {/* Sekretaris Desa */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+              {/* Sekretaris Desa - Posisi Kiri */}
+              <div className="order-1 lg:order-2 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-blue-200">
+                  <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-blue-200 shadow-lg">
                     <img 
-                      src="/images/pengurus/sekretaris-desa.jpg" 
+                      src="https://moncongloebulu.vercel.app/images/team/sekdes%20mbulu.jpg" 
                       alt="Sekretaris Desa Abd Rasyid"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'/%3E%3C/svg%3E";
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
                       }}
                     />
+                    <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center" style={{display: 'none'}}>
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Sekretaris Desa</h3>
-                  <p className="text-secondary text-sm mb-3">Abd Rasyid, S.Pd</p>
-                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  <h3 className="text-xl font-bold text-primary mb-2">Sekretaris Desa</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Abd Rasyid, S.Pd</p>
+                  <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
+                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
                     PNS
                   </div>
                 </div>
               </div>
 
-              {/* Bendahara Desa */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+              {/* Kaur Keuangan - Posisi Kanan */}
+              <div className="order-3 lg:order-3 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-teal-200">
+                  <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-teal-200 shadow-lg">
                     <img 
-                      src="/images/pengurus/bendahara-desa.jpg" 
-                      alt="Bendahara Desa Bendahara Desa"
+                      src="https://moncongloebulu.vercel.app/images/team/Pak%20Bahar.jpg" 
+                      alt="Kaur Keuangan"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2314b8a6'%3E%3Cpath d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'/%3E%3C/svg%3E";
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
                       }}
                     />
+                    <div className="w-full h-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center" style={{display: 'none'}}>
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                      </svg>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Bendahara Desa</h3>
-                  <p className="text-secondary text-sm mb-3">Bendahara Desa</p>
-                  <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  <h3 className="text-xl font-bold text-primary mb-2">Kaur Keuangan</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Baharuddin, S.Pd</p>
+                  <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-teal-50 px-4 py-2 rounded-full border border-teal-200">
+                    <svg className="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
                     Non-PNS
                   </div>
                 </div>
@@ -263,138 +292,153 @@ const Profil = () => {
           {/* Kepala Dusun */}
           <div className="mb-8">
             <h3 className="text-lg sm:text-2xl font-bold text-secondary mb-6 text-center">Kepala Dusun & Jadwal Piket</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                 {/* Dusun Diccekang */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
                       <img 
-                        src="/images/pengurus/kepala-dusun-diccekang.jpg" 
+                        src="https://moncongloebulu.vercel.app/images/team/Dusun%20diccekang.jpg" 
                         alt="Kepala Dusun Diccekang Burhanuddin"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center" style={{display: 'none'}}>
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Diccekang</h3>
-                    <p className="text-secondary text-xs mb-2">Burhanuddin</p>
-                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
-                      Kepala Dusun
-                    </div>
-                    <div className="text-xs text-red-600 font-semibold">
-                      📞 082195062335
-                    </div>
-                    <div className="text-xs text-blue-600 font-semibold mt-1">
-                      📅 Senin (Piket)
+                    <h3 className="text-sm font-bold text-primary mb-2">Dusun Diccekang</h3>
+                    <p className="text-secondary text-sm mb-3 font-medium">Burhanuddin</p>
+                    <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200">
+                      <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Senin
                     </div>
                   </div>
                 </div>
 
                 {/* Dusun Tamalate */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
                       <img 
                         src="/images/pengurus/kepala-dusun-tamalate.jpg" 
                         alt="Kepala Dusun Tamalate Syaripuddin"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center" style={{display: 'none'}}>
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tamalate</h3>
-                    <p className="text-secondary text-xs mb-2">Syaripuddin</p>
-                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
-                      Kepala Dusun
-                    </div>
-                    <div className="text-xs text-red-600 font-semibold">
-                      📞 082346543919
-                    </div>
-                    <div className="text-xs text-blue-600 font-semibold mt-1">
-                      📅 Selasa (Piket)
+                    <h3 className="text-sm font-bold text-primary mb-2">Dusun Tamalate</h3>
+                    <p className="text-secondary text-sm mb-3 font-medium">Syaripuddin</p>
+                    <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200">
+                      <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Selasa
                     </div>
                   </div>
                 </div>
 
                 {/* Dusun Moncongloe Bulu */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
                       <img 
-                        src="/images/pengurus/kepala-dusun-moncongloe-bulu.jpg" 
+                        src="https://moncongloebulu.vercel.app/images/team/dusun%20mbulu.png" 
                         alt="Kepala Dusun M. Loe Bulu Rahman"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center" style={{display: 'none'}}>
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-primary mb-1">Dusun M. Loe Bulu</h3>
-                    <p className="text-secondary text-xs mb-2">Rahman</p>
-                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
-                      Kepala Dusun
-                    </div>
-                    <div className="text-xs text-red-600 font-semibold">
-                      📞 082292363982
-                    </div>
-                    <div className="text-xs text-blue-600 font-semibold mt-1">
-                      📅 Rabu (Piket)
+                    <h3 className="text-sm font-bold text-primary mb-2">Dusun Moncongloe Bulu</h3>
+                    <p className="text-secondary text-sm mb-3 font-medium">Rahman</p>
+                    <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200">
+                      <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Rabu
                     </div>
                   </div>
                 </div>
 
                 {/* Dusun Tammu-Tammu */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
                       <img 
                         src="/images/pengurus/kepala-dusun-tammu-tammu.jpg" 
                         alt="Kepala Dusun Tammu-Tammu Fery Andayani"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center" style={{display: 'none'}}>
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tammu-Tammu</h3>
-                    <p className="text-secondary text-xs mb-2">Fery Andayani</p>
-                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
-                      Kepala Dusun
-                    </div>
-                    <div className="text-xs text-red-600 font-semibold">
-                      📞 082292124166
-                    </div>
-                    <div className="text-xs text-blue-600 font-semibold mt-1">
-                      📅 Kamis (Piket)
+                    <h3 className="text-sm font-bold text-primary mb-2">Dusun Tammu-Tammu</h3>
+                    <p className="text-secondary text-sm mb-3 font-medium">Fery Andayani</p>
+                    <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200">
+                      <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Kamis
                     </div>
                   </div>
                 </div>
 
                 {/* Dusun Tompo Balang */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-yellow-200">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
                       <img 
-                        src="/images/pengurus/kepala-dusun-tompo-balang.jpg" 
+                        src="https://moncongloebulu.vercel.app/images/team/Dusun%20Hasbi.jpg" 
                         alt="Kepala Dusun Tompo Balang Hasbi"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23eab308'%3E%3Cpath d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/%3E%3Cpath d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3C/svg%3E";
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center" style={{display: 'none'}}>
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-primary mb-1">Dusun Tompo Balang</h3>
-                    <p className="text-secondary text-xs mb-2">Hasbi</p>
-                    <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full mb-2">
-                      Kepala Dusun
-                    </div>
-                    <div className="text-xs text-red-600 font-semibold">
-                      📞 085299259991
-                    </div>
-                    <div className="text-xs text-blue-600 font-semibold mt-1">
-                      📅 Jum'at (Piket)
+                    <h3 className="text-sm font-bold text-primary mb-2">Dusun Tompo Balang</h3>
+                    <p className="text-secondary text-sm mb-3 font-medium">Hasbi</p>
+                    <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200">
+                      <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Jum'at
                     </div>
                   </div>
                 </div>
