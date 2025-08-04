@@ -20,6 +20,7 @@ import { StatistikProvider } from './context/StatistikContext';
 import { PrasaranaProvider } from './context/PrasaranaContext';
 import { BeritaProvider } from './context/BeritaContext';
 import { PengaduanProvider } from './context/PengaduanContext';
+import SessionTimeout from './components/SessionTimeout';
 
 // Context untuk sidebar state
 const SidebarContext = createContext();
@@ -42,11 +43,65 @@ const ModulPage = ({ title }) => (
 
 // Komponen untuk proteksi route admin
 function RequireAdmin({ children }) {
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Check for valid session
+  const checkAdminSession = () => {
+    const session = sessionStorage.getItem('adminSession');
+    const lastLogin = localStorage.getItem('adminLastLogin');
+    const sessionId = localStorage.getItem('adminSessionId');
+    
+    if (!session || !lastLogin || !sessionId) {
+      return false;
+    }
+    
+    try {
+      const sessionData = JSON.parse(session);
+      
+      // Validate session data
+      if (!sessionData.isAdmin || !sessionData.sessionId || !sessionData.lastActivity) {
+        return false;
+      }
+      
+      // Check if session ID matches
+      if (sessionData.sessionId !== sessionId) {
+        return false;
+      }
+      
+      // Check session timeout (30 minutes)
+      const timeSinceActivity = Date.now() - sessionData.lastActivity;
+      const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+      
+      if (timeSinceActivity > SESSION_TIMEOUT) {
+        // Session expired, clear all data
+        sessionStorage.removeItem('adminSession');
+        localStorage.removeItem('adminLastLogin');
+        localStorage.removeItem('adminSessionId');
+        return false;
+      }
+      
+      // Update last activity
+      sessionData.lastActivity = Date.now();
+      sessionStorage.setItem('adminSession', JSON.stringify(sessionData));
+      
+      return true;
+    } catch (error) {
+      console.error('Error validating admin session:', error);
+      return false;
+    }
+  };
+  
+  const isAdmin = checkAdminSession();
+  
   if (!isAdmin) {
+    // Clear any existing session data
+    sessionStorage.removeItem('adminSession');
+    localStorage.removeItem('adminLastLogin');
+    localStorage.removeItem('adminSessionId');
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
+  
   return children;
 }
 
@@ -55,9 +110,31 @@ function AdminHeader({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebar
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('isAdmin');
+    // Clear all session data
+    sessionStorage.removeItem('adminSession');
+    localStorage.removeItem('adminLastLogin');
+    localStorage.removeItem('adminSessionId');
+    localStorage.removeItem('adminLoginAttempts');
+    localStorage.removeItem('adminLockoutTime');
+    
+    // Remove activity monitoring event listeners
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.removeEventListener(event, () => {}, true);
+    });
+    
     navigate('/admin/login');
   };
+
+  // Auto logout on tab close/refresh
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('adminSession');
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   const adminNavLinks = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: (
@@ -82,9 +159,9 @@ function AdminHeader({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebar
     )},
     { to: '/admin/pengaduan', label: 'Laporan Pengaduan', icon: (
       <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4.19 4a2 2 0 00-1.81 1.81V19a2 2 0 002 2h12a2 2 0 002-2V5.81A2 2 0 0019.81 4H4.19zM16 2v4M8 2v4M3 10h18"></path>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
-    )},
+    )}
   ];
 
   return (
@@ -222,7 +299,28 @@ function Header() {
   const isHomePage = location.pathname === '/';
 
   useEffect(() => {
-    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+    // Check for valid admin session
+    const session = sessionStorage.getItem('adminSession');
+    const lastLogin = localStorage.getItem('adminLastLogin');
+    const sessionId = localStorage.getItem('adminSessionId');
+    
+    if (session && lastLogin && sessionId) {
+      try {
+        const sessionData = JSON.parse(session);
+        const timeSinceActivity = Date.now() - sessionData.lastActivity;
+        const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+        
+        if (sessionData.isAdmin && sessionData.sessionId === sessionId && timeSinceActivity <= SESSION_TIMEOUT) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
   }, [location]);
   useEffect(() => {
     const onScroll = () => setIsTop(window.scrollY === 0);
@@ -471,7 +569,25 @@ function FooterInfo() {
     return null;
   }
 
-  const isAdmin = typeof window !== 'undefined' && localStorage.getItem('isAdmin') === 'true';
+  const isAdmin = (() => {
+    if (typeof window === 'undefined') return false;
+    
+    const session = sessionStorage.getItem('adminSession');
+    const lastLogin = localStorage.getItem('adminLastLogin');
+    const sessionId = localStorage.getItem('adminSessionId');
+    
+    if (!session || !lastLogin || !sessionId) return false;
+    
+    try {
+      const sessionData = JSON.parse(session);
+      const timeSinceActivity = Date.now() - sessionData.lastActivity;
+      const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+      
+      return sessionData.isAdmin && sessionData.sessionId === sessionId && timeSinceActivity <= SESSION_TIMEOUT;
+    } catch (error) {
+      return false;
+    }
+  })();
   return (
     <footer className="w-full bg-primary text-white pt-10 pb-4 px-4">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 border-b border-white/30 pb-6">
@@ -593,7 +709,7 @@ function App() {
   React.useEffect(() => {
     if (
       window.location.pathname === '/' &&
-      localStorage.getItem('isAdmin') === 'true' &&
+      sessionStorage.getItem('adminSession') &&
       sessionStorage.getItem('adminNeedsRefresh') === 'true'
     ) {
       sessionStorage.removeItem('adminNeedsRefresh');
@@ -674,6 +790,7 @@ function App() {
                 </main>
                 {!isAdminRoute && <FooterInfo />}
                 <ScrollToTopButton />
+                {isAdminRoute && <SessionTimeout />}
               </div>
             </PengaduanProvider>
           </BeritaProvider>
