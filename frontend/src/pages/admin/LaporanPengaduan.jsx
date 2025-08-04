@@ -530,29 +530,29 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
 
   return (
     <motion.div 
-      className="overflow-x-auto rounded-lg border border-neutral"
+      className="rounded-lg border border-neutral"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      {/* Mobile Card View */}
+      {/* Mobile Card View - Enhanced */}
       <div className="md:hidden">
         {data.length > 0 ? (
           <div className="space-y-4 p-4">
             {data.map((laporan, index) => (
               <motion.div 
                 key={laporan.id}
-                className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
                 <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 text-sm mb-1">{laporan.judul}</h3>
-                    <p className="text-xs text-gray-500">No: {index + 1}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{laporan.judul}</h3>
+                    <p className="text-xs text-gray-500">No: {index + 1} • {formatDate(laporan.tanggal_pengaduan)}</p>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ml-2">
                     <select
                       value={laporan.status || 'pending'}
                       onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
@@ -571,19 +571,15 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
 
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tanggal:</span>
-                    <span className="text-gray-900">{formatDate(laporan.tanggal_pengaduan)}</span>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-gray-600">Pelapor:</span>
-                    <span className="text-gray-900">{laporan.nama || 'Anonim'}</span>
+                    <span className="text-gray-900 font-medium">{laporan.nama || 'Anonim'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Kategori:</span>
                     <span className="text-gray-900">{laporan.kategori}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Isi Laporan:</span>
+                    <span className="text-gray-600">Isi:</span>
                     <span className="text-gray-900 text-xs truncate max-w-48">{laporan.isi || '-'}</span>
                   </div>
                   {laporan.email && (
@@ -598,6 +594,10 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                       <span className="text-gray-900">{laporan.whatsapp}</span>
                     </div>
                   )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">IP:</span>
+                    <span className="text-gray-900 text-xs">{laporan.client_ip || '-'}</span>
+                  </div>
                 </div>
 
                 {/* Lampiran Info */}
@@ -715,208 +715,214 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
             ))}
           </div>
         ) : (
-                     <div className="text-center py-8 text-text-secondary">
-             <div className="flex flex-col items-center space-y-2">
-               <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-               </svg>
-               <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
-             </div>
-           </div>
+          <div className="text-center py-8 text-text-secondary">
+            <div className="flex flex-col items-center space-y-2">
+              <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Desktop Table View */}
+      {/* Desktop Table View - Enhanced with horizontal scroll */}
       <div className="hidden md:block">
-        <table className="min-w-full bg-white">
-          {/* Header tabel dengan warna neutral dan teks secondary */}
-          <thead className="bg-neutral/60">
-            <tr>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">No</th>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Tanggal</th>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Pelapor</th>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Judul Laporan</th>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Isi Laporan</th>
-              <th className="py-3 px-4 border-b border-neutral text-left text-sm font-semibold text-secondary uppercase tracking-wider">Kategori</th>
-              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Status</th>
-              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">IP Address</th>
-              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Lampiran</th>
-              <th className="py-3 px-4 border-b border-neutral text-center text-sm font-semibold text-secondary uppercase tracking-wider">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length > 0 ? (
-              data.map((laporan, index) => (
-                // Baris tabel dengan warna teks yang sesuai
-                <motion.tr 
-                  key={laporan.id} 
-                  className="hover:bg-neutral/40 transition-colors"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <td className="py-3 px-4 border-b border-neutral text-text-secondary text-sm">{index + 1}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{formatDate(laporan.tanggal_pengaduan)}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">
-                    <div>
-                      <div className="font-medium">{laporan.nama || 'Anonim'}</div>
-                      <div className="text-xs text-text-secondary">
-                        {laporan.email && `${laporan.email}`}
-                        {laporan.email && laporan.whatsapp && ' / '}
-                        {laporan.whatsapp && `${laporan.whatsapp}`}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 border-b border-neutral text-text-main font-semibold text-sm max-w-xs truncate">{laporan.judul}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm max-w-xs truncate">{laporan.isi || '-'}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-text-main text-sm">{laporan.kategori}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-center">
-                    <select
-                      value={laporan.status || 'pending'}
-                      onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
-                      className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                        laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                        laporan.status === 'selesai' ? 'bg-green-100 text-green-800 border-green-200' :
-                        'bg-gray-100 text-gray-800 border-gray-200'
-                      }`}
-                    >
-                      <option value="pending">Menunggu</option>
-                      <option value="proses">Proses</option>
-                      <option value="selesai">Selesai</option>
-                    </select>
-                  </td>
-                  <td className="py-3 px-4 border-b border-neutral text-center text-text-main text-sm">{laporan.client_ip || '-'}</td>
-                  <td className="py-3 px-4 border-b border-neutral text-center">
-                    {laporan.lampiran_data_url ? (
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="flex items-center space-x-1">
-                          <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
+            <div className="overflow-hidden shadow-sm border-0">
+              <table className="min-w-full divide-y divide-neutral">
+                {/* Header tabel dengan warna neutral dan teks secondary */}
+                <thead className="bg-neutral/60">
+                  <tr>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-12">No</th>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-24">Tanggal</th>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-32">Pelapor</th>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-48">Judul</th>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-64">Isi Laporan</th>
+                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-32">Kategori</th>
+                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-24">Status</th>
+                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">IP Address</th>
+                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">Lampiran</th>
+                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-neutral">
+                  {data.length > 0 ? (
+                    data.map((laporan, index) => (
+                      // Baris tabel dengan warna teks yang sesuai
+                      <motion.tr 
+                        key={laporan.id} 
+                        className="hover:bg-neutral/40 transition-colors"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <td className="py-3 px-3 border-b border-neutral text-text-secondary text-xs font-medium">{index + 1}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">{formatDate(laporan.tanggal_pengaduan)}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">
+                          <div>
+                            <div className="font-medium truncate">{laporan.nama || 'Anonim'}</div>
+                            <div className="text-xs text-text-secondary truncate">
+                              {laporan.email && `${laporan.email}`}
+                              {laporan.email && laporan.whatsapp && ' / '}
+                              {laporan.whatsapp && `${laporan.whatsapp}`}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 border-b border-neutral text-text-main font-semibold text-xs max-w-xs truncate">{laporan.judul}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs max-w-xs truncate">{laporan.isi || '-'}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">{laporan.kategori}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-center">
+                          <select
+                            value={laporan.status || 'pending'}
+                            onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
+                            className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                              laporan.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                              laporan.status === 'selesai' ? 'bg-green-100 text-green-800 border-green-200' :
+                              'bg-gray-100 text-gray-800 border-gray-200'
+                            }`}
+                          >
+                            <option value="pending">Menunggu</option>
+                            <option value="proses">Proses</option>
+                            <option value="selesai">Selesai</option>
+                          </select>
+                        </td>
+                        <td className="py-3 px-3 border-b border-neutral text-center text-text-main text-xs font-mono">{laporan.client_ip || '-'}</td>
+                        <td className="py-3 px-3 border-b border-neutral text-center">
+                          {laporan.lampiran_data_url ? (
+                            <div className="flex flex-col items-center space-y-1">
+                              <div className="flex items-center space-x-1">
+                                <svg className="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                </svg>
+                                <span className="text-xs text-green-600 font-medium">Ada</span>
+                              </div>
+                              <div className="flex space-x-1">
+                                <button
+                                  onClick={() => {
+                                    try {
+                                      const newWindow = window.open();
+                                      newWindow.document.write(`
+                                        <html>
+                                          <head>
+                                            <title>Preview Lampiran</title>
+                                            <style>
+                                              body { margin: 0; padding: 20px; background: #f5f5f5; font-family: Arial, sans-serif; }
+                                              img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                              .container { text-align: center; max-width: 800px; margin: 0 auto; }
+                                              .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                                              .info { background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; text-align: left; }
+                                              .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                              .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                            </style>
+                                          </head>
+                                          <body>
+                                            <div class="container">
+                                              <div class="header">
+                                                <h2>Preview Lampiran</h2>
+                                                <div class="info">
+                                                  <strong>File:</strong> ${laporan.lampiran_info}<br>
+                                                  <strong>Ukuran:</strong> ${Math.round(laporan.lampiran_data_url.length / 1024)} KB<br>
+                                                  <strong>Tipe:</strong> ${laporan.lampiran_type || 'Image'}
+                                                </div>
+                                              </div>
+                                              <div class="loading">Memuat gambar...</div>
+                                              <img src="${laporan.lampiran_data_url}" alt="Lampiran" 
+                                                onload="document.querySelector('.loading').style.display='none';"
+                                                onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
+                                            </div>
+                                          </body>
+                                        </html>
+                                      `);
+                                      newWindow.document.close();
+                                    } catch (error) {
+                                      console.error('Error opening image:', error);
+                                      alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                                    }
+                                  }}
+                                  className="text-xs bg-blue-500 text-white px-1 py-0.5 rounded hover:bg-blue-600 transition-colors"
+                                  title="Lihat lampiran"
+                                >
+                                  Lihat
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    try {
+                                      fetch(laporan.lampiran_data_url)
+                                        .then(response => response.blob())
+                                        .then(blob => {
+                                          const url = window.URL.createObjectURL(blob);
+                                          const a = document.createElement('a');
+                                          a.href = url;
+                                          a.download = laporan.lampiran_info || 'lampiran.jpg';
+                                          document.body.appendChild(a);
+                                          a.click();
+                                          window.URL.revokeObjectURL(url);
+                                          document.body.removeChild(a);
+                                        })
+                                        .catch(error => {
+                                          console.error('Error downloading image:', error);
+                                          alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                                        });
+                                    } catch (error) {
+                                      console.error('Error with image URL:', error);
+                                      alert('Gambar tidak dapat diakses.');
+                                    }
+                                  }}
+                                  className="text-xs bg-green-500 text-white px-1 py-0.5 rounded hover:bg-green-600 transition-colors"
+                                  title="Download lampiran"
+                                >
+                                  Download
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-3 border-b border-neutral text-center">
+                          <div className="flex items-center justify-center space-x-1">
+                            {/* Tombol "Lihat" dengan gaya baru */}
+                            <motion.button
+                              onClick={() => onShowDetail(laporan)}
+                              className="bg-white text-primary border-2 border-primary px-2 py-1 rounded-md text-xs hover:bg-primary hover:text-white transition-colors"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              Detail
+                            </motion.button>
+                            {/* Tombol "Hapus" dengan warna dari palet */}
+                            <motion.button
+                              onClick={() => onDelete(laporan.id)}
+                              className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              Hapus
+                            </motion.button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))
+                  ) : (
+                    <tr>
+                      {/* Teks menggunakan warna 'text-text-secondary' */}
+                      <td colSpan="10" className="text-center py-8 text-text-secondary">
+                        <div className="flex flex-col items-center space-y-2">
+                          <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <span className="text-xs text-green-600 font-medium">Ada</span>
+                          <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
                         </div>
-                        <div className="flex space-x-1">
-                          <button
-                            onClick={() => {
-                              try {
-                                const newWindow = window.open();
-                                newWindow.document.write(`
-                                  <html>
-                                    <head>
-                                      <title>Preview Lampiran</title>
-                                      <style>
-                                        body { margin: 0; padding: 20px; background: #f5f5f5; font-family: Arial, sans-serif; }
-                                        img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                                        .container { text-align: center; max-width: 800px; margin: 0 auto; }
-                                        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-                                        .info { background: #e6fffa; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 14px; text-align: left; }
-                                        .loading { color: #3182ce; background: #ebf8ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
-                                        .error { color: #e53e3e; background: #fed7d7; padding: 20px; border-radius: 8px; margin: 20px 0; }
-                                      </style>
-                                    </head>
-                                    <body>
-                                      <div class="container">
-                                        <div class="header">
-                                          <h2>Preview Lampiran</h2>
-                                          <div class="info">
-                                            <strong>File:</strong> ${laporan.lampiran_info}<br>
-                                            <strong>Ukuran:</strong> ${Math.round(laporan.lampiran_data_url.length / 1024)} KB<br>
-                                            <strong>Tipe:</strong> ${laporan.lampiran_type || 'Image'}
-                                          </div>
-                                        </div>
-                                        <div class="loading">Memuat gambar...</div>
-                                        <img src="${laporan.lampiran_data_url}" alt="Lampiran" 
-                                          onload="document.querySelector('.loading').style.display='none';"
-                                          onerror="this.parentElement.innerHTML='<div class=error>Gambar tidak dapat ditampilkan. Silakan download file untuk melihatnya.</div>'"/>
-                                      </div>
-                                    </body>
-                                  </html>
-                                `);
-                                newWindow.document.close();
-                              } catch (error) {
-                                console.error('Error opening image:', error);
-                                alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
-                              }
-                            }}
-                            className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
-                            title="Lihat lampiran"
-                          >
-                            Lihat
-                          </button>
-                          <button
-                            onClick={() => {
-                              try {
-                                fetch(laporan.lampiran_data_url)
-                                  .then(response => response.blob())
-                                  .then(blob => {
-                                    const url = window.URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = laporan.lampiran_info || 'lampiran.jpg';
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    window.URL.revokeObjectURL(url);
-                                    document.body.removeChild(a);
-                                  })
-                                  .catch(error => {
-                                    console.error('Error downloading image:', error);
-                                    alert('Gagal mengunduh gambar. Silakan coba lagi.');
-                                  });
-                              } catch (error) {
-                                console.error('Error with image URL:', error);
-                                alert('Gambar tidak dapat diakses.');
-                              }
-                            }}
-                            className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors"
-                            title="Download lampiran"
-                          >
-                            Download
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-400">-</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4 border-b border-neutral text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      {/* Tombol "Lihat" dengan gaya baru */}
-                      <motion.button
-                        onClick={() => onShowDetail(laporan)}
-                        className="bg-white text-primary border-2 border-primary px-2 py-1 rounded-md text-xs hover:bg-primary hover:text-white transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Detail
-                      </motion.button>
-                      {/* Tombol "Hapus" dengan warna dari palet */}
-                      <motion.button
-                        onClick={() => onDelete(laporan.id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Hapus
-                      </motion.button>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))
-            ) : (
-              <tr>
-                {/* Teks menggunakan warna 'text-text-secondary' */}
-                                 <td colSpan="10" className="text-center py-8 text-text-secondary">
-                  <div className="flex flex-col items-center space-y-2">
-                    <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p className="text-sm sm:text-base">Belum ada data untuk kategori ini.</p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
