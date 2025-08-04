@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 const BeritaContext = createContext();
 
@@ -10,14 +10,12 @@ export const useBerita = () => {
   return context;
 };
 
-const defaultBerita = [];
-
 export const BeritaProvider = ({ children }) => {
-  const [berita, setBerita] = useState(defaultBerita);
+  const [berita, setBerita] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchBerita = async () => {
+  const fetchBerita = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -26,69 +24,39 @@ export const BeritaProvider = ({ children }) => {
         ? 'https://pandora-vite.vercel.app/api/berita'
         : 'http://localhost:3001/api/berita';
       
-      console.log('🔍 Fetching berita from:', apiUrl);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      const response = await fetch(apiUrl, {
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      clearTimeout(timeoutId);
-      
-      console.log('📡 Response status:', response.status);
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      console.log('📊 Received berita data:', data);
-      
-      if (data && data.length > 0) {
-        setBerita(data);
-        // Backup ke localStorage
-        localStorage.setItem('berita', JSON.stringify(data));
-        console.log('✅ Berita data loaded successfully');
-      } else {
-        // Jika data kosong, gunakan default
-        setBerita(defaultBerita);
-        localStorage.setItem('berita', JSON.stringify(defaultBerita));
-        console.log('⚠️ No data received, using default berita');
-      }
+      setBerita(data);
     } catch (error) {
-      console.error('❌ Gagal mengambil berita dari backend:', error);
+      console.error('Error fetching berita:', error);
       setError(error.message);
       
-      // Fallback ke localStorage
-      try {
-        const storedBerita = localStorage.getItem('berita');
-        if (storedBerita) {
-          setBerita(JSON.parse(storedBerita));
-          console.log('📦 Loaded berita from localStorage');
-        } else {
-          setBerita(defaultBerita);
-          localStorage.setItem('berita', JSON.stringify(defaultBerita));
-          console.log('📦 Using default berita from localStorage');
+      // Fallback to default data if API fails
+      const defaultBerita = [
+        {
+          id: 1,
+          judul: 'Selamat Datang di Website Desa Moncongloe Bulu',
+          isi: 'Website resmi Desa Moncongloe Bulu telah diluncurkan untuk memberikan informasi terbaru kepada warga.',
+          tanggal_publikasi: new Date().toISOString(),
+          gambar_url: null
         }
-      } catch (localError) {
-        console.error('❌ Gagal memuat berita dari localStorage:', localError);
-        setBerita(defaultBerita);
-      }
+      ];
+      setBerita(defaultBerita);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const refetchBerita = async () => {
+  const refetchBerita = useCallback(async () => {
     await fetchBerita();
-  };
+  }, [fetchBerita]);
 
-  const addBerita = async (beritaData) => {
+  const addBerita = useCallback(async (beritaData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
         ? 'https://pandora-vite.vercel.app/api/berita'
@@ -109,9 +77,9 @@ export const BeritaProvider = ({ children }) => {
       console.error('Error adding berita:', error);
       throw error;
     }
-  };
+  }, [refetchBerita]);
 
-  const updateBerita = async (id, beritaData) => {
+  const updateBerita = useCallback(async (id, beritaData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
         ? `https://pandora-vite.vercel.app/api/berita/${id}`
@@ -132,9 +100,9 @@ export const BeritaProvider = ({ children }) => {
       console.error('Error updating berita:', error);
       throw error;
     }
-  };
+  }, [refetchBerita]);
 
-  const deleteBerita = async (id) => {
+  const deleteBerita = useCallback(async (id) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
         ? `https://pandora-vite.vercel.app/api/berita/${id}`
@@ -154,13 +122,13 @@ export const BeritaProvider = ({ children }) => {
       console.error('Error deleting berita:', error);
       throw error;
     }
-  };
+  }, [refetchBerita]);
 
   useEffect(() => {
     fetchBerita();
-  }, []);
+  }, [fetchBerita]);
 
-  const value = {
+  const value = useMemo(() => ({
     berita,
     setBerita,
     loading,
@@ -169,7 +137,7 @@ export const BeritaProvider = ({ children }) => {
     addBerita,
     updateBerita,
     deleteBerita,
-  };
+  }), [berita, loading, error, refetchBerita, addBerita, updateBerita, deleteBerita]);
 
   return (
     <BeritaContext.Provider value={value}>

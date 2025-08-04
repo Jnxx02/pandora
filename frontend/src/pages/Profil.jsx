@@ -1,8 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDesa } from '../context/DesaContext';
 import { useStatistik } from '../context/StatistikContext';
 import { usePrasarana } from '../context/PrasaranaContext';
 import BareVideoPlayer from '../components/BareVideoPlayer';
+
+// Add lazy loading for images
+const LazyImage = ({ src, alt, className, onError, ...props }) => {
+  const [imageSrc, setImageSrc] = useState(src);
+  const [imageRef, setImageRef] = useState();
+
+  useEffect(() => {
+    let observer;
+    let didCancel = false;
+
+    if (imageRef && imageSrc) {
+      if (IntersectionObserver) {
+        observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (
+                !didCancel &&
+                (entry.intersectionRatio > 0 || entry.isIntersecting)
+              ) {
+                setImageSrc(src);
+                observer.unobserve(imageRef);
+              }
+            });
+          },
+          {
+            threshold: 0.01,
+            rootMargin: '75%',
+          }
+        );
+        observer.observe(imageRef);
+      } else {
+        // Fallback for older browsers
+        setImageSrc(src);
+      }
+    }
+    return () => {
+      didCancel = true;
+      if (observer && observer.unobserve) {
+        observer.unobserve(imageRef);
+      }
+    };
+  }, [src, imageRef]);
+
+  return (
+    <img
+      ref={setImageRef}
+      src={imageSrc}
+      alt={alt}
+      className={className}
+      onError={onError}
+      loading="lazy"
+      {...props}
+    />
+  );
+};
 
 // Data ini bisa dipindahkan ke context atau file data terpusat jika diperlukan di halaman lain
 const batasWilayah = [
@@ -172,7 +227,7 @@ const Profil = () => {
               <div className="order-2 lg:order-1 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-red-200 shadow-lg">
-                    <img 
+                    <LazyImage 
                       src="https://moncongloebulu.vercel.app/images/team/muhammad%20tahir.jpeg" 
                       alt="Kepala Desa Muhammad Tahir"
                       className="w-full h-full object-cover"
@@ -202,7 +257,7 @@ const Profil = () => {
               <div className="order-1 lg:order-2 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-blue-200 shadow-lg">
-                    <img 
+                    <LazyImage 
                       src="https://moncongloebulu.vercel.app/images/team/sekdes%20mbulu.jpg" 
                       alt="Sekretaris Desa Abd Rasyid"
                       className="w-full h-full object-cover"
@@ -232,7 +287,7 @@ const Profil = () => {
               <div className="order-3 lg:order-3 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-teal-200 shadow-lg">
-                    <img 
+                    <LazyImage 
                       src="https://moncongloebulu.vercel.app/images/team/Pak%20Bahar.jpg" 
                       alt="Kaur Keuangan"
                       className="w-full h-full object-cover"
@@ -297,7 +352,7 @@ const Profil = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
-                      <img 
+                      <LazyImage 
                         src="https://moncongloebulu.vercel.app/images/team/Dusun%20diccekang.jpg" 
                         alt="Kepala Dusun Diccekang Burhanuddin"
                         className="w-full h-full object-cover"
@@ -327,7 +382,7 @@ const Profil = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
-                      <img 
+                      <LazyImage 
                         src="/images/pengurus/kepala-dusun-tamalate.jpg" 
                         alt="Kepala Dusun Tamalate Syaripuddin"
                         className="w-full h-full object-cover"
@@ -357,7 +412,7 @@ const Profil = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
-                      <img 
+                      <LazyImage 
                         src="https://moncongloebulu.vercel.app/images/team/dusun%20mbulu.png" 
                         alt="Kepala Dusun M. Loe Bulu Rahman"
                         className="w-full h-full object-cover"
@@ -387,7 +442,7 @@ const Profil = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
-                      <img 
+                      <LazyImage 
                         src="/images/pengurus/kepala-dusun-tammu-tammu.jpg" 
                         alt="Kepala Dusun Tammu-Tammu Fery Andayani"
                         className="w-full h-full object-cover"
@@ -417,7 +472,7 @@ const Profil = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-200 shadow-lg">
-                      <img 
+                      <LazyImage 
                         src="https://moncongloebulu.vercel.app/images/team/Dusun%20Hasbi.jpg" 
                         alt="Kepala Dusun Tompo Balang Hasbi"
                         className="w-full h-full object-cover"

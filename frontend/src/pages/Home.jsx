@@ -79,11 +79,13 @@ const Home = () => {
 
   useEffect(() => {
     if (recentBerita.length === 0) return;
+    
     const interval = setInterval(() => {
       setBeritaIdx(idx => (idx + 1) % recentBerita.length);
     }, 4000);
+    
     return () => clearInterval(interval);
-  }, [recentBerita]);
+  }, [recentBerita.length]); // Only depend on length, not the entire array
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Tanggal tidak tersedia';

@@ -71,7 +71,7 @@ const Login = () => {
     localStorage.setItem('adminSessionId', sessionData.sessionId);
   };
 
-  const handleSubmit = async (e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (isLocked) {
@@ -116,7 +116,7 @@ const Login = () => {
     }
     
     setIsLoading(false);
-  });
+  };
 
   const setupActivityMonitoring = () => {
     // Update last activity on user interaction
