@@ -1,22 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// Komponen banner tidak perlu diubah karena sudah menggunakan warna primary.
+// Komponen banner dengan slogan dan layout yang diperbaiki
 const SuarakuBanner = () => (
   <div className="w-full bg-primary text-white p-4 shadow-lg sticky top-0 z-10">
     <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16">
-      {/* Tombol back di kiri, Logo SUARAKU di kanan */}
-      <div className="flex items-center gap-4">
-        <Link
-          to="/"
-          className="p-2 rounded-full text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-          aria-label="Kembali ke Beranda"
-        >
-          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </Link>
-        
+      {/* Logo SUARAKU di kiri */}
+      <div className="flex items-center">
         <img 
           src="/images/logos/suaraku.png" 
           alt="Logo SUARAKU" 
@@ -30,19 +20,30 @@ const SuarakuBanner = () => (
         />
         <h1 className="text-xl font-bold" style={{display: 'none'}}>Suaraku</h1>
       </div>
+
+      {/* Slogan di kanan */}
+      <div className="flex items-center">
+        <span className="text-sm font-bold text-white hover:text-yellow-300 transition-colors duration-300 cursor-default">
+          #DariWargaUntukDesa
+        </span>
+      </div>
     </div>
   </div>
 );
 
-const Pengaduan = () => (
-  // GANTI: Latar belakang utama menggunakan 'bg-neutral'
-  <div className="min-h-screen bg-neutral">
-    <SuarakuBanner />
+const Pengaduan = () => {
+  // Get current year for dynamic copyright
+  const currentYear = new Date().getFullYear();
 
-    <main className="py-6 px-4 sm:px-6">
-      {/* Container untuk layout side-by-side */}
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+  return (
+    // GANTI: Latar belakang utama menggunakan 'bg-neutral'
+    <div className="min-h-screen bg-neutral">
+      <SuarakuBanner />
+
+      <main className="py-6 px-4 sm:px-6">
+        {/* Container untuk layout side-by-side */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           
           {/* Penjelasan dan Regulasi Section - SEBELAH KIRI */}
           <section className="p-4">
@@ -73,8 +74,20 @@ const Pengaduan = () => (
       </div>
     </main>
 
-    {/* Floating Action Button */}
-    {/* GANTI: Tombol FAB menggunakan warna 'primary' dan 'secondary' */}
+    {/* Floating Action Buttons */}
+    {/* Tombol kembali - Floating di kiri */}
+    <Link
+      to="/"
+      className="fixed bottom-6 left-6 bg-white text-primary px-4 py-3 rounded-full shadow-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-transform transform hover:scale-105 flex items-center gap-2"
+      aria-label="Kembali ke Beranda"
+    >
+      <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span className="font-semibold hidden sm:inline">Kembali</span>
+    </Link>
+
+    {/* Tombol buat laporan - Floating di kanan */}
     <Link
       to="/pengaduan/formulir"
       className="fixed bottom-6 right-6 bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-transform transform hover:scale-105 flex items-center gap-3"
@@ -86,7 +99,19 @@ const Pengaduan = () => (
       <span className="font-semibold hidden sm:inline">Buat Laporan</span>
       <span className="font-semibold sm:hidden">Lapor</span>
     </Link>
+
+    {/* Copyright Footer */}
+    <footer className="bg-neutral border-t border-gray-200 mt-12">
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
+        <div className="text-center">
+          <p className="text-text-secondary text-sm">
+            © {currentYear} Desa Moncongloe Bulu. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
   </div>
-);
+  );
+};
 
 export default Pengaduan;

@@ -7,18 +7,8 @@ import CustomNotification from '../components/CustomNotification';
 const FormulirHeader = () => (
     <div className="w-full bg-primary text-white p-4 shadow-lg sticky top-0 z-10">
         <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16">
-            {/* Tombol back di kiri, Logo SUARAKU di kanan */}
-            <div className="flex items-center gap-4">
-                <Link
-                    to="/pengaduan"
-                    className="p-2 rounded-full text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                    aria-label="Kembali ke Halaman Pengaduan"
-                >
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                
+            {/* Logo SUARAKU di kiri */}
+            <div className="flex items-center">
                 <img 
                     src="/images/logos/suaraku.png" 
                     alt="Logo SUARAKU" 
@@ -32,11 +22,21 @@ const FormulirHeader = () => (
                 />
                 <h1 className="text-xl font-bold" style={{display: 'none'}}>Suaraku</h1>
             </div>
+
+            {/* Slogan di kanan */}
+            <div className="flex items-center">
+                <span className="text-sm font-bold text-white hover:text-yellow-300 transition-colors duration-300 cursor-default">
+                    #DariWargaUntukDesa
+                </span>
+            </div>
         </div>
     </div>
 );
 
 const FormulirPengaduan = () => {
+    // Get current year for dynamic copyright
+    const currentYear = new Date().getFullYear();
+    
     const { addPengaduan } = usePengaduan();
     const [isAnonim, setIsAnonim] = useState(false);
     const [klasifikasi, setKlasifikasi] = useState('pengaduan');
@@ -791,6 +791,30 @@ const FormulirPengaduan = () => {
                 </div>
             </div>
         )}
+
+        {/* Copyright Footer */}
+        <footer className="bg-neutral border-t border-gray-200 mt-12">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
+                <div className="text-center">
+                    <p className="text-text-secondary text-sm">
+                        © {currentYear} Desa Moncongloe Bulu. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        {/* Floating Action Buttons */}
+        {/* Tombol kembali - Floating di kiri */}
+        <Link
+            to="/pengaduan"
+            className="fixed bottom-6 left-6 bg-white text-primary px-4 py-3 rounded-full shadow-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-transform transform hover:scale-105 flex items-center gap-2"
+            aria-label="Kembali ke Halaman Pengaduan"
+        >
+            <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="font-semibold hidden sm:inline">Kembali</span>
+        </Link>
 
         <CustomNotification notification={notification} setNotification={setNotification} />
     </div>
