@@ -6,6 +6,7 @@ import { StatistikProvider } from './context/StatistikContext';
 import { PrasaranaProvider } from './context/PrasaranaContext';
 import { BeritaProvider } from './context/BeritaContext';
 import { PengaduanProvider } from './context/PengaduanContext';
+import { DokumentasiKKNProvider } from './context/DokumentasiKKNContext';
 import SessionTimeout from './components/SessionTimeout';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -24,6 +25,7 @@ const DaftarBerita = lazy(() => import('./pages/admin/DaftarBerita'));
 const EditStatistik = lazy(() => import('./pages/admin/EditStatistik'));
 const EditPrasarana = lazy(() => import('./pages/admin/EditPrasarana'));
 const DetailBerita = lazy(() => import('./pages/DetailBerita'));
+const DokumentasiKKN = lazy(() => import('./pages/DokumentasiKKN'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -354,13 +356,7 @@ function Header() {
     { to: '/sejarah', label: 'Sejarah' },
     { to: '/berita', label: 'Berita' },
     { to: '/pengaduan', label: 'Pengaduan' },
-    {
-      label: 'Modul',
-      subLinks: [
-        { to: '/modul/contoh-1', label: 'Modul Contoh 1' },
-        { to: '/modul/contoh-2', label: 'Modul Contoh 2' },
-      ]
-    },
+    { to: '/dokumentasi-kkn', label: 'Dokumentasi' },
   ];
   return (
     <header className={`w-full shadow-md sticky top-0 z-20 transition-all duration-300 ${isTransparent ? 'bg-primary/20 backdrop-blur-sm text-white' : 'bg-primary text-white'}`}>
@@ -750,7 +746,8 @@ function App() {
         <StatistikProvider>
           <BeritaProvider>
             <PengaduanProvider>
-              <ErrorBoundary>
+              <DokumentasiKKNProvider>
+                <ErrorBoundary>
                 <div className={`min-h-screen bg-background font-sans ${isAdminRoute ? 'lg:flex' : 'flex flex-col'}`}>
                   <ScrollToTop />
                   {isAdminRoute ? (
@@ -813,6 +810,7 @@ function App() {
                           </RequireAdmin>
                         } />
                         <Route path="/berita/:id" element={<DetailBerita />} />
+                        <Route path="/dokumentasi-kkn" element={<DokumentasiKKN />} />
                         <Route path="/modul/contoh-1" element={<ModulPage title="Modul Contoh 1" />} />
                         <Route path="/modul/contoh-2" element={<ModulPage title="Modul Contoh 2" />} />
                       </Routes>
@@ -823,6 +821,7 @@ function App() {
                   {isAdminRoute && <SessionTimeout />}
                 </div>
               </ErrorBoundary>
+                </DokumentasiKKNProvider>
             </PengaduanProvider>
           </BeritaProvider>
         </StatistikProvider>

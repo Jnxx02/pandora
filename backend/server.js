@@ -936,6 +936,100 @@ app.get('/api/pengaduan/export', async (req, res) => {
   }
 });
 
+// API endpoint untuk MENGAMBIL (GET) dokumentasi KKN
+app.get('/api/dokumentasi', async (req, res) => {
+  try {
+    if (supabase && supabaseStatus === 'configured') {
+      // Use Supabase if available
+      const { data, error } = await supabase
+        .from('dokumentasi_kkn')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      res.status(200).json(data || []);
+    } else {
+      // Fallback: return default data untuk development
+      console.log('📚 Returning development dokumentasi data');
+      const defaultData = [
+        {
+          id: 1,
+          title: 'Template BUMDes',
+          description: 'Template spreadsheet untuk pengelolaan BUMDes yang sudah siap digunakan',
+          category: 'template',
+          author: 'KKN-T 114',
+          downloads: 0,
+          file_url: '#',
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z'
+        },
+        {
+          id: 2,
+          title: 'Modul Pelatihan UMKM',
+          description: 'Modul pelatihan untuk pengembangan usaha mikro, kecil, dan menengah',
+          category: 'modul',
+          author: 'KKN-T 114',
+          downloads: 0,
+          file_url: '#',
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z'
+        },
+        {
+          id: 3,
+          title: 'Buku Panduan Desa Digital',
+          description: 'Panduan lengkap untuk implementasi teknologi digital di desa',
+          category: 'buku_panduan',
+          author: 'KKN-T 114',
+          downloads: 0,
+          file_url: '#',
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z'
+        }
+      ];
+      res.status(200).json(defaultData);
+    }
+  } catch (error) {
+    console.error('Error in GET /api/dokumentasi:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// API endpoint untuk INCREMENT download count dokumentasi
+app.post('/api/dokumentasi/download', async (req, res) => {
+  try {
+    const { id } = req.body;
+    
+    if (!id) {
+      return res.status(400).json({ error: 'ID dokumentasi diperlukan' });
+    }
+
+    if (supabase && supabaseStatus === 'configured') {
+      // Use Supabase RPC function if available
+      const { error } = await supabase.rpc('increment_dokumentasi_downloads', {
+        doc_id: id
+      });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal update download count' });
+      }
+
+      res.status(200).json({ success: true });
+    } else {
+      // Fallback untuk development - just return success
+      console.log('📚 Download count increment (development mode)');
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    console.error('Error in POST /api/dokumentasi/download:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
 // Jalankan server di semua environment
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
@@ -943,6 +1037,8 @@ app.listen(PORT, () => {
   console.log(`   GET  /api/health - Health check`);
   console.log(`   GET  /api/statistik - Get statistik data`);
   console.log(`   POST /api/statistik - Save statistik data`);
+  console.log(`   GET  /api/dokumentasi - Get dokumentasi data`);
+  console.log(`   POST /api/dokumentasi/download - Increment download count`);
   console.log(`🔧 Supabase Status: ${supabaseStatus}`);
 });
 
