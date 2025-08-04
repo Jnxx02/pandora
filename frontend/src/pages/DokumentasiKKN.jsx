@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDokumentasiKKN } from '../context/DokumentasiKKNContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const DokumentasiKKN = () => {
     const [activeCategory, setActiveCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
     
     const { 
         dokumentasi, 
@@ -12,6 +17,50 @@ const DokumentasiKKN = () => {
         incrementDownload,
         searchDokumentasi 
     } = useDokumentasiKKN();
+
+    // Check admin status
+    useEffect(() => {
+        const checkAdminStatus = () => {
+            try {
+                const adminSession = sessionStorage.getItem('adminSession');
+                if (adminSession) {
+                    const sessionData = JSON.parse(adminSession);
+                    const now = Date.now();
+                    const sessionTimeout = 30 * 60 * 1000; // 30 menit
+                    
+                    if (sessionData.isAdmin && (now - sessionData.loginTime) < sessionTimeout) {
+                        setIsAdmin(true);
+                        return;
+                    }
+                }
+                setIsAdmin(false);
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        checkAdminStatus();
+        
+        // Check admin status periodically
+        const interval = setInterval(checkAdminStatus, 60000); // Check every minute
+        
+        return () => clearInterval(interval);
+    }, []);
+
+    // Check for success message from navigation
+    useEffect(() => {
+        if (location.state?.message) {
+            setShowSuccessMessage(true);
+            // Clear the message from location state
+            navigate(location.pathname, { replace: true });
+            
+            // Auto-hide success message after 5 seconds
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 5000);
+        }
+    }, [location.state, navigate, location.pathname]);
 
     // Filter data berdasarkan kategori dan search term
     const getFilteredData = () => {
@@ -55,6 +104,26 @@ const DokumentasiKKN = () => {
 
     return (
         <div className="min-h-screen bg-neutral">
+            {/* Success Message */}
+            {showSuccessMessage && (
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                    <div className="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
+                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{location.state?.message || 'Dokumentasi berhasil ditambahkan!'}</span>
+                        <button
+                            onClick={() => setShowSuccessMessage(false)}
+                            className="ml-4 text-green-500 hover:text-green-700"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            )}
+            
             <main className="py-6 px-4 sm:px-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
@@ -62,9 +131,24 @@ const DokumentasiKKN = () => {
                         <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4">
                             Dokumentasi KKN
                         </h1>
-                        <p className="text-text-secondary text-lg max-w-3xl mx-auto">
+                        <p className="text-text-secondary text-lg max-w-3xl mx-auto mb-6">
                             Kumpulan hasil karya mahasiswa KKN-T 114 Moncongloe Bulu berupa modul, buku panduan, dan template spreadsheet untuk kemajuan desa. Saat ini tersedia template BUMDes yang sudah siap digunakan.
                         </p>
+                        
+                        {/* Admin Action Button */}
+                        {isAdmin && (
+                            <div className="flex justify-center">
+                                <button
+                                    onClick={() => navigate('/admin/dokumentasi/tambah')}
+                                    className="bg-secondary text-white px-6 py-3 rounded-lg hover:bg-primary transition-colors duration-200 flex items-center gap-2 shadow-lg"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    Tambah Dokumentasi
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Search and Filter Section */}

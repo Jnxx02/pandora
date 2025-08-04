@@ -26,6 +26,7 @@ const EditStatistik = lazy(() => import('./pages/admin/EditStatistik'));
 const EditPrasarana = lazy(() => import('./pages/admin/EditPrasarana'));
 const DetailBerita = lazy(() => import('./pages/DetailBerita'));
 const DokumentasiKKN = lazy(() => import('./pages/DokumentasiKKN'));
+const TambahDokumentasi = lazy(() => import('./pages/admin/TambahDokumentasi'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -807,6 +808,11 @@ function App() {
                         <Route path="/admin/prasarana" element={
                           <RequireAdmin>
                             <EditPrasarana />
+                          </RequireAdmin>
+                        } />
+                        <Route path="/admin/dokumentasi/tambah" element={
+                          <RequireAdmin>
+                            <TambahDokumentasi />
                           </RequireAdmin>
                         } />
                         <Route path="/berita/:id" element={<DetailBerita />} />
