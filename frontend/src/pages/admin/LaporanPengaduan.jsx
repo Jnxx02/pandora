@@ -1233,7 +1233,7 @@ function LaporanPengaduan() {
         <body>
           <div class="header">
             <div class="logo-container">
-              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iIzE2NzM0NyIvPgo8cGF0aCBkPSJNNDAgMTVDMjUuOTYgMTUgMTUgMjUuOTYgMTUgNDBDMTUgNTQuMDQgMjUuOTYgNjUgNDAgNjVDNTQuMDQgNjUgNjUgNTQuMDQgNjUgNDBDNjUgMjUuOTYgNTQuMDQgMTUgNDAgMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMzAgMzVIMzVWNDVIMzBWMzVaIiBmaWxsPSIjMTY3MzQ3Ii8+CjxwYXRoIGQ9Ik0zNSA0MEg0MFY0NUgzNVY0MFoiIGZpbGw9IiMxNjczNDciLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDEwQzE0LjQ4IDEwIDEwIDE0LjQ4IDEwIDIwQzEwIDI1LjUyIDE0LjQ4IDMwIDIwIDMwQzI1LjUyIDMwIDMwIDI1LjUyIDMwIDIwQzMwIDE0LjQ4IDI1LjUyIDEwIDIwIDEwWiIgZmlsbD0iIzE2NzM0NyIvPgo8cGF0aCBkPSJNMTUgMjVIMjVWMzBIMTVWMjVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+" alt="Logo Desa Moncongloe Bulu" class="logo">
+              <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa Moncongloe Bulu" class="logo">
               <div>
                 <h1>LAPORAN ${activeTab === 'pengaduan' ? 'PENGADUAN' : 'ASPIRASI'} WARGA</h1>
                 <h2>Desa Moncongloe Bulu</h2>
