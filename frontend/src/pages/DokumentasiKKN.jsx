@@ -480,7 +480,12 @@ const DokumentasiKKN = () => {
                                 {/* Content */}
                                 <div className="p-4 sm:p-6">
                                     <h3 className="text-base sm:text-lg font-semibold text-text-main mb-2 line-clamp-2">
-                                        {item?.title || 'Judul tidak tersedia'}
+                                        {item?.title 
+                                            ? item.title.length > 50 
+                                                ? item.title.substring(0, 50) + '...' 
+                                                : item.title
+                                            : 'Judul tidak tersedia'
+                                        }
                                     </h3>
                                     <p className="text-text-secondary text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-3">
                                         {item?.description || 'Deskripsi tidak tersedia'}
