@@ -248,7 +248,7 @@ const Profil = () => {
                     <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
-                    Periode 2021-2027
+                    Periode 2019-2027
                   </div>
                 </div>
               </div>
@@ -335,8 +335,8 @@ const Profil = () => {
                       </svg>
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Babinsa</h3>
-                  <p className="text-secondary text-sm mb-3 font-medium">Sertu Eko Kustriyanto</p>
+                  <h3 className="text-xl font-bold text-primary mb-2">Babinsa</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Sertu Eko Kustriyanto</p>
                   <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-green-50 px-3 py-2 rounded-full border border-green-200">
                     <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -356,8 +356,8 @@ const Profil = () => {
                       </svg>
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Binmas</h3>
-                  <p className="text-secondary text-sm mb-3 font-medium">Aiptu Abdul Kadir</p>
+                  <h3 className="text-xl font-bold text-primary mb-2">Binmas</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Aiptu Abdul Kadir</p>
                   <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-purple-50 px-3 py-2 rounded-full border border-purple-200">
                     <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -377,8 +377,8 @@ const Profil = () => {
                       </svg>
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">Ketua TP. PKK Desa</h3>
-                  <p className="text-secondary text-sm mb-3 font-medium">Hanik, S.Pd</p>
+                  <h3 className="text-xl font-bold text-primary mb-2">Ketua TP. PKK Desa</h3>
+                  <p className="text-secondary text-base mb-3 font-medium">Hanik, S.Pd</p>
                   <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-pink-50 px-3 py-2 rounded-full border border-pink-200">
                     <svg className="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
