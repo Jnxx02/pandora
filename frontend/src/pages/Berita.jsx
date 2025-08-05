@@ -77,7 +77,14 @@ const Berita = () => {
             {berita.map(b => (
               <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-secondary rounded-xl p-4 shadow hover:bg-primary hover:text-white transition text-left border-none">
                 <img src={b.gambar || 'https://via.placeholder.com/400x300'} alt={b.judul} className="w-full h-40 object-cover rounded mb-2" />
-                <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">{b.judul}</div>
+                <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">
+                  {b.judul 
+                    ? b.judul.length > 50 
+                      ? b.judul.substring(0, 50) + '...' 
+                      : b.judul
+                    : 'Judul tidak tersedia'
+                  }
+                </div>
                 <div className="text-xs font-bold text-secondary mb-2 bg-white/80 px-2 py-1 rounded w-fit shadow">
                   {b.tanggal_publikasi ? new Date(b.tanggal_publikasi).toLocaleDateString('id-ID', {
                     day: 'numeric', month: 'long', year: 'numeric'

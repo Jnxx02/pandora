@@ -302,14 +302,19 @@ const Dashboard = () => {
                           </svg>
                         </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {beritaItem.judul || 'Judul tidak tersedia'}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {formatDate(beritaItem.tanggal_publikasi)}
-                        </p>
-                      </div>
+                                             <div className="flex-1 min-w-0">
+                         <p className="text-sm font-medium text-gray-900 truncate">
+                           {beritaItem.judul 
+                             ? beritaItem.judul.length > 50 
+                               ? beritaItem.judul.substring(0, 50) + '...' 
+                               : beritaItem.judul
+                             : 'Judul tidak tersedia'
+                           }
+                         </p>
+                         <p className="text-sm text-gray-500">
+                           {formatDate(beritaItem.tanggal_publikasi)}
+                         </p>
+                       </div>
                     </motion.div>
                   ))}
                 </div>
