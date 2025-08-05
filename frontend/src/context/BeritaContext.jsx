@@ -21,7 +21,7 @@ export const BeritaProvider = ({ children }) => {
       setError(null);
       
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/berita'
+        ? 'https://www.moncongloebulu.com/api/berita'
         : 'http://localhost:3001/api/berita';
       
       const response = await fetch(apiUrl);
@@ -59,7 +59,7 @@ export const BeritaProvider = ({ children }) => {
   const addBerita = useCallback(async (beritaData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/berita'
+        ? 'https://www.moncongloebulu.com/api/berita'
         : 'http://localhost:3001/api/berita';
       
       const response = await fetch(apiUrl, {
@@ -82,7 +82,7 @@ export const BeritaProvider = ({ children }) => {
   const updateBerita = useCallback(async (id, beritaData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? `https://pandora-vite.vercel.app/api/berita/${id}`
+        ? `https://www.moncongloebulu.com/api/berita/${id}`
         : `http://localhost:3001/api/berita/${id}`;
       
       const response = await fetch(apiUrl, {
@@ -105,7 +105,7 @@ export const BeritaProvider = ({ children }) => {
   const deleteBerita = useCallback(async (id) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? `https://pandora-vite.vercel.app/api/berita/${id}`
+        ? `https://www.moncongloebulu.com/api/berita/${id}`
         : `http://localhost:3001/api/berita/${id}`;
       
       const response = await fetch(apiUrl, {

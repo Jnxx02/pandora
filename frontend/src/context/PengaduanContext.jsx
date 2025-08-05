@@ -23,7 +23,7 @@ export const PengaduanProvider = ({ children }) => {
       setError(null);
       
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/pengaduan'
+        ? 'https://www.moncongloebulu.com/api/pengaduan'
         : 'http://localhost:3001/api/pengaduan';
       
       console.log('🔍 Fetching pengaduan from:', apiUrl);
@@ -89,7 +89,7 @@ export const PengaduanProvider = ({ children }) => {
   const addPengaduan = async (pengaduanData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? `https://pandora-vite.vercel.app/api/pengaduan`
+        ? `https://www.moncongloebulu.com/api/pengaduan`
         : `http://localhost:3001/api/pengaduan`;
 
       // Optimize payload size and ensure proper structure
@@ -167,7 +167,7 @@ export const PengaduanProvider = ({ children }) => {
   const updatePengaduan = async (id, pengaduanData) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? `https://pandora-vite.vercel.app/api/pengaduan/${id}`
+        ? `https://www.moncongloebulu.com/api/pengaduan/${id}`
         : `http://localhost:3001/api/pengaduan/${id}`;
       
       const response = await fetch(apiUrl, {
@@ -190,7 +190,7 @@ export const PengaduanProvider = ({ children }) => {
   const deletePengaduan = async (id) => {
     try {
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? `https://pandora-vite.vercel.app/api/pengaduan/${id}`
+        ? `https://www.moncongloebulu.com/api/pengaduan/${id}`
         : `http://localhost:3001/api/pengaduan/${id}`;
       
       const response = await fetch(apiUrl, {

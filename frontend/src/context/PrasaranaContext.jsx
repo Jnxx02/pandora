@@ -40,7 +40,7 @@ export const PrasaranaProvider = ({ children }) => {
       setError(null);
       
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/prasarana'
+        ? 'https://www.moncongloebulu.com/api/prasarana'
         : 'http://localhost:3001/api/prasarana';
       
       console.log('🔍 Fetching prasarana from:', apiUrl);

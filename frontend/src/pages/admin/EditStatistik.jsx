@@ -65,8 +65,8 @@ const EditStatistik = () => {
       const sortedData = sortStatistik(statistik);
       
       // Gunakan URL yang dinamis berdasarkan environment
-      const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://pandora-vite.vercel.app/api/statistik'
+            const apiUrl = process.env.NODE_ENV === 'production'
+        ? 'https://www.moncongloebulu.com/api/statistik'
         : 'http://localhost:3001/api/statistik';
       
       // POST data ke backend

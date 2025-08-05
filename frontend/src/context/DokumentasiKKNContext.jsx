@@ -49,7 +49,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
         try {
             // Gunakan URL yang dinamis berdasarkan environment
             const apiUrl = process.env.NODE_ENV === 'production' 
-                ? 'https://pandora-vite.vercel.app/api/dokumentasi'
+                ? 'https://www.moncongloebulu.com/api/dokumentasi'
                 : 'http://localhost:3001/api/dokumentasi';
             
             // Coba ambil dari backend terlebih dahulu
@@ -101,7 +101,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
 
             // Try to update on backend if available
             const apiUrl = process.env.NODE_ENV === 'production' 
-                ? 'https://pandora-vite.vercel.app/api/dokumentasi/download'
+                ? 'https://www.moncongloebulu.com/api/dokumentasi/download'
                 : 'http://localhost:3001/api/dokumentasi/download';
 
             const response = await fetch(apiUrl, {
@@ -156,7 +156,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
 
             // Try to add to backend first
             const apiUrl = process.env.NODE_ENV === 'production' 
-                ? 'https://pandora-vite.vercel.app/api/dokumentasi'
+                ? 'https://www.moncongloebulu.com/api/dokumentasi'
                 : 'http://localhost:3001/api/dokumentasi';
 
             const response = await fetch(apiUrl, {
@@ -213,7 +213,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
 
             // Try to update in backend first
             const apiUrl = process.env.NODE_ENV === 'production' 
-                ? `https://pandora-vite.vercel.app/api/dokumentasi/${id}`
+                ? `https://www.moncongloebulu.com/api/dokumentasi/${id}`
                 : `http://localhost:3001/api/dokumentasi/${id}`;
 
             const response = await fetch(apiUrl, {
@@ -262,7 +262,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
         try {
             // Try to delete from backend first
             const apiUrl = process.env.NODE_ENV === 'production' 
-                ? `https://pandora-vite.vercel.app/api/dokumentasi/${id}`
+                ? `https://www.moncongloebulu.com/api/dokumentasi/${id}`
                 : `http://localhost:3001/api/dokumentasi/${id}`;
 
             const response = await fetch(apiUrl, {

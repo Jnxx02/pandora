@@ -56,7 +56,7 @@ export const StatistikProvider = ({ children }) => {
     try {
       // Gunakan URL yang dinamis berdasarkan environment
       const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://pandora-vite.vercel.app/api/statistik'
+        ? 'https://www.moncongloebulu.com/api/statistik'
         : 'http://localhost:3001/api/statistik';
       
       // Coba ambil dari backend terlebih dahulu

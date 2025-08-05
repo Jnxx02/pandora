@@ -72,7 +72,7 @@ const EditPrasarana = () => {
       }));
 
       const apiUrl = process.env.NODE_ENV === 'production'
-        ? 'https://pandora-vite.vercel.app/api/prasarana'
+        ? 'https://www.moncongloebulu.com/api/prasarana'
         : 'http://localhost:3001/api/prasarana';
 
       const response = await fetch(apiUrl, {
