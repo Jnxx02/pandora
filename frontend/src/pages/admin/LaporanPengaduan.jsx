@@ -178,11 +178,11 @@ const DetailModal = ({ laporan, onClose }) => {
                           })
                           .catch(error => {
                             console.error('Error downloading image:', error);
-                            alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                            showNotification('error', 'Gagal mengunduh gambar. Silakan coba lagi.');
                           });
                       } catch (error) {
                         console.error('Error with image URL:', error);
-                        alert('Gambar tidak dapat diakses.');
+                        showNotification('error', 'Gambar tidak dapat diakses.');
                       }
                     }}
                     className="flex-1 bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm hover:bg-blue-600 transition-colors flex items-center justify-center"
@@ -232,7 +232,7 @@ const DetailModal = ({ laporan, onClose }) => {
                         newWindow.document.close();
                       } catch (error) {
                         console.error('Error opening image:', error);
-                        alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                        showNotification('error', 'Gagal membuka gambar. Silakan download file untuk melihatnya.');
                       }
                     }}
                     className="flex-1 bg-green-500 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm hover:bg-green-600 transition-colors flex items-center justify-center"
@@ -650,7 +650,7 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                               newWindow.document.close();
                             } catch (error) {
                               console.error('Error opening image:', error);
-                              alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                              showNotification('error', 'Gagal membuka gambar. Silakan download file untuk melihatnya.');
                             }
                           }}
                           className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
@@ -675,11 +675,11 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                                 })
                                 .catch(error => {
                                   console.error('Error downloading image:', error);
-                                  alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                                  showNotification('error', 'Gagal mengunduh gambar. Silakan coba lagi.');
                                 });
                             } catch (error) {
                               console.error('Error with image URL:', error);
-                              alert('Gambar tidak dapat diakses.');
+                              showNotification('error', 'Gambar tidak dapat diakses.');
                             }
                           }}
                           className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors"
@@ -838,7 +838,7 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                                       newWindow.document.close();
                                     } catch (error) {
                                       console.error('Error opening image:', error);
-                                      alert('Gagal membuka gambar. Silakan download file untuk melihatnya.');
+                                      showNotification('error', 'Gagal membuka gambar. Silakan download file untuk melihatnya.');
                                     }
                                   }}
                                   className="text-xs bg-blue-500 text-white px-1 py-0.5 rounded hover:bg-blue-600 transition-colors"
@@ -863,11 +863,11 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                                         })
                                         .catch(error => {
                                           console.error('Error downloading image:', error);
-                                          alert('Gagal mengunduh gambar. Silakan coba lagi.');
+                                          showNotification('error', 'Gagal mengunduh gambar. Silakan coba lagi.');
                                         });
                                     } catch (error) {
                                       console.error('Error with image URL:', error);
-                                      alert('Gambar tidak dapat diakses.');
+                                      showNotification('error', 'Gambar tidak dapat diakses.');
                                     }
                                   }}
                                   className="text-xs bg-green-500 text-white px-1 py-0.5 rounded hover:bg-green-600 transition-colors"
@@ -953,6 +953,9 @@ function LaporanPengaduan() {
   const [selectedLaporan, setSelectedLaporan] = useState(null);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const [downloadPeriod, setDownloadPeriod] = useState('all'); // all, weekly, monthly, yearly
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingLaporan, setDeletingLaporan] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showNotification = (type, message) => {
     setNotification({ show: true, type, message });
@@ -1005,15 +1008,9 @@ function LaporanPengaduan() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
-      try {
-        await deletePengaduan(id);
-        showNotification('success', 'Laporan berhasil dihapus!');
-      } catch (error) {
-        console.error("Error deleting pengaduan:", error);
-        showNotification('error', 'Gagal menghapus laporan.');
-      }
-    }
+    // This function is now replaced by handleDeleteClick and handleDeleteConfirm
+    // Keeping it for backward compatibility but it should not be used
+    console.warn('handleDelete is deprecated, use handleDeleteClick instead');
   };
 
   const handleUpdateStatus = async (id, newStatus) => {
@@ -1034,6 +1031,33 @@ function LaporanPengaduan() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedLaporan(null);
+  };
+
+  const handleDeleteClick = (laporan) => {
+    setDeletingLaporan(laporan);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingLaporan) return;
+    
+    setIsDeleting(true);
+    try {
+      await deletePengaduan(deletingLaporan.id);
+      showNotification('success', 'Laporan berhasil dihapus!');
+      setShowDeleteModal(false);
+      setDeletingLaporan(null);
+    } catch (error) {
+      console.error("Error deleting pengaduan:", error);
+      showNotification('error', 'Gagal menghapus laporan.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeletingLaporan(null);
   };
 
   // Function untuk download semua laporan dalam format PDF berdasarkan periode
@@ -1494,7 +1518,7 @@ function LaporanPengaduan() {
                 title="Pengaduan" 
                 data={laporanPengaduan} 
                 onShowDetail={handleShowDetail} 
-                onDelete={handleDelete}
+                onDelete={handleDeleteClick}
                 onUpdateStatus={handleUpdateStatus}
               />
             )}
@@ -1503,7 +1527,7 @@ function LaporanPengaduan() {
                 title="Aspirasi" 
                 data={laporanAspirasi} 
                 onShowDetail={handleShowDetail} 
-                onDelete={handleDelete}
+                onDelete={handleDeleteClick}
                 onUpdateStatus={handleUpdateStatus}
               />
             )}
@@ -1512,6 +1536,62 @@ function LaporanPengaduan() {
       </motion.div>
 
       {isModalOpen && <DetailModal laporan={selectedLaporan} onClose={handleCloseModal} />}
+      
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && deletingLaporan && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Konfirmasi Hapus</h2>
+                <button
+                  onClick={handleCloseDeleteModal}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-700 mb-4">
+                  Apakah Anda yakin ingin menghapus laporan ini?
+                </p>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-gray-900 mb-2">{deletingLaporan.judul}</h3>
+                  <p className="text-sm text-gray-600">{deletingLaporan.deskripsi}</p>
+                  <p className="text-xs text-gray-500 mt-2">Oleh: {deletingLaporan.nama_pelapor}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCloseDeleteModal}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Menghapus...
+                    </div>
+                  ) : (
+                    'Hapus Laporan'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <CustomNotification notification={notification} setNotification={setNotification} />
     </motion.div>
   );

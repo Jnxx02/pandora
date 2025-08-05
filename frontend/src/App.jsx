@@ -5,10 +5,11 @@ import { DesaProvider } from './context/DesaContext';
 import { StatistikProvider } from './context/StatistikContext';
 import { PrasaranaProvider } from './context/PrasaranaContext';
 import { BeritaProvider } from './context/BeritaContext';
-import { PengaduanProvider } from './context/PengaduanContext';
+import { PengaduanProvider, PengaduanContext } from './context/PengaduanContext';
 import { DokumentasiKKNProvider } from './context/DokumentasiKKNContext';
 import SessionTimeout from './components/SessionTimeout';
 import ErrorBoundary from './components/ErrorBoundary';
+import CustomNotification from './components/CustomNotification';
 
 // Lazy load components for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -56,6 +57,8 @@ const ModulPage = ({ title }) => (
     <p className="text-lg text-gray-700">Konten untuk modul ini akan segera ditambahkan oleh tim KKNT 114 Moncongloe Bulu.</p>
   </div>
 );
+
+
 
 // Komponen untuk proteksi route admin
 function RequireAdmin({ children }) {
@@ -814,6 +817,7 @@ function App() {
                       </Routes>
                     </Suspense>
                   </main>
+                  
                   {!isAdminRoute && <FooterInfo />}
                   <ScrollToTopButton />
                   {isAdminRoute && <SessionTimeout />}

@@ -170,6 +170,103 @@ const Dashboard = () => {
           </motion.div>
         </motion.div>
 
+        {/* Complaints Summary */}
+        <motion.div 
+          className="mb-8"
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <div className="bg-white rounded-xl shadow-lg border border-neutral/50 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-secondary">Ringkasan Pengaduan</h2>
+              <Link to="/admin/pengaduan" className="text-primary hover:text-secondary text-sm font-medium">
+                Kelola Pengaduan →
+              </Link>
+            </div>
+            
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-2 text-gray-600">Memuat data pengaduan...</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Pending Complaints */}
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-red-600">Menunggu Proses</p>
+                      <p className="text-2xl font-bold text-red-700">
+                        {pengaduan.filter(item => item.status === 'pending').length}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-red-100 rounded-lg">
+                      <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* In Progress Complaints */}
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-yellow-600">Sedang Diproses</p>
+                      <p className="text-2xl font-bold text-yellow-700">
+                        {pengaduan.filter(item => item.status === 'proses').length}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-yellow-100 rounded-lg">
+                      <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Completed Complaints */}
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-green-600">Selesai</p>
+                      <p className="text-2xl font-bold text-green-700">
+                        {pengaduan.filter(item => item.status === 'selesai').length}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Warning for pending complaints */}
+            {pengaduan.filter(item => item.status === 'pending').length > 0 && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                  </svg>
+                  <span className="text-red-700 font-medium">
+                    Ada {pengaduan.filter(item => item.status === 'pending').length} pengaduan yang belum diproses
+                  </span>
+                  <Link 
+                    to="/admin/pengaduan" 
+                    className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium underline"
+                  >
+                    Proses Sekarang
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* Main Content Grid */}
         <motion.div 
           className="grid grid-cols-1 lg:grid-cols-2 gap-8"

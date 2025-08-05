@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const PengaduanContext = createContext();
 
+export { PengaduanContext };
+
 export const usePengaduan = () => {
   const context = useContext(PengaduanContext);
   if (!context) {

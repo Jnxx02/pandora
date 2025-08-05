@@ -7,21 +7,39 @@ import CustomNotification from '../../components/CustomNotification';
 const DaftarBerita = () => {
   const { berita, deleteBerita, loading } = useBerita();
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingBerita, setDeletingBerita] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showNotification = (type, message) => {
     setNotification({ show: true, type, message });
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
+  const handleDeleteClick = (berita) => {
+    setDeletingBerita(berita);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingBerita) return;
     
+    setIsDeleting(true);
     try {
-      await deleteBerita(id);
+      await deleteBerita(deletingBerita.id);
       showNotification('success', 'Berita berhasil dihapus!');
+      setShowDeleteModal(false);
+      setDeletingBerita(null);
     } catch (error) {
       console.error("Gagal menghapus berita:", error);
       showNotification('error', `Gagal menghapus berita: ${error.message}`);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeletingBerita(null);
   };
 
   const formatDate = (dateString) => {
@@ -185,7 +203,7 @@ const DaftarBerita = () => {
                           Edit
                         </Link>
                         <motion.button
-                          onClick={() => handleDelete(b.id)}
+                          onClick={() => handleDeleteClick(b)}
                           className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium flex items-center gap-1"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -204,6 +222,36 @@ const DaftarBerita = () => {
           </div>
         )}
       </motion.div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && deletingBerita && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Konfirmasi Hapus Berita</h3>
+            <p className="text-gray-700 mb-6">
+              Apakah Anda yakin ingin menghapus berita "{deletingBerita.judul}"?
+              <br />
+              Aksi ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleCloseDeleteModal}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+                disabled={isDeleting}
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-semibold"
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Menghapus...' : 'Hapus'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };

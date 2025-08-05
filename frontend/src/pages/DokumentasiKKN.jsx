@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDokumentasiKKN } from '../context/DokumentasiKKNContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import CustomNotification from '../components/CustomNotification';
 
 const DokumentasiKKN = () => {
     const [activeCategory, setActiveCategory] = useState('all');
@@ -22,8 +23,13 @@ const DokumentasiKKN = () => {
     const [deletingItem, setDeletingItem] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [notification, setNotification] = useState({ show: false, type: '', message: '' });
     const navigate = useNavigate();
     const location = useLocation();
+
+    const showNotification = (type, message) => {
+        setNotification({ show: true, type, message });
+    };
 
     // Function untuk mendapatkan preview berdasarkan tipe file
     const getFilePreview = (item) => {
@@ -211,6 +217,7 @@ const DokumentasiKKN = () => {
 
         try {
             await addDokumentasi(formData);
+            showNotification('success', 'Dokumentasi berhasil ditambahkan!');
             setShowAddModal(false);
             setFormData({
                 title: '',
@@ -222,7 +229,7 @@ const DokumentasiKKN = () => {
             });
         } catch (error) {
             console.error('Error adding documentation:', error);
-            alert('Gagal menambahkan dokumentasi. Silakan coba lagi.');
+            showNotification('error', 'Gagal menambahkan dokumentasi. Silakan coba lagi.');
         } finally {
             setIsSubmitting(false);
         }
@@ -260,6 +267,7 @@ const DokumentasiKKN = () => {
 
         try {
             await updateDokumentasi(editingItem.id, formData);
+            showNotification('success', 'Dokumentasi berhasil diupdate!');
             setShowEditModal(false);
             setEditingItem(null);
             setFormData({
@@ -272,7 +280,7 @@ const DokumentasiKKN = () => {
             });
         } catch (error) {
             console.error('Error updating documentation:', error);
-            alert('Gagal mengupdate dokumentasi. Silakan coba lagi.');
+            showNotification('error', 'Gagal mengupdate dokumentasi. Silakan coba lagi.');
         } finally {
             setIsEditing(false);
         }
@@ -302,11 +310,12 @@ const DokumentasiKKN = () => {
 
         try {
             await deleteDokumentasi(deletingItem.id);
+            showNotification('success', 'Dokumentasi berhasil dihapus!');
             setShowDeleteModal(false);
             setDeletingItem(null);
         } catch (error) {
             console.error('Error deleting documentation:', error);
-            alert('Gagal menghapus dokumentasi. Silakan coba lagi.');
+            showNotification('error', 'Gagal menghapus dokumentasi. Silakan coba lagi.');
         } finally {
             setIsDeleting(false);
         }
@@ -520,7 +529,7 @@ const DokumentasiKKN = () => {
                                                 window.open(downloadUrl, '_blank');
                                             } else {
                                                 // Fallback untuk link yang belum tersedia
-                                                alert('Link download akan segera tersedia');
+                                                showNotification('info', 'Link download akan segera tersedia');
                                             }
                                         }}
                                         className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
@@ -904,6 +913,9 @@ const DokumentasiKKN = () => {
                     </div>
                 </div>
             )}
+
+            {/* Custom Notification */}
+            <CustomNotification notification={notification} setNotification={setNotification} />
         </div>
     );
 };
