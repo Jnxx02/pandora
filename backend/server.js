@@ -998,6 +998,71 @@ app.get('/api/dokumentasi', async (req, res) => {
   }
 });
 
+// API endpoint untuk MENAMBAHKAN (POST) dokumentasi baru
+app.post('/api/dokumentasi', async (req, res) => {
+  try {
+    const { title, description, category, author, download_url, thumbnail_url } = req.body;
+    
+    // Validasi input
+    if (!title || !description || !category || !author || !download_url) {
+      return res.status(400).json({ error: 'Title, description, category, author, dan download_url harus diisi' });
+    }
+
+    if (supabase && supabaseStatus === 'configured') {
+      const dokumentasiData = {
+        title,
+        description,
+        category,
+        author,
+        download_url: download_url, // Use download_url directly
+        thumbnail_url: thumbnail_url || null,
+        downloads: 0,
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('dokumentasi_kkn')
+        .insert([dokumentasiData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal menambahkan dokumentasi ke database' });
+      }
+
+      res.status(201).json({ 
+        message: 'Dokumentasi berhasil ditambahkan!', 
+        data 
+      });
+    } else {
+      // Fallback untuk development
+      console.log('📚 Adding dokumentasi (development mode)');
+      const dokumentasiData = {
+        id: Date.now(),
+        title,
+        description,
+        category,
+        author,
+        download_url: download_url,
+        thumbnail_url: thumbnail_url || null,
+        downloads: 0,
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
+      
+      res.status(201).json({ 
+        message: 'Dokumentasi berhasil ditambahkan (development mode)!', 
+        data: dokumentasiData 
+      });
+    }
+  } catch (error) {
+    console.error('Error in POST /api/dokumentasi:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
 // API endpoint untuk INCREMENT download count dokumentasi
 app.post('/api/dokumentasi/download', async (req, res) => {
   try {
@@ -1030,6 +1095,104 @@ app.post('/api/dokumentasi/download', async (req, res) => {
   }
 });
 
+// API endpoint untuk UPDATE dokumentasi
+app.put('/api/dokumentasi/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, category, author, download_url, thumbnail_url } = req.body;
+    
+    // Validasi input
+    if (!title || !description || !category || !author || !download_url) {
+      return res.status(400).json({ error: 'Semua field wajib diisi' });
+    }
+
+    if (supabase && supabaseStatus === 'configured') {
+      // Update dokumentasi di Supabase
+      const { data, error } = await supabase
+        .from('dokumentasi_kkn')
+        .update({
+          title,
+          description,
+          category,
+          author,
+          download_url,
+          thumbnail_url: thumbnail_url || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal update dokumentasi di database' });
+      }
+
+      if (!data || data.length === 0) {
+        return res.status(404).json({ error: 'Dokumentasi tidak ditemukan' });
+      }
+
+      res.status(200).json({ 
+        message: 'Dokumentasi berhasil diupdate!', 
+        data: data[0] 
+      });
+    } else {
+      // Fallback untuk development
+      console.log('📚 Updating dokumentasi (development mode)');
+      const updatedData = {
+        id: parseInt(id),
+        title,
+        description,
+        category,
+        author,
+        download_url,
+        thumbnail_url: thumbnail_url || null,
+        updated_at: new Date().toISOString()
+      };
+      
+      res.status(200).json({ 
+        message: 'Dokumentasi berhasil diupdate (development mode)!', 
+        data: updatedData 
+      });
+    }
+  } catch (error) {
+    console.error('Error in PUT /api/dokumentasi/:id:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// API endpoint untuk DELETE dokumentasi
+app.delete('/api/dokumentasi/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (supabase && supabaseStatus === 'configured') {
+      // Delete dokumentasi dari Supabase
+      const { error } = await supabase
+        .from('dokumentasi_kkn')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({ error: 'Gagal menghapus dokumentasi dari database' });
+      }
+
+      res.status(200).json({ 
+        message: 'Dokumentasi berhasil dihapus!' 
+      });
+    } else {
+      // Fallback untuk development
+      console.log('📚 Deleting dokumentasi (development mode)');
+      res.status(200).json({ 
+        message: 'Dokumentasi berhasil dihapus (development mode)!' 
+      });
+    }
+  } catch (error) {
+    console.error('Error in DELETE /api/dokumentasi/:id:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
 
 
 // Jalankan server di semua environment
@@ -1040,6 +1203,9 @@ app.listen(PORT, () => {
   console.log(`   GET  /api/statistik - Get statistik data`);
   console.log(`   POST /api/statistik - Save statistik data`);
   console.log(`   GET  /api/dokumentasi - Get dokumentasi data`);
+  console.log(`   POST /api/dokumentasi - Add new dokumentasi`);
+  console.log(`   PUT  /api/dokumentasi/:id - Update dokumentasi`);
+  console.log(`   DELETE /api/dokumentasi/:id - Delete dokumentasi`);
   console.log(`   POST /api/dokumentasi/download - Increment download count`);
   console.log(`🔧 Supabase Status: ${supabaseStatus}`);
 });

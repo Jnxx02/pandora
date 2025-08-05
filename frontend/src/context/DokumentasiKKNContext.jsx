@@ -141,6 +141,154 @@ export const DokumentasiKKNProvider = ({ children }) => {
         return filtered;
     }, [dokumentasi]);
 
+    // Add new dokumentasi
+    const addDokumentasi = useCallback(async (newDokumentasi) => {
+        try {
+            // Create new dokumentasi object with required fields
+            const dokumentasiToAdd = {
+                title: newDokumentasi.title,
+                description: newDokumentasi.description,
+                category: newDokumentasi.category,
+                author: newDokumentasi.author,
+                download_url: newDokumentasi.file_url, // Map file_url to download_url
+                thumbnail_url: newDokumentasi.thumbnail_url || null
+            };
+
+            // Try to add to backend first
+            const apiUrl = process.env.NODE_ENV === 'production' 
+                ? 'https://pandora-vite.vercel.app/api/dokumentasi'
+                : 'http://localhost:3001/api/dokumentasi';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dokumentasiToAdd),
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                // Update local state with the response from backend
+                setDokumentasi(prev => [responseData.data, ...prev]);
+                return responseData.data;
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error adding dokumentasi:', error);
+            
+            // If backend fails, add to local state only
+            const dokumentasiToAdd = {
+                id: Date.now(), // Only for local state fallback
+                title: newDokumentasi.title,
+                description: newDokumentasi.description,
+                category: newDokumentasi.category,
+                author: newDokumentasi.author,
+                downloads: 0,
+                download_url: newDokumentasi.file_url, // Map file_url to download_url
+                thumbnail_url: newDokumentasi.thumbnail_url || null,
+                is_active: true,
+                created_at: new Date().toISOString()
+            };
+            
+            setDokumentasi(prev => [dokumentasiToAdd, ...prev]);
+            return dokumentasiToAdd;
+        }
+    }, []);
+
+    // Update dokumentasi
+    const updateDokumentasi = useCallback(async (id, updatedDokumentasi) => {
+        try {
+            // Create updated dokumentasi object with required fields
+            const dokumentasiToUpdate = {
+                title: updatedDokumentasi.title,
+                description: updatedDokumentasi.description,
+                category: updatedDokumentasi.category,
+                author: updatedDokumentasi.author,
+                download_url: updatedDokumentasi.file_url, // Map file_url to download_url
+                thumbnail_url: updatedDokumentasi.thumbnail_url || null
+            };
+
+            // Try to update in backend first
+            const apiUrl = process.env.NODE_ENV === 'production' 
+                ? `https://pandora-vite.vercel.app/api/dokumentasi/${id}`
+                : `http://localhost:3001/api/dokumentasi/${id}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dokumentasiToUpdate),
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (response.ok) {
+                const updatedData = await response.json();
+                // Update local state
+                setDokumentasi(prev => prev.map(item => 
+                    item.id === id ? { ...item, ...updatedData.data } : item
+                ));
+                return updatedData;
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error updating dokumentasi:', error);
+            
+            // If backend fails, update local state only
+            const updatedItem = {
+                id: parseInt(id),
+                title: updatedDokumentasi.title,
+                description: updatedDokumentasi.description,
+                category: updatedDokumentasi.category,
+                author: updatedDokumentasi.author,
+                download_url: updatedDokumentasi.file_url,
+                thumbnail_url: updatedDokumentasi.thumbnail_url || null,
+                updated_at: new Date().toISOString()
+            };
+            
+            setDokumentasi(prev => prev.map(item => 
+                item.id === parseInt(id) ? { ...item, ...updatedItem } : item
+            ));
+            return { data: updatedItem };
+        }
+    }, []);
+
+    // Delete dokumentasi
+    const deleteDokumentasi = useCallback(async (id) => {
+        try {
+            // Try to delete from backend first
+            const apiUrl = process.env.NODE_ENV === 'production' 
+                ? `https://pandora-vite.vercel.app/api/dokumentasi/${id}`
+                : `http://localhost:3001/api/dokumentasi/${id}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (response.ok) {
+                // Remove from local state
+                setDokumentasi(prev => prev.filter(item => item.id !== parseInt(id)));
+                return { success: true };
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error deleting dokumentasi:', error);
+            
+            // If backend fails, remove from local state only
+            setDokumentasi(prev => prev.filter(item => item.id !== parseInt(id)));
+            return { success: true };
+        }
+    }, []);
+
     // Initial fetch
     useEffect(() => {
         fetchDokumentasi();
@@ -152,7 +300,10 @@ export const DokumentasiKKNProvider = ({ children }) => {
         error,
         refetchDokumentasi: fetchDokumentasi,
         incrementDownload,
-        searchDokumentasi
+        searchDokumentasi,
+        addDokumentasi,
+        updateDokumentasi,
+        deleteDokumentasi
     };
 
     return (

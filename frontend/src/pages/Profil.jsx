@@ -278,7 +278,7 @@ const Profil = () => {
                     <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
-                    PNS
+                    Non-PNS
                   </div>
                 </div>
               </div>
@@ -314,8 +314,83 @@ const Profil = () => {
               </div>
             </div>
 
+            {/* Additional Staff Members */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+              {/* Sertu Eko Kustriyanto - Babinsa */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-green-200 shadow-lg">
+                    <LazyImage 
+                      src="/images/pengurus/babinsa.jpg" 
+                      alt="Babinsa Sertu Eko Kustriyanto"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center" style={{display: 'none'}}>
+                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Babinsa</h3>
+                  <p className="text-secondary text-sm mb-3 font-medium">Sertu Eko Kustriyanto</p>
+                  <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-green-50 px-3 py-2 rounded-full border border-green-200">
+                    <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    TNI AD
+                  </div>
+                </div>
+              </div>
+
+              {/* Aiptu Abdul Kadir - Binmas */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-purple-200 shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Binmas</h3>
+                  <p className="text-secondary text-sm mb-3 font-medium">Aiptu Abdul Kadir</p>
+                  <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-purple-50 px-3 py-2 rounded-full border border-purple-200">
+                    <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    POLRI
+                  </div>
+                </div>
+              </div>
+
+              {/* Ketua TP. PKK Desa */}
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-200 shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
+                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">Ketua TP. PKK Desa</h3>
+                  <p className="text-secondary text-sm mb-3 font-medium">Hanik, S.Pd</p>
+                  <div className="inline-flex items-center gap-2 text-xs text-gray-600 bg-pink-50 px-3 py-2 rounded-full border border-pink-200">
+                    <svg className="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    PKK Desa
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Button Lihat Selengkapnya */}
-            <div className="text-center">
+            <div className="text-center mt-8">
               <button 
                 onClick={() => setSotkStaffOpen(!sotkStaffOpen)}
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105"
