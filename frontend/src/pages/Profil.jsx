@@ -408,7 +408,7 @@ const Profil = () => {
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80">
                 <h4 className="text-lg font-bold text-primary mb-4 text-center">Struktur Organisasi Lengkap</h4>
                 <img 
-                  src="https://upload.wikimedia.org/wikipedia/id/thumb/f/fe/Desa_Moncongloe_Bulu.jpg/500px-Desa_Moncongloe_Bulu.jpg" 
+                  src="images/sotk/sotk-desa-moncongloe-bulu.png" 
                   alt="Struktur Organisasi Desa Moncongloe Bulu"
                   className="w-full h-auto rounded-lg shadow-md border"
                 />
@@ -579,7 +579,7 @@ const Profil = () => {
           {/* Download Button */}
           <div className="text-center">
             <a 
-              href="/dokumen/sotk-desa-moncongloe-bulu.pdf" // Pastikan file ada di folder `public/dokumen`
+              href="/images/sotk/sotk-desa-moncongloe-bulu.pdf" // Pastikan file ada di folder `public/dokumen`
               download="SOTK Desa Moncongloe Bulu.pdf"
               target="_blank"
               rel="noopener noreferrer"
