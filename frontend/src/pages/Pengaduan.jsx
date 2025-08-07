@@ -63,7 +63,7 @@ const Pengaduan = () => {
             {/* GANTI: Latar placeholder menggunakan 'bg-neutral' */}
             <div className="flex items-center justify-center overflow-hidden">
                               <img
-                  src="/images/posters/PHOTO-2025-07-31-20-17-09.jpg"
+                  src="/images/posters/poster-suaraku.png"
                   alt="Poster Alur Layanan Pengaduan"
                   className="w-full h-auto max-h-[600px] object-contain rounded-lg"
                 />
