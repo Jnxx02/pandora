@@ -25,6 +25,7 @@ const TambahEditBerita = lazy(() => import('./pages/admin/TambahEditBerita'));
 const DaftarBerita = lazy(() => import('./pages/admin/DaftarBerita'));
 const EditStatistik = lazy(() => import('./pages/admin/EditStatistik'));
 const EditPrasarana = lazy(() => import('./pages/admin/EditPrasarana'));
+const PanduanAdmin = lazy(() => import('./pages/admin/PanduanAdmin'));
 const DetailBerita = lazy(() => import('./pages/DetailBerita'));
 const DokumentasiKKN = lazy(() => import('./pages/DokumentasiKKN'));
 
@@ -807,6 +808,11 @@ function App() {
                         <Route path="/admin/prasarana" element={
                           <RequireAdmin>
                             <EditPrasarana />
+                          </RequireAdmin>
+                        } />
+                        <Route path="/admin/panduan" element={
+                          <RequireAdmin>
+                            <PanduanAdmin />
                           </RequireAdmin>
                         } />
 
