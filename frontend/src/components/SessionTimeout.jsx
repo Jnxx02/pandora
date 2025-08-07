@@ -28,7 +28,7 @@ const SessionTimeout = () => {
           timeSinceActivity: Math.round(timeSinceActivity / 1000 / 60) + ' minutes',
           remainingTime: Math.round(remainingTime / 1000 / 60) + ' minutes',
           showWarning,
-          remainingTime <= WARNING_TIME && remainingTime > 0,
+          shouldShowWarning: remainingTime <= WARNING_TIME && remainingTime > 0,
           testingMode: TESTING_MODE
         });
 
