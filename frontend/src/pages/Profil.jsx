@@ -224,7 +224,7 @@ const Profil = () => {
             {/* Layout untuk 3 staff dengan posisi yang seimbang */}
             <div className="flex flex-col lg:flex-row justify-center items-center gap-8 mb-6">
               {/* Kepala Desa - Posisi Tengah */}
-              <div className="order-2 lg:order-1 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
+              <div className="order-1 lg:order-1 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-red-200 shadow-lg">
                     <LazyImage 
@@ -254,7 +254,7 @@ const Profil = () => {
               </div>
 
               {/* Sekretaris Desa - Posisi Kiri */}
-              <div className="order-1 lg:order-2 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
+              <div className="order-2 lg:order-2 bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full max-w-sm">
                 <div className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-blue-200 shadow-lg">
                     <LazyImage 
@@ -380,6 +380,15 @@ const Profil = () => {
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200/80 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <div className="text-center">
                   <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-200 shadow-lg">
+                  <LazyImage 
+                      src="/images/pengurus/ketua-pkk.png" 
+                      alt="Ketua TP. PKK Desa"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
                     <div className="w-full h-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
                       <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
