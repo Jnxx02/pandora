@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useBerita } from '../context/BeritaContext';
 
 const Berita = () => {
   const { berita, loading, error } = useBerita();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // 3x3 grid
+
+  // Hitung pagination
+  const { currentBerita, totalPages, startIndex, endIndex } = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentBerita = berita.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(berita.length / itemsPerPage);
+    
+    return {
+      currentBerita,
+      totalPages,
+      startIndex,
+      endIndex: Math.min(endIndex, berita.length)
+    };
+  }, [berita, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
@@ -73,30 +95,106 @@ const Berita = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {berita.map(b => (
-              <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-secondary rounded-xl p-4 shadow hover:bg-primary hover:text-white transition text-left border-none">
-                <img src={b.gambar || 'https://via.placeholder.com/400x300'} alt={b.judul} className="w-full h-40 object-cover rounded mb-2" />
-                <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">
-                  {b.judul 
-                    ? b.judul.length > 50 
-                      ? b.judul.substring(0, 50) + '...' 
-                      : b.judul
-                    : 'Judul tidak tersedia'
+          <>
+            {/* Info Pagination */}
+            <div className="flex justify-between items-center mb-6 text-sm text-gray-600">
+              <div>
+                Menampilkan {startIndex + 1}-{endIndex} dari {berita.length} berita
+              </div>
+              <div>
+                Halaman {currentPage} dari {totalPages}
+              </div>
+            </div>
+
+            {/* Grid Berita */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {currentBerita.map(b => (
+                <Link to={`/berita/${b.id}`} key={b.id} className="group flex flex-col bg-secondary rounded-xl p-4 shadow hover:bg-primary hover:text-white transition text-left border-none">
+                  <img src={b.gambar || 'https://via.placeholder.com/400x300'} alt={b.judul} className="w-full h-40 object-cover rounded mb-2" />
+                  <div className="font-bold text-primary text-lg mb-1 group-hover:text-white transition">
+                    {b.judul 
+                      ? b.judul.length > 50 
+                        ? b.judul.substring(0, 50) + '...' 
+                        : b.judul
+                      : 'Judul tidak tersedia'
+                    }
+                  </div>
+                  <div className="text-xs font-bold text-secondary mb-2 bg-white/80 px-2 py-1 rounded w-fit shadow">
+                    {b.tanggal_publikasi ? new Date(b.tanggal_publikasi).toLocaleDateString('id-ID', {
+                      day: 'numeric', month: 'long', year: 'numeric'
+                    }) : ''}
+                  </div>
+                  <div className="text-primary text-sm mb-2 line-clamp-3 group-hover:text-white transition">
+                    {b.konten ? b.konten.substring(0, 150) + (b.konten.length > 150 ? '...' : '') : ''}
+                  </div>
+                  <span className="text-sm underline text-primary group-hover:text-white mt-auto">Lihat Detail</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center space-x-1 sm:space-x-2">
+                {/* Previous Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === 1
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, index) => {
+                  const page = index + 1;
+                  const showPage = page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
+                  
+                  if (!showPage && page === currentPage - 2) {
+                    return <span key={page} className="px-2 text-gray-400">...</span>;
                   }
-                </div>
-                <div className="text-xs font-bold text-secondary mb-2 bg-white/80 px-2 py-1 rounded w-fit shadow">
-                  {b.tanggal_publikasi ? new Date(b.tanggal_publikasi).toLocaleDateString('id-ID', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                  }) : ''}
-                </div>
-                <div className="text-primary text-sm mb-2 line-clamp-3 group-hover:text-white transition">
-                  {b.konten ? b.konten.substring(0, 150) + (b.konten.length > 150 ? '...' : '') : ''}
-                </div>
-                <span className="text-sm underline text-primary group-hover:text-white mt-auto">Lihat Detail</span>
-              </Link>
-            ))}
-          </div>
+                  if (!showPage && page === currentPage + 2) {
+                    return <span key={page} className="px-2 text-gray-400">...</span>;
+                  }
+                  if (!showPage) return null;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === page
+                          ? 'bg-primary text-white'
+                          : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                {/* Next Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === totalPages
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
