@@ -597,7 +597,7 @@ const KelolaDokumentasi = () => {
 
     return (
         <motion.div 
-            className="py-10 max-w-7xl mx-auto bg-neutral min-h-screen px-4"
+            className="py-4 sm:py-10 max-w-7xl mx-auto bg-neutral min-h-screen px-4 sm:px-6"
             initial="initial"
             animate="in"
             exit="out"
@@ -608,17 +608,17 @@ const KelolaDokumentasi = () => {
             <CustomNotification notification={notification} setNotification={setNotification} />
 
             <motion.div 
-                className="mb-6 flex justify-between items-center"
+                className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
                 variants={itemVariants}
             >
                 <div>
-                    <h2 className="text-2xl font-bold text-secondary">Kelola Dokumentasi</h2>
-                    <p className="text-gray-600 mt-1">Kelola dokumentasi dan template untuk website</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-secondary">Kelola Dokumentasi</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">Kelola dokumentasi dan template untuk website</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-medium flex items-center gap-2"
+                        className="px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -627,7 +627,7 @@ const KelolaDokumentasi = () => {
                     </button>
                     <Link
                         to="/admin/dashboard"
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium flex items-center gap-2"
+                        className="px-3 sm:px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -639,12 +639,12 @@ const KelolaDokumentasi = () => {
 
             {/* Search and Filter Section */}
             <motion.div 
-                className="bg-white rounded-xl shadow p-6 border border-neutral/50 mb-6"
+                className="bg-white rounded-xl shadow p-4 sm:p-6 border border-neutral/50 mb-4 sm:mb-6"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 sm:gap-4">
                     {/* Search Bar */}
                     <div className="w-full">
                         <div className="relative">
@@ -653,19 +653,19 @@ const KelolaDokumentasi = () => {
                                 placeholder="Cari dokumentasi..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-base"
+                                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                             />
-                            <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="absolute left-3 top-2.5 sm:top-3.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
                     </div>
 
                     {/* Category Filter */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                         <button
                             onClick={() => setActiveCategory('all')}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm ${
                                 activeCategory === 'all'
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -675,7 +675,7 @@ const KelolaDokumentasi = () => {
                         </button>
                         <button
                             onClick={() => setActiveCategory('modul')}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm ${
                                 activeCategory === 'modul'
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -685,7 +685,7 @@ const KelolaDokumentasi = () => {
                         </button>
                         <button
                             onClick={() => setActiveCategory('buku_panduan')}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm ${
                                 activeCategory === 'buku_panduan'
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -695,7 +695,7 @@ const KelolaDokumentasi = () => {
                         </button>
                         <button
                             onClick={() => setActiveCategory('template')}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm ${
                                 activeCategory === 'template'
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -709,17 +709,17 @@ const KelolaDokumentasi = () => {
 
             {/* Results Count */}
             <motion.div 
-                className="mb-6"
+                className="mb-4 sm:mb-6"
                 variants={itemVariants}
             >
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm sm:text-base">
                     Menampilkan {filteredData.length} dokumentasi
                 </p>
             </motion.div>
 
             {/* Documentation Grid */}
             <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -731,7 +731,7 @@ const KelolaDokumentasi = () => {
                         variants={itemVariants}
                     >
                         {/* Thumbnail */}
-                        <div className="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                        <div className="h-32 sm:h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                             {item?.thumbnail_url ? (
                                 <div className="w-full h-full">
                                     {getFilePreview(item)}
@@ -744,29 +744,29 @@ const KelolaDokumentasi = () => {
                         </div>
 
                         {/* Content */}
-                        <div className="p-6">
-                            <h3 className="text-lg font-semibold text-text-main mb-2 line-clamp-2">
+                        <div className="p-3 sm:p-6">
+                            <h3 className="text-base sm:text-lg font-semibold text-text-main mb-2 line-clamp-2">
                                 {item?.title 
-                                    ? item.title.length > 50 
-                                        ? item.title.substring(0, 50) + '...' 
+                                    ? item.title.length > 40 
+                                        ? item.title.substring(0, 40) + '...' 
                                         : item.title
                                     : 'Judul tidak tersedia'
                                 }
                             </h3>
-                            <p className="text-text-secondary text-sm mb-4 line-clamp-3">
+                            <p className="text-text-secondary text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">
                                 {item?.description || 'Deskripsi tidak tersedia'}
                             </p>
 
                             {/* Meta Info */}
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 mb-3 sm:mb-4 gap-1 sm:gap-0">
                                 <span className="truncate">Oleh: {item?.author || 'Anonim'}</span>
-                                <span className="flex-shrink-0 ml-2">
+                                <span className="flex-shrink-0">
                                     {item?.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : 'Tanggal tidak tersedia'}
                                 </span>
                             </div>
 
                             {/* Downloads Count */}
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                            <div className="flex items-center justify-between text-xs text-gray-500 mb-3 sm:mb-4">
                                 <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -788,21 +788,21 @@ const KelolaDokumentasi = () => {
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => handleEditClick(item)}
-                                    className="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
+                                    className="flex-1 bg-blue-500 text-white py-2 px-2 sm:px-3 rounded text-xs sm:text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
                                 >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
-                                    Edit
+                                    <span className="hidden sm:inline">Edit</span>
                                 </button>
                                 <button
                                     onClick={() => handleDeleteClick(item)}
-                                    className="flex-1 bg-red-500 text-white py-2 px-3 rounded text-sm hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
+                                    className="flex-1 bg-red-500 text-white py-2 px-2 sm:px-3 rounded text-xs sm:text-sm hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
                                 >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
-                                    Hapus
+                                    <span className="hidden sm:inline">Hapus</span>
                                 </button>
                             </div>
                         </div>
@@ -832,25 +832,25 @@ const KelolaDokumentasi = () => {
 
             {/* Add Documentation Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                        <div className="p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900">Tambah Dokumentasi Baru</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Tambah Dokumentasi Baru</h2>
                                 <button
                                     onClick={handleCloseModal}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                                 >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                                 {/* Title */}
                                 <div>
-                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                                         Judul Dokumentasi *
                                     </label>
                                     <input
@@ -860,14 +860,14 @@ const KelolaDokumentasi = () => {
                                         value={formData.title}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                         placeholder="Contoh: Template Laporan Keuangan Desa"
                                     />
                                 </div>
 
                                 {/* Description */}
                                 <div>
-                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                                         Deskripsi *
                                     </label>
                                     <textarea
@@ -877,14 +877,14 @@ const KelolaDokumentasi = () => {
                                         onChange={handleInputChange}
                                         required
                                         rows="3"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                         placeholder="Deskripsi singkat tentang dokumentasi ini"
                                     />
                                 </div>
 
                                 {/* Author */}
                                 <div>
-                                    <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                                         Penulis *
                                     </label>
                                     <input
@@ -894,14 +894,14 @@ const KelolaDokumentasi = () => {
                                         value={formData.author}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                         placeholder="Nama penulis"
                                     />
                                 </div>
 
                                 {/* Category */}
                                 <div>
-                                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                                         Kategori *
                                     </label>
                                     <select
@@ -910,7 +910,7 @@ const KelolaDokumentasi = () => {
                                         value={formData.category}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                     >
                                         <option value="template">📄 Template</option>
                                         <option value="modul">📋 Modul</option>
@@ -1067,18 +1067,18 @@ const KelolaDokumentasi = () => {
                                 </div>
 
                                 {/* Submit Button */}
-                                <div className="flex gap-3 pt-4">
+                                <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
                                     <button
                                         type="button"
                                         onClick={handleCloseModal}
-                                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                        className="flex-1 px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
                                     >
                                         Batal
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || isUploadingDocument || isUploadingThumbnail}
-                                        className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex-1 px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                                     >
                                         {(isSubmitting || isUploadingDocument || isUploadingThumbnail) ? (
                                             <div className="flex items-center justify-center gap-2">
@@ -1100,22 +1100,22 @@ const KelolaDokumentasi = () => {
 
             {/* Edit Documentation Modal */}
             {showEditModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                        <div className="p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900">Edit Dokumentasi</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Edit Dokumentasi</h2>
                                 <button
                                     onClick={handleCloseEditModal}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                                 >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
 
-                            <form onSubmit={handleEditSubmit} className="space-y-4">
+                            <form onSubmit={handleEditSubmit} className="space-y-3 sm:space-y-4">
                                 {/* Title */}
                                 <div>
                                     <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -1335,18 +1335,18 @@ const KelolaDokumentasi = () => {
                                 </div>
 
                                 {/* Submit Button */}
-                                <div className="flex gap-3 pt-4">
+                                <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
                                     <button
                                         type="button"
                                         onClick={handleCloseEditModal}
-                                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                        className="flex-1 px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
                                     >
                                         Batal
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isEditing || isUploadingDocument || isUploadingThumbnail}
-                                        className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex-1 px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                                     >
                                         {(isEditing || isUploadingDocument || isUploadingThumbnail) ? (
                                             <div className="flex items-center justify-center gap-2">
