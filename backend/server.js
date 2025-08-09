@@ -3,6 +3,8 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const pdf2pic = require('pdf2pic');
+const sharp = require('sharp');
 // Load environment variables from .env file for local development
 require('dotenv').config();
 
@@ -15,6 +17,172 @@ const PORT = 3001;
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Create thumbnails directory if it doesn't exist
+const thumbnailsDir = path.join(uploadsDir, 'thumbnails');
+if (!fs.existsSync(thumbnailsDir)) {
+  fs.mkdirSync(thumbnailsDir, { recursive: true });
+}
+
+// Function to generate thumbnail from PDF
+async function generateThumbnailFromPDF(filePath, outputFileName) {
+  try {
+    console.log('Starting PDF thumbnail generation for:', filePath);
+    
+    // First, try to create a generic PDF icon as fallback
+    const fallbackThumbnail = await generateGenericPDFThumbnail(outputFileName);
+    
+    // Try to use pdf2pic if available
+    try {
+      const convert = pdf2pic.fromPath(filePath, {
+        density: 100,
+        saveFilename: outputFileName,
+        savePath: thumbnailsDir,
+        format: "png",
+        width: 300,
+        height: 400
+      });
+
+      console.log('Attempting PDF conversion...');
+      const result = await convert(1, { responseType: "image" });
+      
+      if (result && result.length > 0) {
+        const thumbnailPath = result[0].path;
+        console.log('PDF conversion successful, optimizing...');
+        
+        // Optimize the thumbnail with sharp
+        const optimizedPath = path.join(thumbnailsDir, `${outputFileName}-optimized.png`);
+        await sharp(thumbnailPath)
+          .resize(300, 400, { 
+            fit: 'cover',
+            position: 'top'
+          })
+          .png({ quality: 80 })
+          .toFile(optimizedPath);
+        
+        // Remove original unoptimized file
+        if (fs.existsSync(thumbnailPath)) {
+          fs.unlinkSync(thumbnailPath);
+        }
+        
+        console.log('PDF thumbnail generated successfully:', `${outputFileName}-optimized.png`);
+        return `${outputFileName}-optimized.png`;
+      }
+    } catch (pdf2picError) {
+      console.warn('pdf2pic failed, using fallback thumbnail:', pdf2picError.message);
+      return fallbackThumbnail;
+    }
+    
+    // If pdf2pic didn't work, return the fallback
+    return fallbackThumbnail;
+    
+  } catch (error) {
+    console.error('Error generating PDF thumbnail:', error);
+    // Try to generate a generic fallback
+    try {
+      return await generateGenericPDFThumbnail(outputFileName);
+    } catch (fallbackError) {
+      console.error('Failed to generate fallback thumbnail:', fallbackError);
+      return null;
+    }
+  }
+}
+
+// Generate a generic PDF icon thumbnail
+async function generateGenericPDFThumbnail(outputFileName) {
+  try {
+    const svgIcon = `
+      <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pdfGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="300" height="400" fill="url(#pdfGrad)" rx="15" ry="15"/>
+        <rect x="20" y="60" width="260" height="280" fill="white" rx="8" ry="8" opacity="0.9"/>
+        
+        <!-- PDF Icon -->
+        <path d="M150 100 L180 130 L180 180 L120 180 L120 130 Z" fill="#FF5722" opacity="0.8"/>
+        <text x="150" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white">PDF</text>
+        
+        <!-- Document lines -->
+        <line x1="140" y1="200" x2="240" y2="200" stroke="#FF5722" stroke-width="3" opacity="0.6"/>
+        <line x1="140" y1="220" x2="220" y2="220" stroke="#FF5722" stroke-width="2" opacity="0.4"/>
+        <line x1="140" y1="240" x2="260" y2="240" stroke="#FF5722" stroke-width="2" opacity="0.4"/>
+        <line x1="140" y1="260" x2="200" y2="260" stroke="#FF5722" stroke-width="2" opacity="0.4"/>
+        
+        <!-- Footer -->
+        <text x="150" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">PDF Document</text>
+      </svg>
+    `;
+    
+    const thumbnailPath = path.join(thumbnailsDir, `${outputFileName}.png`);
+    await sharp(Buffer.from(svgIcon))
+      .png()
+      .toFile(thumbnailPath);
+    
+    console.log('Generic PDF thumbnail generated:', `${outputFileName}.png`);
+    return `${outputFileName}.png`;
+  } catch (error) {
+    console.error('Error generating generic PDF thumbnail:', error);
+    throw error;
+  }
+}
+
+// Function to generate thumbnail for Office documents (placeholder)
+async function generateThumbnailFromOffice(filePath, outputFileName) {
+  try {
+    // For now, create a generic thumbnail for Office documents
+    // In a production environment, you might want to use libraries like:
+    // - libreoffice-convert for converting to PDF first
+    // - or create custom thumbnails based on file type
+    
+    const fileExt = path.extname(filePath).toLowerCase();
+    let iconColor = '#4285F4'; // Default blue
+    let iconText = 'DOC';
+    
+    switch (fileExt) {
+      case '.docx':
+      case '.doc':
+        iconColor = '#2B579A';
+        iconText = 'DOC';
+        break;
+      case '.xlsx':
+      case '.xls':
+        iconColor = '#217346';
+        iconText = 'XLS';
+        break;
+      case '.pptx':
+      case '.ppt':
+        iconColor = '#D24726';
+        iconText = 'PPT';
+        break;
+    }
+    
+    // Create a simple thumbnail using Sharp
+    const svgIcon = `
+      <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="400" fill="${iconColor}"/>
+        <rect x="20" y="20" width="260" height="320" fill="white" rx="10"/>
+        <text x="150" y="200" font-family="Arial, sans-serif" font-size="36" font-weight="bold" 
+              text-anchor="middle" fill="${iconColor}">${iconText}</text>
+        <text x="150" y="240" font-family="Arial, sans-serif" font-size="14" 
+              text-anchor="middle" fill="#666">Document</text>
+      </svg>
+    `;
+    
+    const thumbnailPath = path.join(thumbnailsDir, `${outputFileName}.png`);
+    await sharp(Buffer.from(svgIcon))
+      .png()
+      .toFile(thumbnailPath);
+    
+    return `${outputFileName}.png`;
+  } catch (error) {
+    console.error('Error generating Office document thumbnail:', error);
+    return null;
+  }
 }
 
 // Configure multer for file uploads
@@ -154,10 +322,35 @@ const uploadDocument = multer({
 });
 
 // Upload documentation file endpoint
-app.post('/api/upload-document', uploadDocument.single('document'), (req, res) => {
+app.post('/api/upload-document', uploadDocument.single('document'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No document file uploaded' });
+    }
+
+    const filePath = req.file.path;
+    const fileExt = path.extname(req.file.filename).toLowerCase();
+    const baseFileName = path.parse(req.file.filename).name;
+    
+    // Generate thumbnail based on file type
+    let thumbnailUrl = null;
+    let thumbnailFilename = null;
+    
+    try {
+      if (fileExt === '.pdf') {
+        // Generate thumbnail from PDF
+        thumbnailFilename = await generateThumbnailFromPDF(filePath, `thumb-${baseFileName}`);
+      } else if (['.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'].includes(fileExt)) {
+        // Generate generic thumbnail for Office documents
+        thumbnailFilename = await generateThumbnailFromOffice(filePath, `thumb-${baseFileName}`);
+      }
+      
+      if (thumbnailFilename) {
+        thumbnailUrl = `${req.protocol}://${req.get('host')}/uploads/thumbnails/${thumbnailFilename}`;
+      }
+    } catch (thumbnailError) {
+      console.error('Error generating thumbnail:', thumbnailError);
+      // Continue without thumbnail if generation fails
     }
 
     // Return the URL path to access the uploaded document
@@ -169,7 +362,9 @@ app.post('/api/upload-document', uploadDocument.single('document'), (req, res) =
       filename: req.file.filename,
       originalName: req.file.originalname,
       mimetype: req.file.mimetype,
-      size: req.file.size
+      size: req.file.size,
+      thumbnailUrl: thumbnailUrl,
+      thumbnailFilename: thumbnailFilename
     });
   } catch (error) {
     console.error('Error uploading document:', error);
@@ -195,6 +390,98 @@ app.post('/api/upload-thumbnail', upload.single('thumbnail'), (req, res) => {
   } catch (error) {
     console.error('Error uploading thumbnail:', error);
     res.status(500).json({ error: 'Failed to upload thumbnail' });
+  }
+});
+
+// Regenerate thumbnail from existing document endpoint
+app.post('/api/regenerate-thumbnail', async (req, res) => {
+  try {
+    const { documentUrl } = req.body;
+    console.log('Regenerate thumbnail request for:', documentUrl);
+    
+    if (!documentUrl) {
+      return res.status(400).json({ error: 'Document URL is required' });
+    }
+
+    // Extract filename from URL
+    let filename;
+    let filePath;
+    
+    if (documentUrl.startsWith('http://localhost:3001/uploads/') || documentUrl.includes('/uploads/')) {
+      // URL from our server - extract filename from URL
+      const urlParts = documentUrl.split('/');
+      filename = urlParts[urlParts.length - 1];
+      filePath = path.join(uploadsDir, filename);
+    } else if (documentUrl.startsWith('http')) {
+      // External URL - cannot regenerate thumbnail
+      console.error('Cannot regenerate thumbnail for external URL:', documentUrl);
+      return res.status(400).json({ error: 'Cannot regenerate thumbnail for external URLs' });
+    } else {
+      // Assume it's a relative path or filename
+      filename = documentUrl.split('/').pop();
+      filePath = path.join(uploadsDir, filename);
+    }
+    
+    console.log('Looking for file at:', filePath);
+    console.log('File exists:', fs.existsSync(filePath));
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error('File not found:', filePath);
+      return res.status(404).json({ error: `Document file not found: ${filename}` });
+    }
+
+    const fileExt = path.extname(filename).toLowerCase();
+    const baseFileName = path.parse(filename).name;
+    
+    console.log('File extension:', fileExt);
+    console.log('Base filename:', baseFileName);
+    
+    // Generate thumbnail based on file type
+    let thumbnailUrl = null;
+    let thumbnailFilename = null;
+    
+    try {
+      if (fileExt === '.pdf') {
+        console.log('Generating PDF thumbnail...');
+        // Generate thumbnail from PDF
+        thumbnailFilename = await generateThumbnailFromPDF(filePath, `thumb-${baseFileName}`);
+      } else if (['.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'].includes(fileExt)) {
+        console.log('Generating Office document thumbnail...');
+        // Generate generic thumbnail for Office documents
+        thumbnailFilename = await generateThumbnailFromOffice(filePath, `thumb-${baseFileName}`);
+      } else {
+        console.error('Unsupported file type:', fileExt);
+        return res.status(400).json({ error: `File type not supported for thumbnail generation: ${fileExt}` });
+      }
+      
+      console.log('Generated thumbnail filename:', thumbnailFilename);
+      
+      if (thumbnailFilename) {
+        thumbnailUrl = `${req.protocol}://${req.get('host')}/uploads/thumbnails/${thumbnailFilename}`;
+        console.log('Thumbnail URL:', thumbnailUrl);
+      }
+    } catch (thumbnailError) {
+      console.error('Error generating thumbnail:', thumbnailError);
+      console.error('Stack trace:', thumbnailError.stack);
+      return res.status(500).json({ error: `Failed to generate thumbnail: ${thumbnailError.message}` });
+    }
+
+    if (!thumbnailUrl) {
+      console.error('No thumbnail URL generated');
+      return res.status(500).json({ error: 'Failed to generate thumbnail - no URL returned' });
+    }
+    
+    console.log('Thumbnail regeneration successful');
+    res.status(200).json({
+      message: 'Thumbnail regenerated successfully',
+      thumbnailUrl: thumbnailUrl,
+      thumbnailFilename: thumbnailFilename
+    });
+  } catch (error) {
+    console.error('Error regenerating thumbnail:', error);
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ error: `Failed to regenerate thumbnail: ${error.message}` });
   }
 });
 

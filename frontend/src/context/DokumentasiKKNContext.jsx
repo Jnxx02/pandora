@@ -150,8 +150,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
                 description: newDokumentasi.description,
                 category: newDokumentasi.category,
                 author: newDokumentasi.author,
-                download_url: newDokumentasi.file_url, // Map file_url to download_url
-                thumbnail_url: newDokumentasi.thumbnail_url || null
+                download_url: newDokumentasi.file_url // Map file_url to download_url
             };
 
             // Try to add to backend first
@@ -188,7 +187,6 @@ export const DokumentasiKKNProvider = ({ children }) => {
                 author: newDokumentasi.author,
                 downloads: 0,
                 download_url: newDokumentasi.file_url, // Map file_url to download_url
-                thumbnail_url: newDokumentasi.thumbnail_url || null,
                 is_active: true,
                 created_at: new Date().toISOString()
             };
@@ -207,8 +205,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
                 description: updatedDokumentasi.description,
                 category: updatedDokumentasi.category,
                 author: updatedDokumentasi.author,
-                download_url: updatedDokumentasi.file_url, // Map file_url to download_url
-                thumbnail_url: updatedDokumentasi.thumbnail_url || null
+                download_url: updatedDokumentasi.file_url // Map file_url to download_url
             };
 
             // Try to update in backend first
@@ -240,18 +237,17 @@ export const DokumentasiKKNProvider = ({ children }) => {
             
             // If backend fails, update local state only
             const updatedItem = {
-                id: parseInt(id),
+                id: id,
                 title: updatedDokumentasi.title,
                 description: updatedDokumentasi.description,
                 category: updatedDokumentasi.category,
                 author: updatedDokumentasi.author,
                 download_url: updatedDokumentasi.file_url,
-                thumbnail_url: updatedDokumentasi.thumbnail_url || null,
                 updated_at: new Date().toISOString()
             };
             
             setDokumentasi(prev => prev.map(item => 
-                item.id === parseInt(id) ? { ...item, ...updatedItem } : item
+                item.id === id ? { ...item, ...updatedItem } : item
             ));
             return { data: updatedItem };
         }
@@ -275,7 +271,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
 
             if (response.ok) {
                 // Remove from local state
-                setDokumentasi(prev => prev.filter(item => item.id !== parseInt(id)));
+                setDokumentasi(prev => prev.filter(item => item.id !== id));
                 return { success: true };
             } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -284,7 +280,7 @@ export const DokumentasiKKNProvider = ({ children }) => {
             console.error('Error deleting dokumentasi:', error);
             
             // If backend fails, remove from local state only
-            setDokumentasi(prev => prev.filter(item => item.id !== parseInt(id)));
+            setDokumentasi(prev => prev.filter(item => item.id !== id));
             return { success: true };
         }
     }, []);

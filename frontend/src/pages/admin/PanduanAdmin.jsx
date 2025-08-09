@@ -485,7 +485,82 @@ const PanduanAdmin = () => {
       yPosition += 7;
     });
     
-    // Page 16 - BAB V
+    // Page 16 - BAB IV continued (Dokumentasi KKN)
+    doc.addPage();
+    doc.setFont("helvetica", "bold");
+    doc.text("4.8. Manajemen Dokumentasi KKN", 20, 20);
+    doc.setFont("helvetica", "normal");
+    
+    const dokumentasi = [
+      "Cara Menambah Dokumentasi Baru:",
+      "1. Klik menu \"Kelola Dokumentasi\" di dashboard",
+      "2. Klik tombol \"Tambah Dokumentasi\"",
+      "3. Isi judul, deskripsi, dan nama penulis",
+      "4. Pilih kategori yang sesuai (Template, Modul, atau Panduan)",
+      "5. Upload file dokumen (PDF, Word, Excel, PowerPoint) atau masukkan URL",
+      "6. Upload thumbnail gambar (opsional) atau masukkan URL gambar",
+      "7. Klik \"Simpan Dokumentasi\" untuk menyimpan",
+      "",
+      "Cara Mengedit Dokumentasi:",
+      "1. Buka menu \"Kelola Dokumentasi\"",
+      "2. Cari dokumentasi yang ingin diedit",
+      "3. Klik tombol \"Edit\" pada card dokumentasi",
+      "4. Ubah informasi yang diperlukan",
+      "5. Upload file atau gambar baru jika diperlukan",
+      "6. Klik \"Update Dokumentasi\" untuk menyimpan perubahan"
+    ];
+    
+    yPosition = 35;
+    dokumentasi.forEach(line => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(line, 20, yPosition);
+      yPosition += 7;
+    });
+    
+    // Page 17 - BAB IV continued (Tips Upload File)
+    doc.addPage();
+    doc.setFont("helvetica", "bold");
+    doc.text("Tips Upload File dan Kategori Dokumentasi:", 20, 20);
+    doc.setFont("helvetica", "normal");
+    
+    const tipsDokumentasi = [
+      "Tips Upload File:",
+      "• File dokumen maksimal 50MB (PDF, Word, Excel, PowerPoint)",
+      "• Thumbnail gambar maksimal 5MB (JPG, PNG, GIF)",
+      "• FITUR BARU: Thumbnail otomatis dibuat untuk file PDF",
+      "• Tombol 'Generate Thumbnail' tersedia untuk dokumen lama",
+      "• Gunakan nama file yang deskriptif",
+      "• Pastikan file dapat dibuka dengan baik sebelum upload",
+      "• Thumbnail custom dapat diupload untuk mengganti yang otomatis",
+      "",
+      "Kategori Dokumentasi:",
+      "• Template: Format dokumen kosong yang dapat digunakan berulang",
+      "• Modul: Materi pembelajaran atau pelatihan",
+      "• Panduan: Petunjuk teknis dan prosedur",
+      "",
+      "Best Practices:",
+      "• Organisir dokumentasi berdasarkan kategori yang tepat",
+      "• Gunakan judul dan deskripsi yang jelas dan informatif",
+      "• Generate thumbnail untuk dokumen lama yang belum memilikinya",
+      "• Update dokumentasi secara berkala sesuai kebutuhan",
+      "• Hapus dokumentasi yang sudah tidak relevan",
+      "• Backup file penting secara terpisah"
+    ];
+    
+    yPosition = 35;
+    tipsDokumentasi.forEach(line => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(line, 20, yPosition);
+      yPosition += 7;
+    });
+    
+    // Page 18 - BAB V
     doc.addPage();
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
@@ -568,6 +643,38 @@ const PanduanAdmin = () => {
     
     yPosition = 35;
     studiStatistik.forEach(line => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(line, 20, yPosition);
+      yPosition += 7;
+    });
+    
+    // Page 18 - BAB V continued (Studi Kasus Dokumentasi)
+    doc.addPage();
+    doc.setFont("helvetica", "bold");
+    doc.text("5.4. Studi Kasus: Mengelola Dokumentasi KKN", 20, 20);
+    doc.setFont("helvetica", "normal");
+    
+    const studiDokumentasi = [
+      "Langkah-langkah menambah template laporan:",
+      "1. Login ke sistem admin",
+      "2. Klik menu \"Kelola Dokumentasi\" di dashboard",
+      "3. Klik tombol \"Tambah Dokumentasi\"",
+      "4. Isi form dengan data:",
+      "   - Judul: \"Template Laporan Kegiatan KKN\"",
+      "   - Deskripsi: \"Format standar laporan kegiatan KKN untuk mahasiswa\"",
+      "   - Penulis: \"Tim KKN Unhas\"",
+      "   - Kategori: \"Template\"",
+      "5. Upload file template (format .docx)",
+      "6. Upload thumbnail gambar preview (opsional)",
+      "7. Klik \"Simpan Dokumentasi\"",
+      "8. Verifikasi dokumentasi muncul di halaman publik"
+    ];
+    
+    yPosition = 35;
+    studiDokumentasi.forEach(line => {
       if (yPosition > 250) {
         doc.addPage();
         yPosition = 20;
@@ -695,6 +802,12 @@ const PanduanAdmin = () => {
       "",
       "Q: Berita tidak muncul di halaman utama?",
       "A: Pastikan sudah klik \"Simpan Berita\" dan cek status publikasi.",
+      "",
+      "Q: File dokumentasi gagal diupload?",
+      "A: Periksa ukuran file (max 50MB) dan format (PDF/Word/Excel/PowerPoint). Pastikan koneksi internet stabil.",
+      "",
+      "Q: Bagaimana menghapus dokumentasi yang salah?",
+      "A: Buka Kelola Dokumentasi, cari item yang ingin dihapus, klik tombol Hapus dan konfirmasi.",
       "",
       "Q: Bagaimana mengatasi pengaduan yang banyak?",
       "A: Prioritaskan berdasarkan urgensi dan update status secara berkala.",
@@ -961,6 +1074,63 @@ const PanduanAdmin = () => {
             </div>
           </motion.div>
 
+          {/* Pengelolaan Dokumentasi KKN */}
+          <motion.div variants={itemVariants} className="bg-white rounded-xl shadow-lg border border-neutral/50 p-4 sm:p-6">
+            <div className="flex items-center mb-4">
+              <div className="p-2 sm:p-3 bg-teal-100 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <h2 className="text-lg sm:text-xl font-semibold text-secondary">Pengelolaan Dokumentasi</h2>
+            </div>
+            <div className="space-y-3 sm:space-y-4">
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Cara Menambah Dokumentasi Baru:</h3>
+                <ol className="list-decimal list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li>Klik menu "Kelola Dokumentasi" di dashboard</li>
+                  <li>Klik tombol "Tambah Dokumentasi"</li>
+                  <li>Isi judul, deskripsi, dan nama penulis</li>
+                  <li>Pilih kategori yang sesuai (Template, Modul, atau Panduan)</li>
+                  <li>Upload file dokumen (PDF, Word, Excel, PowerPoint) atau masukkan URL</li>
+                  <li>Upload thumbnail gambar (opsional) atau masukkan URL gambar</li>
+                  <li>Klik "Simpan Dokumentasi" untuk menyimpan</li>
+                </ol>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Cara Mengedit Dokumentasi:</h3>
+                <ol className="list-decimal list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li>Buka menu "Kelola Dokumentasi"</li>
+                  <li>Cari dokumentasi yang ingin diedit</li>
+                  <li>Klik tombol "Edit" pada card dokumentasi</li>
+                  <li>Ubah informasi yang diperlukan</li>
+                  <li>Upload file atau gambar baru jika diperlukan</li>
+                  <li>Klik "Update Dokumentasi" untuk menyimpan perubahan</li>
+                </ol>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Tips Upload File:</h3>
+                <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li>File dokumen maksimal 50MB (PDF, Word, Excel, PowerPoint)</li>
+                  <li>Thumbnail gambar maksimal 5MB (JPG, PNG, GIF)</li>
+                  <li><span className="font-medium text-blue-600">Thumbnail otomatis dibuat untuk file PDF</span></li>
+                  <li><span className="font-medium text-green-600">Tombol "Generate Thumbnail" tersedia untuk dokumen lama</span></li>
+                  <li>Gunakan nama file yang deskriptif</li>
+                  <li>Pastikan file dapat dibuka dengan baik sebelum upload</li>
+                  <li>Thumbnail custom dapat diupload untuk mengganti yang otomatis</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Kategori Dokumentasi:</h3>
+                <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li><span className="font-medium text-blue-600">📄 Template:</span> Format dokumen kosong yang dapat digunakan berulang</li>
+                  <li><span className="font-medium text-green-600">📋 Modul:</span> Materi pembelajaran atau pelatihan</li>
+                  <li><span className="font-medium text-purple-600">📝 Panduan:</span> Petunjuk teknis dan prosedur</li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Tips Umum */}
           <motion.div variants={itemVariants} className="bg-white rounded-xl shadow-lg border border-neutral/50 p-4 sm:p-6">
             <div className="flex items-center mb-4">
@@ -988,6 +1158,16 @@ const PanduanAdmin = () => {
                   <li>Gunakan gambar berkualitas tinggi</li>
                   <li>Update informasi secara berkala</li>
                   <li>Respon cepat terhadap pengaduan warga</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Pengelolaan Dokumentasi:</h3>
+                <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li>Organisir dokumentasi berdasarkan kategori yang tepat</li>
+                  <li>Gunakan judul dan deskripsi yang jelas dan informatif</li>
+                  <li>Update dokumentasi secara berkala sesuai kebutuhan</li>
+                  <li>Hapus dokumentasi yang sudah tidak relevan</li>
+                  <li>Backup file penting secara terpisah</li>
                 </ul>
               </div>
             </div>
