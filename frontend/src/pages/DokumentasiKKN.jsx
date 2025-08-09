@@ -5,6 +5,7 @@ const DokumentasiKKN = () => {
     const { dokumentasi, incrementDownload, searchDokumentasi } = useDokumentasiKKN();
     const [activeCategory, setActiveCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [showInfo, setShowInfo] = useState(false);
 
     // Filter data berdasarkan kategori dan search term
     const getFilteredData = () => {
@@ -88,7 +89,7 @@ const DokumentasiKKN = () => {
             {/* Main Content */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
                 {/* Search and Filter Section */}
-                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-8">
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
                     <div className="flex flex-col lg:flex-row gap-4">
                         {/* Search Bar */}
                         <div className="flex-1">
@@ -122,6 +123,68 @@ const DokumentasiKKN = () => {
                             </select>
                         </div>
                     </div>
+                </div>
+
+                {/* Info Accordion */}
+                <div className="bg-white rounded-xl shadow-sm mb-8 overflow-hidden">
+                    <button
+                        onClick={() => setShowInfo(!showInfo)}
+                        className="w-full px-4 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Tentang Dokumentasi</h3>
+                                <p className="text-xs sm:text-sm text-gray-500">Pelajari lebih lanjut tentang koleksi dokumentasi kami</p>
+                            </div>
+                        </div>
+                        <svg 
+                            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${showInfo ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    {showInfo && (
+                        <div className="px-4 sm:px-6 pb-6 border-t border-gray-100">
+                            <div className="pt-4">
+                                <p className="text-gray-600 text-sm sm:text-base mb-6">
+                                    Dokumentasi ini berisi berbagai template, modul pembelajaran, dan panduan yang telah dikembangkan oleh 
+                                    tim KKN-T 114 Universitas Hasanuddin untuk mendukung kegiatan pembangunan dan pemberdayaan masyarakat di Desa Moncongloe Bulu.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <span className="text-xl">📄</span>
+                                        </div>
+                                        <h4 className="font-medium text-gray-900 mb-1 text-sm">Template</h4>
+                                        <p className="text-xs text-gray-600">Format dokumen siap pakai untuk keperluan administratif</p>
+                                    </div>
+                                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <span className="text-xl">📋</span>
+                                        </div>
+                                        <h4 className="font-medium text-gray-900 mb-1 text-sm">Modul</h4>
+                                        <p className="text-xs text-gray-600">Materi pembelajaran dan pelatihan pengembangan kapasitas</p>
+                                    </div>
+                                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <span className="text-xl">📝</span>
+                                        </div>
+                                        <h4 className="font-medium text-gray-900 mb-1 text-sm">Panduan</h4>
+                                        <p className="text-xs text-gray-600">Petunjuk teknis dan prosedur implementasi program</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Dokumentasi Grid */}
@@ -166,9 +229,10 @@ const DokumentasiKKN = () => {
                                     <div className="flex items-center justify-between">
                                         <span className="flex items-center gap-1">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
-                                            {item?.downloads || 0} downloads
+                                            {item?.downloads || 0} pelihat
                                         </span>
                                         {/* File Type Badge */}
                                         {(item.download_url || item.file_url) && (
@@ -230,39 +294,7 @@ const DokumentasiKKN = () => {
                     </div>
                 )}
 
-                {/* Info Section */}
-                <div className="mt-12 bg-white rounded-xl shadow-sm p-6 sm:p-8">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Tentang Dokumentasi KKN</h2>
-                        <p className="text-gray-600 mb-6">
-                            Dokumentasi ini berisi berbagai template, modul pembelajaran, dan panduan yang telah dikembangkan oleh 
-                            tim KKN-T 114 untuk mendukung kegiatan pembangunan dan pemberdayaan masyarakat di Desa Moncongloe Bulu.
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-                            <div className="p-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl">📄</span>
-                                </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">Template</h3>
-                                <p className="text-sm text-gray-600">Format dokumen siap pakai untuk berbagai keperluan administratif</p>
-                            </div>
-                            <div className="p-4">
-                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl">📋</span>
-                                </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">Modul</h3>
-                                <p className="text-sm text-gray-600">Materi pembelajaran dan pelatihan untuk pengembangan kapasitas</p>
-                            </div>
-                            <div className="p-4">
-                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl">📝</span>
-                                </div>
-                                <h3 className="font-semibold text-gray-900 mb-2">Panduan</h3>
-                                <p className="text-sm text-gray-600">Petunjuk teknis dan prosedur untuk implementasi program</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     );
