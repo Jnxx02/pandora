@@ -498,16 +498,29 @@ const PanduanAdmin = () => {
       "3. Isi judul, deskripsi, dan nama penulis",
       "4. Pilih kategori yang sesuai (Template, Modul, atau Panduan)",
       "5. Upload file dokumen (PDF, Word, Excel, PowerPoint) atau masukkan URL",
-      "6. Upload thumbnail gambar (opsional) atau masukkan URL gambar",
-      "7. Klik \"Simpan Dokumentasi\" untuk menyimpan",
+      "6. Klik \"Simpan Dokumentasi\" untuk menyimpan",
       "",
       "Cara Mengedit Dokumentasi:",
       "1. Buka menu \"Kelola Dokumentasi\"",
       "2. Cari dokumentasi yang ingin diedit",
       "3. Klik tombol \"Edit\" pada card dokumentasi",
       "4. Ubah informasi yang diperlukan",
-      "5. Upload file atau gambar baru jika diperlukan",
-      "6. Klik \"Update Dokumentasi\" untuk menyimpan perubahan"
+      "5. Upload file baru jika diperlukan",
+      "6. Klik \"Update Dokumentasi\" untuk menyimpan perubahan",
+      "",
+      "Cara Menghapus Dokumentasi:",
+      "1. Buka menu \"Kelola Dokumentasi\"",
+      "2. Cari dokumentasi yang ingin dihapus",
+      "3. Klik tombol \"Hapus\" (ikon tempat sampah) pada card dokumentasi",
+      "4. Konfirmasi penghapusan pada dialog yang muncul",
+      "5. Dokumentasi akan langsung hilang dari daftar",
+      "",
+      "Tips Upload File:",
+      "• File dokumen maksimal 50MB (PDF, Word, Excel, PowerPoint)",
+      "• Gunakan nama file yang deskriptif dan mudah dipahami",
+      "• Pastikan file dapat dibuka dengan baik sebelum upload",
+      "• File akan ditampilkan dengan ikon sesuai jenisnya",
+      "• Dokumen dapat diupload langsung atau menggunakan URL eksternal"
     ];
     
     yPosition = 35;
@@ -668,9 +681,9 @@ const PanduanAdmin = () => {
       "   - Penulis: \"Tim KKN Unhas\"",
       "   - Kategori: \"Template\"",
       "5. Upload file template (format .docx)",
-      "6. Upload thumbnail gambar preview (opsional)",
-      "7. Klik \"Simpan Dokumentasi\"",
-      "8. Verifikasi dokumentasi muncul di halaman publik"
+      "6. Klik \"Simpan Dokumentasi\"",
+      "7. Verifikasi dokumentasi muncul di halaman publik",
+      "8. Dokumentasi akan ditampilkan dengan ikon file yang sesuai"
     ];
     
     yPosition = 35;
@@ -1093,7 +1106,6 @@ const PanduanAdmin = () => {
                   <li>Isi judul, deskripsi, dan nama penulis</li>
                   <li>Pilih kategori yang sesuai (Template, Modul, atau Panduan)</li>
                   <li>Upload file dokumen (PDF, Word, Excel, PowerPoint) atau masukkan URL</li>
-                  <li>Upload thumbnail gambar (opsional) atau masukkan URL gambar</li>
                   <li>Klik "Simpan Dokumentasi" untuk menyimpan</li>
                 </ol>
               </div>
@@ -1104,20 +1116,29 @@ const PanduanAdmin = () => {
                   <li>Cari dokumentasi yang ingin diedit</li>
                   <li>Klik tombol "Edit" pada card dokumentasi</li>
                   <li>Ubah informasi yang diperlukan</li>
-                  <li>Upload file atau gambar baru jika diperlukan</li>
+                  <li>Upload file baru jika diperlukan</li>
                   <li>Klik "Update Dokumentasi" untuk menyimpan perubahan</li>
+                </ol>
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Cara Menghapus Dokumentasi:</h3>
+                <ol className="list-decimal list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
+                  <li>Buka menu "Kelola Dokumentasi"</li>
+                  <li>Cari dokumentasi yang ingin dihapus</li>
+                  <li>Klik tombol "Hapus" (ikon tempat sampah) pada card dokumentasi</li>
+                  <li>Konfirmasi penghapusan pada dialog yang muncul</li>
+                  <li>Dokumentasi akan langsung hilang dari daftar</li>
                 </ol>
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Tips Upload File:</h3>
                 <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base pl-2">
                   <li>File dokumen maksimal 50MB (PDF, Word, Excel, PowerPoint)</li>
-                  <li>Thumbnail gambar maksimal 5MB (JPG, PNG, GIF)</li>
-                  <li><span className="font-medium text-blue-600">Thumbnail otomatis dibuat untuk file PDF</span></li>
-                  <li><span className="font-medium text-green-600">Tombol "Generate Thumbnail" tersedia untuk dokumen lama</span></li>
-                  <li>Gunakan nama file yang deskriptif</li>
+                  <li>Gunakan nama file yang deskriptif dan mudah dipahami</li>
                   <li>Pastikan file dapat dibuka dengan baik sebelum upload</li>
-                  <li>Thumbnail custom dapat diupload untuk mengganti yang otomatis</li>
+                  <li>File akan ditampilkan dengan ikon sesuai jenisnya (PDF, DOC, XLS, PPT)</li>
+                  <li>Dokumen dapat diupload langsung atau menggunakan URL eksternal</li>
+                  <li>Periksa kembali informasi sebelum menyimpan</li>
                 </ul>
               </div>
               <div>
@@ -1186,7 +1207,7 @@ const PanduanAdmin = () => {
             <div className="space-y-2">
               <p className="text-sm sm:text-base">Jika Anda mengalami kesulitan dalam menggunakan sistem admin PANDORA, silakan hubungi:</p>
               <ul className="list-disc list-inside space-y-1 text-sm sm:text-base pl-2">
-                <li>Tim Pengembang: kwanj22h@student.unhas.ac.id</li>
+                <li>Tim Pengembang: kkn114.moncongloebulu@gmail.com</li>
               </ul>
             </div>
           </motion.div>
