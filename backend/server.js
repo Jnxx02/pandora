@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 // Load environment variables from .env file for local development
 require('dotenv').config();
 
@@ -7,6 +10,41 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = 3001;
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'berita-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(uploadsDir));
 
 // Increase payload size limit
 app.use(express.json({ limit: '10mb' }));
@@ -52,6 +90,27 @@ app.get('/api/health', (req, res) => {
     supabase: supabaseStatus,
     message: 'Backend server is running'
   });
+});
+
+// Upload image endpoint
+app.post('/api/upload-image', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file uploaded' });
+    }
+
+    // Return the URL path to access the uploaded image
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    
+    res.status(200).json({
+      message: 'Image uploaded successfully',
+      imageUrl: imageUrl,
+      filename: req.file.filename
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
 });
 
 // API endpoint untuk MENGAMBIL (GET) statistik
