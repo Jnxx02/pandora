@@ -168,7 +168,7 @@ const galleryData = [
   },
   {
     id: 5,
-    imageSrc: "/images/gallery/budaya-tradisi.JPG",
+    imageSrc: "/images/gallery/budaya-tradisi.PNG",
     alt: "Budaya dan Tradisi",
     title: "Budaya dan Tradisi",
     description: "Kearifan lokal dan adat istiadat desa",
