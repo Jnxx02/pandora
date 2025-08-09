@@ -59,6 +59,135 @@ const LazyImage = ({ src, alt, className, onError, ...props }) => {
   );
 };
 
+// Gallery Item Component with fallback to placeholder
+const GalleryItem = ({ 
+  imageSrc, 
+  alt, 
+  title, 
+  description, 
+  gradientFrom, 
+  gradientTo, 
+  iconPath 
+}) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
+  return (
+    <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+      {!imageError && imageSrc ? (
+        <>
+          <LazyImage
+            src={imageSrc}
+            alt={alt}
+            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+          {!imageLoaded && (
+            <div className={`absolute inset-0 w-full h-64 bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center animate-pulse`}>
+              <div className="text-center text-white">
+                <svg className="w-16 h-16 mx-auto mb-2 opacity-60" fill="currentColor" viewBox="0 0 24 24">
+                  <path d={iconPath}/>
+                </svg>
+                <p className="text-sm font-medium">Memuat...</p>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className={`w-full h-64 bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+          <div className="text-center text-white">
+            <svg className="w-16 h-16 mx-auto mb-2 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+              <path d={iconPath}/>
+            </svg>
+            <p className="text-sm font-medium">{title}</p>
+          </div>
+        </div>
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+          <h3 className="font-semibold text-lg">{title}</h3>
+          <p className="text-sm opacity-90">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Gallery data with image paths and fallback configurations
+const galleryData = [
+  {
+    id: 1,
+    imageSrc: "/images/gallery/pemandangan-desa.JPG",
+    alt: "Pemandangan Desa",
+    title: "Pemandangan Desa",
+    description: "Keindahan alam dan pemandangan desa yang asri",
+    gradientFrom: "from-green-400",
+    gradientTo: "to-blue-500",
+    iconPath: "M14,6L10.25,11L13.1,14.8L11.5,16C9.81,13.75 7,10 7,10L1,18H23L14,6Z"
+  },
+  {
+    id: 2,
+    imageSrc: "/images/gallery/kegiatan-masyarakat.JPG",
+    alt: "Kegiatan Masyarakat",
+    title: "Kegiatan Masyarakat",
+    description: "Aktivitas dan gotong royong warga desa",
+    gradientFrom: "from-orange-400",
+    gradientTo: "to-red-500",
+    iconPath: "M16,4C18.11,4 20.11,4.89 21.39,6.39L20,7.78C19.07,6.85 17.82,6.22 16.5,6.03V4.05C16.33,4.02 16.17,4 16,4M16,4C13.24,4 11,6.24 11,9S13.24,14 16,14 21,11.76 21,9C21,6.24 18.76,4 16,4M16,6A3,3 0 0,1 19,9A3,3 0 0,1 16,12A3,3 0 0,1 13,9A3,3 0 0,1 16,6M7,9C8.66,9 10,7.66 10,6S8.66,3 7,3 4,4.34 4,6 5.34,9 7,9M7,5C7.55,5 8,5.45 8,6S7.55,7 7,7 6,6.55 6,6 6.45,5 7,5M16,15C13.33,15 8,16.33 8,19V21H24V19C24,16.33 18.67,15 16,15M7,11C4.33,11 0,12.33 0,15V17H6V19H2V15C2,14.45 4.45,13 7,13S12,14.45 12,15V17H10V19H14V15C14,12.33 9.67,11 7,11Z"
+  },
+  {
+    id: 3,
+    imageSrc: "/images/gallery/potensi-pertanian.JPG",
+    alt: "Potensi Pertanian",
+    title: "Potensi Pertanian",
+    description: "Lahan pertanian yang subur dan produktif",
+    gradientFrom: "from-green-500",
+    gradientTo: "to-yellow-400",
+    iconPath: "M12,2A2,2 0 0,1 14,4C14,5.5 13.18,6.82 12,7.58C10.82,6.82 10,5.5 10,4A2,2 0 0,1 12,2M21,9V7H15V9H21M15,16H21V14H15V16M15,20H21V18H15V20M3,20C5.05,19.81 6.82,18.85 8.5,17.5C10.17,18.85 11.95,19.81 14,20V18C12.17,17.74 10.5,16.9 9,15.5C10.5,14.1 12.17,13.26 14,13V11C11.95,11.19 10.17,12.15 8.5,13.5C6.82,12.15 5.05,11.19 3,11V13C4.83,13.26 6.5,14.1 8,15.5C6.5,16.9 4.83,17.74 3,18V20Z"
+  },
+  {
+    id: 4,
+    imageSrc: "/images/gallery/infrastruktur-desa.JPG",
+    alt: "Infrastruktur Desa",
+    title: "Infrastruktur Desa",
+    description: "Fasilitas dan sarana prasarana desa",
+    gradientFrom: "from-gray-600",
+    gradientTo: "to-blue-600",
+    iconPath: "M12,3L2,12H5V20H19V12H22L12,3M12,8.75A1.25,1.25 0 0,1 13.25,10A1.25,1.25 0 0,1 12,11.25A1.25,1.25 0 0,1 10.75,10A1.25,1.25 0 0,1 12,8.75M12,6.5A3.5,3.5 0 0,1 15.5,10A3.5,3.5 0 0,1 12,13.5A3.5,3.5 0 0,1 8.5,10A3.5,3.5 0 0,1 12,6.5M8,15H16V17H8V15Z"
+  },
+  {
+    id: 5,
+    imageSrc: "/images/gallery/budaya-tradisi.JPG",
+    alt: "Budaya dan Tradisi",
+    title: "Budaya dan Tradisi",
+    description: "Kearifan lokal dan adat istiadat desa",
+    gradientFrom: "from-purple-500",
+    gradientTo: "to-pink-500",
+    iconPath: "M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,1H9V3H7V1H5V3H3V5H5V7H3V9H5V11H3V13H5V15H7V13H9V15H15L21,9M15,9H9V7H15V9M9,11V13H15V11H9M12,15L7,22H17L12,15Z"
+  },
+  {
+    id: 6,
+    imageSrc: "/images/gallery/kehidupan-sehari-hari.JPG",
+    alt: "Kehidupan Sehari-hari",
+    title: "Kehidupan Sehari-hari",
+    description: "Rutinitas dan aktivitas warga desa",
+    gradientFrom: "from-teal-400",
+    gradientTo: "to-cyan-500",
+    iconPath: "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"
+  }
+];
+
 // Data ini bisa dipindahkan ke context atau file data terpusat jika diperlukan di halaman lain
 const batasWilayah = [
   { arah: 'Utara', wilayah: 'Desa Bonto Bunga (Kec. Mongcongloe, Kab. Maros)' },
@@ -866,95 +995,18 @@ const Profil = () => {
           <h2 className="text-xl sm:text-4xl font-bold text-primary mb-8">Galeri Desa</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Gallery Item 1 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Pemandangan Desa"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+            {galleryData.map((item) => (
+              <GalleryItem
+                key={item.id}
+                imageSrc={item.imageSrc}
+                alt={item.alt}
+                title={item.title}
+                description={item.description}
+                gradientFrom={item.gradientFrom}
+                gradientTo={item.gradientTo}
+                iconPath={item.iconPath}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Pemandangan Desa</h3>
-                  <p className="text-sm opacity-90">Keindahan alam dan pemandangan desa yang asri</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Item 2 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Kegiatan Masyarakat"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Kegiatan Masyarakat</h3>
-                  <p className="text-sm opacity-90">Aktivitas dan gotong royong warga desa</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Item 3 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Potensi Pertanian"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Potensi Pertanian</h3>
-                  <p className="text-sm opacity-90">Lahan pertanian yang subur dan produktif</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Item 4 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Infrastruktur Desa"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Infrastruktur Desa</h3>
-                  <p className="text-sm opacity-90">Fasilitas dan sarana prasarana desa</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Item 5 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Budaya dan Tradisi"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Budaya dan Tradisi</h3>
-                  <p className="text-sm opacity-90">Kearifan lokal dan adat istiadat desa</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Item 6 */}
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <LazyImage
-                src="/images/gallery/pemandangan-alam.JPG"
-                alt="Kehidupan Sehari-hari"
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <h3 className="font-semibold text-lg">Kehidupan Sehari-hari</h3>
-                  <p className="text-sm opacity-90">Rutinitas dan aktivitas warga desa</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
