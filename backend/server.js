@@ -113,6 +113,91 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
   }
 });
 
+// Configure multer for documentation files (different from image upload)
+const documentStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'doc-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const uploadDocument = multer({
+  storage: documentStorage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit for documents
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept various document types
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp'
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('File type not allowed. Please upload PDF, Word, Excel, PowerPoint, or image files.'), false);
+    }
+  }
+});
+
+// Upload documentation file endpoint
+app.post('/api/upload-document', uploadDocument.single('document'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No document file uploaded' });
+    }
+
+    // Return the URL path to access the uploaded document
+    const documentUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    
+    res.status(200).json({
+      message: 'Document uploaded successfully',
+      documentUrl: documentUrl,
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+  } catch (error) {
+    console.error('Error uploading document:', error);
+    res.status(500).json({ error: 'Failed to upload document' });
+  }
+});
+
+// Upload thumbnail endpoint
+app.post('/api/upload-thumbnail', upload.single('thumbnail'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No thumbnail file uploaded' });
+    }
+
+    // Return the URL path to access the uploaded thumbnail
+    const thumbnailUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    
+    res.status(200).json({
+      message: 'Thumbnail uploaded successfully',
+      thumbnailUrl: thumbnailUrl,
+      filename: req.file.filename
+    });
+  } catch (error) {
+    console.error('Error uploading thumbnail:', error);
+    res.status(500).json({ error: 'Failed to upload thumbnail' });
+  }
+});
+
 // API endpoint untuk MENGAMBIL (GET) statistik
 app.get('/api/statistik', async (req, res) => {
   try {

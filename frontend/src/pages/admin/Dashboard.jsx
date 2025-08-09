@@ -405,7 +405,7 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold text-secondary">Aksi Cepat</h2>
           </div>
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link to="/admin/berita" className="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
                   <div className="p-2 bg-blue-500 rounded-lg mr-3">
@@ -444,6 +444,20 @@ const Dashboard = () => {
                   <div>
                     <p className="font-medium text-gray-900">Edit Prasarana</p>
                     <p className="text-sm text-gray-500">Kelola prasarana</p>
+                  </div>
+                </Link>
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link to="/admin/dokumentasi" className="flex items-center p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors">
+                  <div className="p-2 bg-teal-500 rounded-lg mr-3">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Kelola Dokumentasi</p>
+                    <p className="text-sm text-gray-500">Template & panduan</p>
                   </div>
                 </Link>
               </motion.div>
