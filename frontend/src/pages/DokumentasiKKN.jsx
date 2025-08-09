@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDokumentasiKKN } from '../context/DokumentasiKKNContext';
 
 const DokumentasiKKN = () => {
@@ -6,6 +6,8 @@ const DokumentasiKKN = () => {
     const [activeCategory, setActiveCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [showInfo, setShowInfo] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 9; // 3x3 grid
 
     // Filter data berdasarkan kategori dan search term
     const getFilteredData = () => {
@@ -13,6 +15,31 @@ const DokumentasiKKN = () => {
     };
 
     const filteredData = getFilteredData();
+
+    // Hitung pagination
+    const { currentDokumentasi, totalPages, startIndex, endIndex } = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentDokumentasi = filteredData.slice(startIndex, endIndex);
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+        
+        return {
+            currentDokumentasi,
+            totalPages,
+            startIndex,
+            endIndex: Math.min(endIndex, filteredData.length)
+        };
+    }, [filteredData, currentPage, itemsPerPage]);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Reset ke halaman 1 ketika filter berubah
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, activeCategory]);
 
     // Function untuk mendapatkan icon berdasarkan tipe file
     const getFilePreview = (item) => {
@@ -187,9 +214,21 @@ const DokumentasiKKN = () => {
                     )}
                 </div>
 
+                {/* Info Pagination */}
+                {filteredData.length > 0 && (
+                    <div className="flex justify-between items-center mb-6 text-sm text-gray-600">
+                        <div>
+                            Menampilkan {startIndex + 1}-{endIndex} dari {filteredData.length} dokumentasi
+                        </div>
+                        <div>
+                            Halaman {currentPage} dari {totalPages}
+                        </div>
+                    </div>
+                )}
+
                 {/* Dokumentasi Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredData.map((item) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    {currentDokumentasi.map((item) => (
                         <div key={item?.id || Math.random()} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100">
                             {/* Document Header */}
                             <div className="p-6 bg-gradient-to-br from-primary to-secondary">
@@ -264,6 +303,69 @@ const DokumentasiKKN = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center space-x-1 sm:space-x-2 mb-8">
+                        {/* Previous Button */}
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                currentPage === 1
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white shadow-sm'
+                            }`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: totalPages }, (_, index) => {
+                            const page = index + 1;
+                            const showPage = page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
+                            
+                            if (!showPage && page === currentPage - 2) {
+                                return <span key={page} className="px-2 text-gray-400">...</span>;
+                            }
+                            if (!showPage && page === currentPage + 2) {
+                                return <span key={page} className="px-2 text-gray-400">...</span>;
+                            }
+                            if (!showPage) return null;
+
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        currentPage === page
+                                            ? 'bg-primary text-white shadow-sm'
+                                            : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white shadow-sm'
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            );
+                        })}
+
+                        {/* Next Button */}
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                currentPage === totalPages
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-white text-primary border border-primary hover:bg-primary hover:text-white shadow-sm'
+                            }`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                )}
 
                 {/* Empty State */}
                 {filteredData.length === 0 && (
