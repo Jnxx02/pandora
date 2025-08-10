@@ -268,7 +268,7 @@ const createPengaduanNotificationTemplate = (pengaduanData) => {
           
           <div class="action-buttons">
             <a href="${process.env.FRONTEND_URL || 'https://www.moncongloebulu.com/#/admin/pengaduan'}" class="btn">📋 Lihat Detail Lengkap</a>
-            ${!isAnonim && whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=Halo ${nama},%0A%0AMengenai ${klasifikasi} Anda dengan judul: "${judul}"%0A%0AKami telah menerima laporan Anda dan sedang dalam proses penanganan.%0A%0AUntuk informasi lebih lanjut, silakan hubungi kami.%0A%0ATerima kasih telah melaporkan hal ini kepada kami." class="btn btn-secondary">📱 Hubungi Pelapor</a>` : ''}
+            ${!isAnonim && whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/[^0-9+]/g, '').replace(/^0/, '+62')}?text=Halo ${nama},%0A%0AMengenai ${klasifikasi} Anda dengan judul: "${judul}"%0A%0AKami telah menerima laporan Anda dan sedang dalam proses penanganan.%0A%0AUntuk informasi lebih lanjut, silakan hubungi kami.%0A%0ATerima kasih telah melaporkan hal ini kepada kami." class="btn btn-secondary">📱 Hubungi Pelapor</a>` : ''}
           </div>
         </div>
         
