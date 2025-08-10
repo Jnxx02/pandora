@@ -5,6 +5,29 @@
 
 // Template untuk notifikasi pengaduan baru
 const createPengaduanNotificationTemplate = (pengaduanData) => {
+  // Debug incoming data
+  console.log('📧 EMAIL TEMPLATE DEBUG:', {
+    receivedData: pengaduanData,
+    judulField: pengaduanData?.judul,
+    judulType: typeof pengaduanData?.judul,
+    allKeys: Object.keys(pengaduanData || {}),
+    hasJudul: !!pengaduanData?.judul
+  });
+
+  // Additional detailed debugging for judul field
+  if (pengaduanData?.judul !== undefined) {
+    console.log('🔍 JUDUL FIELD DETAILED DEBUG:', {
+      judul: pengaduanData.judul,
+      judulLength: pengaduanData.judul.length,
+      judulTrimmed: pengaduanData.judul.trim(),
+      judulTrimmedLength: pengaduanData.judul.trim().length,
+      judulIsEmpty: pengaduanData.judul.trim() === '',
+      judulIsWhitespace: /^\s*$/.test(pengaduanData.judul)
+    });
+  } else {
+    console.log('❌ JUDUL FIELD IS UNDEFINED OR NULL');
+  }
+
   const {
     nama,
     email,
@@ -15,9 +38,26 @@ const createPengaduanNotificationTemplate = (pengaduanData) => {
     tanggal_kejadian,
     kategori,
     lampiran_info,
+    lampiran_data_url,
     tanggal_pengaduan,
     status = 'pending'
   } = pengaduanData;
+
+  // Debug destructured values
+  console.log('🔍 DESTRUCTURED VALUES DEBUG:', {
+    nama,
+    email,
+    whatsapp,
+    klasifikasi,
+    judul,
+    isi,
+    tanggal_kejadian,
+    kategori,
+    lampiran_info,
+    lampiran_data_url,
+    tanggal_pengaduan,
+    status
+  });
 
   const isAnonim = nama === 'Anonim';
   const contactInfo = isAnonim 
@@ -33,6 +73,16 @@ const createPengaduanNotificationTemplate = (pengaduanData) => {
   const urgencyIcon = getUrgencyIcon(urgencyLevel);
 
   const subject = `${urgencyIcon} ${klasifikasi.toUpperCase()} BARU: ${judul}`;
+  
+  // Debug values before template construction
+  console.log('🔍 TEMPLATE CONSTRUCTION DEBUG:', {
+    urgencyIcon,
+    klasifikasi,
+    judul,
+    nama,
+    whatsapp,
+    isAnonim
+  });
   
   const htmlBody = `
     <!DOCTYPE html>
@@ -268,7 +318,7 @@ const createPengaduanNotificationTemplate = (pengaduanData) => {
           
           <div class="action-buttons">
             <a href="${process.env.FRONTEND_URL || 'https://www.moncongloebulu.com/#/admin/pengaduan'}" class="btn">📋 Lihat Detail Lengkap</a>
-            ${!isAnonim && whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/[^0-9+]/g, '').replace(/^0/, '+62')}?text=Halo ${nama},%0A%0AMengenai ${klasifikasi} Anda dengan judul: "${judul}"%0A%0AKami telah menerima laporan Anda dan sedang dalam proses penanganan.%0A%0AUntuk informasi lebih lanjut, silakan hubungi kami.%0A%0ATerima kasih telah melaporkan hal ini kepada kami." class="btn btn-secondary">📱 Hubungi Pelapor</a>` : ''}
+            ${!isAnonim && whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/[^0-9+]/g, '').replace(/^0/, '+62')}?text=Halo ${nama},%0A%0AKami telah menerima laporan Anda dan sedang dalam proses penanganan.%0A%0ATerima kasih." class="btn btn-secondary">📱 Hubungi Pelapor</a>` : ''}
           </div>
         </div>
         
@@ -299,12 +349,29 @@ ${tanggal_kejadian ? `- Tanggal Kejadian: ${formatDate(tanggal_kejadian)}` : ''}
 👤 Informasi Pelapor:
 ${contactInfo}${attachmentInfo}
 
+💬 Template Chat WhatsApp (jika ingin hubungi pelapor):
+Halo ${nama},
+
+Kami telah menerima laporan Anda dan sedang dalam proses penanganan.
+
+Terima kasih.
+
 ---
 Email ini dikirim otomatis oleh sistem PANDORA Desa Moncongloe Bulu
 Silakan segera tindak lanjuti ${klasifikasi} ini sesuai dengan prosedur yang berlaku
 
 © ${new Date().getFullYear()} Desa Moncongloe Bulu
   `;
+
+  // Debug the final template
+  console.log('🔍 FINAL TEMPLATE DEBUG:', {
+    subject,
+    htmlLength: htmlBody.length,
+    textLength: textBody.length,
+    judulInSubject: subject.includes(judul),
+    judulInHtml: htmlBody.includes(judul),
+    judulInText: textBody.includes(judul)
+  });
 
   return {
     subject,

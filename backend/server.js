@@ -972,6 +972,15 @@ app.post('/api/pengaduan', async (req, res) => {
       tracking 
     } = req.body;
     
+    // Debug judul field specifically
+    console.log('🔍 JUDUL FIELD DEBUG:', {
+      judul: judul,
+      judulType: typeof judul,
+      judulLength: judul ? judul.length : 0,
+      judulTrimmed: judul ? judul.trim() : null,
+      judulTrimmedLength: judul ? judul.trim().length : 0
+    });
+    
     // Validasi input
     if (!judul || !isi || !kategori) {
       console.log('❌ Validation failed:', { judul: !!judul, isi: !!isi, kategori: !!kategori });
@@ -1043,6 +1052,13 @@ app.post('/api/pengaduan', async (req, res) => {
         
         console.log('📧 Sending email notification to:', desaEmails);
         
+        // Debug data being sent to email
+        console.log('📧 EMAIL DATA DEBUG:', {
+          dataFromSupabase: data[0],
+          judulInData: data[0]?.judul,
+          allFields: Object.keys(data[0] || {})
+        });
+        
         // Kirim notifikasi email
         const emailResult = await sendPengaduanNotificationToMultiple(data[0], desaEmails);
         
@@ -1103,6 +1119,13 @@ app.post('/api/pengaduan', async (req, res) => {
           : ['moncongloebulu.desa@gmail.com']; // Default email
         
         console.log('📧 Sending email notification (fallback mode) to:', desaEmails);
+        
+        // Debug fallback data being sent to email
+        console.log('📧 FALLBACK EMAIL DATA DEBUG:', {
+          fallbackData: pengaduanData,
+          judulInFallback: pengaduanData.judul,
+          allFields: Object.keys(pengaduanData)
+        });
         
         // Kirim notifikasi email
         const emailResult = await sendPengaduanNotificationToMultiple(pengaduanData, desaEmails);

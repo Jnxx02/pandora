@@ -150,6 +150,14 @@ const sendPengaduanNotificationToMultiple = async (pengaduanData, recipientEmail
       return { success: false, error: 'Invalid pengaduan data' };
     }
     
+    // Debug data before creating email
+    console.log('📧 EMAIL CONFIG DEBUG:', {
+      pengaduanData,
+      judulField: pengaduanData.judul,
+      judulType: typeof pengaduanData.judul,
+      allKeys: Object.keys(pengaduanData)
+    });
+    
     const transporter = createTransporter();
     const emailContent = createPengaduanNotificationEmail(pengaduanData);
     
