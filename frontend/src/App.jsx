@@ -209,11 +209,10 @@ function AdminHeader({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebar
             {/* Header */}
             <div className="p-4 border-b border-white/20">
               <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'lg:justify-center' : ''}`}>
-                <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
+                <img src="/images/logos/kabupaten-maros.png" alt="Logo Desa" className="w-8 h-8 object-contain" />
                 {!sidebarCollapsed && (
                   <div className="leading-tight">
                     <div className="font-bold text-lg">Desa Moncongloe Bulu</div>
-                    <div className="text-xs font-normal opacity-80">Kabupaten Maros</div>
                   </div>
                 )}
               </div>
@@ -374,10 +373,12 @@ function Header() {
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 font-bold text-xl hover:text-secondary transition-colors">
-          <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-12 h-12 object-contain" />
+          <img src="/images/logos/kabupaten-maros.png" alt="Logo Desa" className="w-12 h-12 object-contain" />
           <div className="leading-tight">
             <div>Moncongloe Bulu</div>
-            <div className={`text-xs md:text-sm font-normal ${isTransparent ? 'opacity-100' : 'opacity-80'}`}>Kabupaten Maros</div>
+            <div className={`flex items-center gap-2 text-xs md:text-sm font-normal ${isTransparent ? 'opacity-100' : 'opacity-80'}`}>
+              <span>Kabupaten Maros</span>
+            </div>
           </div>
         </Link>
         {/* Hamburger (mobile) */}
@@ -613,10 +614,12 @@ function FooterInfo() {
              <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 border-b border-white/30 pb-6">
         {/* Kolom 1: Logo, nama, kecamatan, kabupaten, deskripsi */}
         <div>
-          <img src="https://desamoncongloe.com/img/logo.png" alt="Logo Desa" className="w-16 h-16 object-contain mb-3" />
+          <img src="/images/logos/kabupaten-maros.png" alt="Logo Desa" className="w-16 h-16 object-contain mb-3" />
           <div className="font-bold text-lg mb-1">Desa Moncongloe Bulu</div>
           <div className="text-white/80 mb-1">Kecamatan Moncongloe</div>
-          <div className="text-white/80 mb-2">Kabupaten Maros</div>
+          <div className="flex items-center gap-2 text-white/80 mb-2">
+            <span>Kabupaten Maros</span>
+          </div>
         </div>
         {/* Kolom 2: Kontak */}
         <div>
