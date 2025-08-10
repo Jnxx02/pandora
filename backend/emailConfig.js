@@ -3,6 +3,27 @@ const { createPengaduanNotificationTemplate, createStatusUpdateTemplate } = requ
 
 // Konfigurasi transporter email
 const createTransporter = () => {
+  // Log environment variables untuk debugging (tidak menampilkan password)
+  console.log('🔧 Email Configuration Debug:');
+  console.log('  - EMAIL_USER:', process.env.EMAIL_USER ? '✅ Set' : '❌ Not set');
+  console.log('  - EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? '✅ Set' : '❌ Not set');
+  console.log('  - EMAIL_HOST:', process.env.EMAIL_HOST || 'Not set (using Gmail)');
+  console.log('  - NODE_ENV:', process.env.NODE_ENV || 'Not set');
+  console.log('  - VERCEL:', process.env.VERCEL || 'Not set');
+  console.log('  - VERCEL_ENV:', process.env.VERCEL_ENV || 'Not set');
+  
+  // Log tambahan untuk debugging Vercel
+  if (process.env.VERCEL) {
+    console.log('🚀 Running on Vercel - checking environment variables...');
+    console.log('🔍 All Environment Variables:', {
+      EMAIL_USER: process.env.EMAIL_USER,
+      EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ? '***SET***' : 'NOT SET',
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV
+    });
+  }
+  
   // Konfigurasi berdasarkan environment variables
   const emailConfig = {
     user: process.env.EMAIL_USER || 'desa.moncongloebulu@gmail.com',
@@ -38,21 +59,49 @@ const createTransporter = () => {
 
   // Default: Gmail SMTP
   // Try different methods to create transporter
-  if (typeof nodemailer.createTransporter === 'function') {
-    return nodemailer.createTransporter({
-      service: 'gmail',
-      auth: emailConfig
-    });
-  } else if (typeof nodemailer.createTransport === 'function') {
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: emailConfig
-    });
-  } else {
-    return new nodemailer.Transporter({
-      service: 'gmail',
-      auth: emailConfig
-    });
+  let transporter;
+  
+  try {
+    if (typeof nodemailer.createTransporter === 'function') {
+      transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: emailConfig,
+        // Tambahan konfigurasi untuk production
+        secure: true,
+        port: 465,
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+    } else if (typeof nodemailer.createTransport === 'function') {
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: emailConfig,
+        // Tambahan konfigurasi untuk production
+        secure: true,
+        port: 465,
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+    } else {
+      transporter = new nodemailer.Transporter({
+        service: 'gmail',
+        auth: emailConfig,
+        // Tambahan konfigurasi untuk production
+        secure: true,
+        port: 465,
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+    }
+    
+    console.log('✅ Email transporter created successfully');
+    return transporter;
+  } catch (error) {
+    console.error('❌ Error creating email transporter:', error);
+    throw error;
   }
 };
 
@@ -87,6 +136,20 @@ const sendPengaduanNotification = async (pengaduanData, recipientEmail) => {
 // Fungsi untuk mengirim email ke multiple recipients
 const sendPengaduanNotificationToMultiple = async (pengaduanData, recipientEmails) => {
   try {
+    console.log('📧 Attempting to send email to multiple recipients:', recipientEmails);
+    
+    // Validasi input
+    if (!recipientEmails || !Array.isArray(recipientEmails) || recipientEmails.length === 0) {
+      console.error('❌ Invalid recipient emails:', recipientEmails);
+      return { success: false, error: 'Invalid recipient emails' };
+    }
+    
+    // Validasi pengaduan data
+    if (!pengaduanData || !pengaduanData.judul) {
+      console.error('❌ Invalid pengaduan data:', pengaduanData);
+      return { success: false, error: 'Invalid pengaduan data' };
+    }
+    
     const transporter = createTransporter();
     const emailContent = createPengaduanNotificationEmail(pengaduanData);
     
@@ -98,12 +161,41 @@ const sendPengaduanNotificationToMultiple = async (pengaduanData, recipientEmail
       text: emailContent.text
     };
 
+    console.log('📤 Sending email with options:', {
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      hasHtml: !!mailOptions.html,
+      hasText: !!mailOptions.text
+    });
+
     const info = await transporter.sendMail(mailOptions);
     console.log('✅ Email notifikasi pengaduan berhasil dikirim ke multiple recipients:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('❌ Error mengirim email notifikasi ke multiple recipients:', error);
-    return { success: false, error: error.message };
+    
+    // Log error details untuk debugging
+    if (error.code) {
+      console.error('  - Error Code:', error.code);
+    }
+    if (error.response) {
+      console.error('  - Response:', error.response);
+    }
+    if (error.responseCode) {
+      console.error('  - Response Code:', error.responseCode);
+    }
+    if (error.command) {
+      console.error('  - Command:', error.command);
+    }
+    
+    return { 
+      success: false, 
+      error: error.message,
+      code: error.code,
+      response: error.response,
+      responseCode: error.responseCode
+    };
   }
 };
 
