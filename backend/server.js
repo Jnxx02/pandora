@@ -264,48 +264,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Test email endpoint
-app.post('/api/test-email', async (req, res) => {
-  try {
-    const { recipientEmail } = req.body;
-    
-    if (!recipientEmail) {
-      return res.status(400).json({ error: 'Recipient email is required' });
-    }
-    
-    // Data test untuk email
-    const testPengaduanData = {
-      nama: 'Test User',
-      email: 'test@example.com',
-      whatsapp: '081234567890',
-      klasifikasi: 'pengaduan',
-      judul: 'Test Pengaduan - Sistem Email',
-      isi: 'Ini adalah test pengaduan untuk memverifikasi sistem email berfungsi dengan baik.',
-      tanggal_kejadian: new Date().toISOString(),
-      kategori: 'Infrastruktur (Jalan, Jembatan, dll.)',
-      lampiran_info: 'test-document.pdf',
-      tanggal_pengaduan: new Date().toISOString()
-    };
-    
-    console.log('🧪 Testing email notification to:', recipientEmail);
-    
-    const emailResult = await sendPengaduanNotification(testPengaduanData, recipientEmail);
-    
-    if (emailResult.success) {
-      res.status(200).json({ 
-        message: 'Test email sent successfully!', 
-        messageId: emailResult.messageId 
-      });
-    } else {
-      res.status(500).json({ 
-        error: 'Failed to send test email', 
-        details: emailResult.error 
-      });
-    }
-  } catch (error) {
-    console.error('Error in test email endpoint:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
-  }
-});
+
 
 // Upload image endpoint
 app.post('/api/upload-image', upload.single('image'), (req, res) => {
@@ -902,7 +861,26 @@ app.get('/api/pengaduan', async (req, res) => {
         .order('tanggal_pengaduan', { ascending: false });
       
       if (error) throw error;
-      res.status(200).json(data || []);
+      
+      // Ensure all items have an id field
+      if (data && data.length > 0) {
+        
+        // Ensure all items have an id field
+        const validatedData = data.map(item => {
+          if (!item.id) {
+            console.warn('⚠️ Item missing ID field:', item);
+            // Generate a temporary ID if missing
+            return { ...item, id: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` };
+          }
+          return item;
+        });
+        
+
+        res.status(200).json(validatedData);
+      } else {
+
+        res.status(200).json([]);
+      }
     } else {
       // Fallback data if Supabase is not available
       const fallbackData = [
@@ -924,7 +902,17 @@ app.get('/api/pengaduan', async (req, res) => {
           catatan_admin: null
         }
       ];
-      res.status(200).json(fallbackData);
+      
+      // Ensure fallback data has ID field
+      const validatedFallbackData = fallbackData.map(item => {
+        if (!item.id) {
+          console.warn('⚠️ Fallback item missing ID field:', item);
+          return { ...item, id: `fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` };
+        }
+        return item;
+      });
+      
+      res.status(200).json(validatedFallbackData);
     }
   } catch (error) {
     console.error('Error fetching pengaduan:', error);
@@ -1021,15 +1009,7 @@ app.post('/api/pengaduan', async (req, res) => {
       };
       
       console.log('💾 Inserting data to Supabase...');
-      console.log('📊 Data structure:', {
-        hasNama: !!pengaduanData.nama,
-        hasJudul: !!pengaduanData.judul,
-        hasIsi: !!pengaduanData.isi,
-        hasKategori: !!pengaduanData.kategori,
-        hasLampiran: !!pengaduanData.lampiran_data_url,
-        lampiranSize: pengaduanData.lampiran_size,
-        trackingKeys: tracking ? Object.keys(tracking) : []
-      });
+
       
       const { data, error } = await supabase
         .from('pengaduan')
@@ -1059,7 +1039,7 @@ app.post('/api/pengaduan', async (req, res) => {
       try {
         const desaEmails = process.env.DESA_EMAIL_RECIPIENTS 
           ? process.env.DESA_EMAIL_RECIPIENTS.split(',').map(email => email.trim())
-          : ['desa.moncongloebulu@gmail.com']; // Default email
+          : ['moncongloebulu.desa@gmail.com']; // Default email
         
         console.log('📧 Sending email notification to:', desaEmails);
         
@@ -1076,9 +1056,16 @@ app.post('/api/pengaduan', async (req, res) => {
         // Jangan gagalkan response jika email gagal
       }
       
+      // Ensure the returned data has a valid ID
+      const returnedData = data[0];
+      if (!returnedData.id) {
+        console.warn('⚠️ Supabase returned data without ID:', returnedData);
+        returnedData.id = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+      
       res.status(201).json({ 
         message: 'Pengaduan berhasil disimpan', 
-        data: data[0] 
+        data: returnedData 
       });
     } else {
       console.log('📦 Using fallback storage (Supabase not available)');
@@ -1113,7 +1100,7 @@ app.post('/api/pengaduan', async (req, res) => {
       try {
         const desaEmails = process.env.DESA_EMAIL_RECIPIENTS 
           ? process.env.DESA_EMAIL_RECIPIENTS.split(',').map(email => email.trim())
-          : ['desa.moncongloebulu@gmail.com']; // Default email
+          : ['moncongloebulu.desa@gmail.com']; // Default email
         
         console.log('📧 Sending email notification (fallback mode) to:', desaEmails);
         
@@ -1128,6 +1115,11 @@ app.post('/api/pengaduan', async (req, res) => {
       } catch (emailError) {
         console.warn('⚠️ Error sending email notification (fallback mode):', emailResult.error);
         // Jangan gagalkan response jika email gagal
+      }
+      
+      // Ensure fallback data has a valid ID
+      if (!pengaduanData.id) {
+        pengaduanData.id = `fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       }
       
       res.status(201).json({ 
@@ -1182,6 +1174,11 @@ app.put('/api/pengaduan/:id', async (req, res) => {
 app.delete('/api/pengaduan/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Debug: Log the ID parameter received
+    console.log('🔍 DELETE request received for ID:', id);
+    console.log('🔍 ID type:', typeof id);
+    console.log('🔍 ID value:', id);
     
     if (supabase && supabaseStatus === 'configured') {
       const { error } = await supabase
@@ -1722,7 +1719,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
   console.log(`📊 API endpoints:`);
   console.log(`   GET  /api/health - Health check`);
-  console.log(`   POST /api/test-email - Test email notification`);
+
   console.log(`   GET  /api/statistik - Get statistik data`);
   console.log(`   POST /api/statistik - Save statistik data`);
   console.log(`   GET  /api/dokumentasi - Get dokumentasi data`);

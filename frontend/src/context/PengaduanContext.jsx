@@ -52,6 +52,11 @@ export const PengaduanProvider = ({ children }) => {
       console.log('📊 Received pengaduan data:', data);
       
       if (data && data.length > 0) {
+        // Debug: Check the structure of the first item
+        console.log('🔍 First pengaduan item structure:', data[0]);
+        console.log('🔍 First pengaduan ID:', data[0].id);
+        console.log('🔍 First pengaduan keys:', Object.keys(data[0]));
+        
         setPengaduan(data);
         localStorage.setItem('pengaduan', JSON.stringify(data));
         console.log('✅ Pengaduan data loaded successfully');
@@ -191,9 +196,16 @@ export const PengaduanProvider = ({ children }) => {
 
   const deletePengaduan = async (id) => {
     try {
+      // Debug: Log the ID being sent
+      console.log('🔍 deletePengaduan called with ID:', id);
+      console.log('🔍 ID type:', typeof id);
+      console.log('🔍 ID value:', id);
+      
       const apiUrl = process.env.NODE_ENV === 'production'
         ? `https://www.moncongloebulu.com/api/pengaduan/${id}`
         : `http://localhost:3001/api/pengaduan/${id}`;
+      
+      console.log('🔍 API URL for delete:', apiUrl);
       
       const response = await fetch(apiUrl, {
         method: 'DELETE',

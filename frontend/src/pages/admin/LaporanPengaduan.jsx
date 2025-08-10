@@ -515,6 +515,13 @@ const PreviewModal = ({ laporan, onClose, onDownload }) => {
 
 // Komponen Tabel Laporan yang sudah dimodifikasi
 const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) => {
+  // Debug: Log the data being passed to the table
+  console.log(`🔍 LaporanTable ${title} data:`, data);
+  if (data && data.length > 0) {
+    console.log(`🔍 First ${title} item:`, data[0]);
+    console.log(`🔍 First ${title} ID:`, data[0].id);
+  }
+  
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
@@ -527,6 +534,30 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
       return dateString;
     }
   };
+
+  // Add scroll event listener to show/hide scroll indicators
+  React.useEffect(() => {
+    const container = document.getElementById('tableContainer');
+    if (container) {
+      const handleScroll = () => {
+        const leftIndicator = container.querySelector('.left-scroll-indicator');
+        const rightIndicator = container.querySelector('.right-scroll-indicator');
+        
+        if (leftIndicator && rightIndicator) {
+          // Show left indicator if scrolled right
+          leftIndicator.style.opacity = container.scrollLeft > 0 ? '1' : '0';
+          // Show right indicator if there's more content to scroll
+          rightIndicator.style.opacity = 
+            container.scrollLeft < (container.scrollWidth - container.clientWidth) ? '1' : '0';
+        }
+      };
+
+      container.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial check
+      
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   return (
     <motion.div 
@@ -728,23 +759,42 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
 
       {/* Desktop Table View - Enhanced with horizontal scroll */}
       <div className="hidden md:block">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm border-0">
+        <div className="overflow-x-auto relative" id="tableContainer">
+          <div className="inline-block min-w-[1200px] align-middle">
+            <div className="overflow-hidden shadow-sm border-0 relative">
+              <div className="text-xs text-gray-500 mb-2 text-center bg-blue-50 p-2 rounded border border-blue-200">
+                💡 <strong>Tips:</strong> Geser ke kanan untuk melihat tombol aksi (Detail & Hapus)
+                <button 
+                  onClick={() => {
+                    const container = document.getElementById('tableContainer');
+                    if (container) {
+                      container.scrollTo({
+                        left: container.scrollWidth,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }}
+                  className="ml-2 bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 transition-colors"
+                >
+                  📍 Lihat Tombol Aksi
+                </button>
+              </div>
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 right-scroll-indicator transition-opacity duration-200"></div>
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none z-10 left-scroll-indicator transition-opacity duration-200" style={{opacity: 0}}></div>
               <table className="min-w-full divide-y divide-neutral">
                 {/* Header tabel dengan warna neutral dan teks secondary */}
                 <thead className="bg-neutral/60">
                   <tr>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-12">No</th>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-24">Tanggal</th>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-32">Pelapor</th>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-48">Judul</th>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-64">Isi Laporan</th>
-                    <th className="py-3 px-3 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-32">Kategori</th>
-                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-24">Status</th>
-                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">IP Address</th>
-                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">Lampiran</th>
-                    <th className="py-3 px-3 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-32">Aksi</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-10">No</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-20">Tanggal</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-28">Pelapor</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-40">Judul</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-36">Isi Laporan</th>
+                    <th className="py-3 px-2 border-b border-neutral text-left text-xs font-semibold text-secondary uppercase tracking-wider w-24">Kategori</th>
+                    <th className="py-3 px-2 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-20">Status</th>
+                    <th className="py-3 px-2 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-24">IP Address</th>
+                    <th className="py-3 px-2 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-24">Lampiran</th>
+                    <th className="py-3 px-2 border-b border-neutral text-center text-xs font-semibold text-secondary uppercase tracking-wider w-28 sticky right-0 bg-neutral/60 shadow-[-2px_0_5px_rgba(0,0,0,0.1)]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-neutral">
@@ -758,11 +808,11 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <td className="py-3 px-3 border-b border-neutral text-text-secondary text-xs font-medium">{index + 1}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">{formatDate(laporan.tanggal_pengaduan)}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">
-                          <div>
-                            <div className="font-medium truncate">{laporan.nama || 'Anonim'}</div>
+                        <td className="py-3 px-2 border-b border-neutral text-text-secondary text-xs font-medium">{index + 1}</td>
+                        <td className="py-3 px-2 border-b border-neutral text-text-main text-xs">{formatDate(laporan.tanggal_pengaduan)}</td>
+                        <td className="py-3 px-2 border-b border-neutral text-text-main text-xs">
+                          <div className="max-w-[110px]">
+                            <div className="font-medium truncate" title={laporan.nama || 'Anonim'}>{laporan.nama || 'Anonim'}</div>
                             <div className="text-xs text-text-secondary truncate">
                               {laporan.email && `${laporan.email}`}
                               {laporan.email && laporan.whatsapp && ' / '}
@@ -770,10 +820,18 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-3 border-b border-neutral text-text-main font-semibold text-xs max-w-xs truncate">{laporan.judul}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs max-w-xs truncate">{laporan.isi || '-'}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-text-main text-xs">{laporan.kategori}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-center">
+                        <td className="py-3 px-2 border-b border-neutral text-text-main font-semibold text-xs">
+                          <div className="max-w-[160px] truncate" title={laporan.judul}>
+                            {laporan.judul}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2 border-b border-neutral text-text-main text-xs">
+                          <div className="max-w-[140px] truncate" title={laporan.isi || '-'}>
+                            {laporan.isi || '-'}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2 border-b border-neutral text-text-main text-xs">{laporan.kategori}</td>
+                        <td className="py-3 px-2 border-b border-neutral text-center">
                           <select
                             value={laporan.status || 'pending'}
                             onChange={(e) => onUpdateStatus(laporan.id, e.target.value)}
@@ -788,8 +846,8 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                             <option value="selesai">Selesai</option>
                           </select>
                         </td>
-                        <td className="py-3 px-3 border-b border-neutral text-center text-text-main text-xs font-mono">{laporan.client_ip || '-'}</td>
-                        <td className="py-3 px-3 border-b border-neutral text-center">
+                        <td className="py-3 px-2 border-b border-neutral text-center text-text-main text-xs font-mono">{laporan.client_ip || '-'}</td>
+                        <td className="py-3 px-2 border-b border-neutral text-center">
                           {laporan.lampiran_data_url ? (
                             <div className="flex flex-col items-center space-y-1">
                               <div className="flex items-center space-x-1">
@@ -881,8 +939,12 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                             <span className="text-xs text-gray-400">-</span>
                           )}
                         </td>
-                        <td className="py-3 px-3 border-b border-neutral text-center">
+                        <td className="py-3 px-2 border-b border-neutral text-center sticky right-0 bg-white shadow-[-2px_0_5px_rgba(0,0,0,0.1)]">
                           <div className="flex items-center justify-center space-x-1">
+                            {/* Debug: Log the laporan object */}
+                            {console.log('🔍 Rendering delete button for laporan:', laporan)}
+                            {console.log('🔍 Laporan ID in render:', laporan.id)}
+                            
                             {/* Tombol "Lihat" dengan gaya baru */}
                             <motion.button
                               onClick={() => onShowDetail(laporan)}
@@ -894,7 +956,12 @@ const LaporanTable = ({ title, data, onShowDetail, onDelete, onUpdateStatus }) =
                             </motion.button>
                             {/* Tombol "Hapus" dengan warna dari palet */}
                             <motion.button
-                              onClick={() => onDelete(laporan.id)}
+                              onClick={() => {
+                                console.log('🔍 Delete button clicked for laporan:', laporan);
+                                console.log('🔍 Laporan ID:', laporan.id);
+                                console.log('🔍 Laporan keys:', Object.keys(laporan));
+                                onDelete(laporan);
+                              }}
                               className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold hover:bg-red-600 transition-colors"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -962,8 +1029,11 @@ function LaporanPengaduan() {
   };
 
   // Filter data berdasarkan klasifikasi
+  console.log('🔍 Raw pengaduan data:', pengaduan);
   const laporanPengaduan = pengaduan.filter(l => l.klasifikasi === 'pengaduan');
   const laporanAspirasi = pengaduan.filter(l => l.klasifikasi === 'aspirasi');
+  console.log('🔍 Filtered laporanPengaduan:', laporanPengaduan);
+  console.log('🔍 Filtered laporanAspirasi:', laporanAspirasi);
 
   // Function untuk filter data berdasarkan periode
   const filterDataByPeriod = (data, period) => {
@@ -1034,12 +1104,24 @@ function LaporanPengaduan() {
   };
 
   const handleDeleteClick = (laporan) => {
+    console.log('🔍 Delete clicked for laporan:', laporan);
+    console.log('🔍 Laporan ID:', laporan.id);
+    console.log('🔍 Laporan keys:', Object.keys(laporan));
+    console.log('🔍 Laporan nama:', laporan.nama);
+    console.log('🔍 Laporan judul:', laporan.judul);
+    console.log('🔍 Laporan isi:', laporan.isi);
     setDeletingLaporan(laporan);
     setShowDeleteModal(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (!deletingLaporan) return;
+    
+    console.log('🔍 Confirming delete for laporan:', deletingLaporan);
+    console.log('🔍 DeletingLaporan ID:', deletingLaporan.id);
+    console.log('🔍 DeletingLaporan nama:', deletingLaporan.nama);
+    console.log('🔍 DeletingLaporan judul:', deletingLaporan.judul);
+    console.log('🔍 DeletingLaporan isi:', deletingLaporan.isi);
     
     setIsDeleting(true);
     try {
@@ -1560,8 +1642,8 @@ function LaporanPengaduan() {
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">{deletingLaporan.judul}</h3>
-                  <p className="text-sm text-gray-600">{deletingLaporan.deskripsi}</p>
-                  <p className="text-xs text-gray-500 mt-2">Oleh: {deletingLaporan.nama_pelapor}</p>
+                  <p className="text-sm text-gray-600">{deletingLaporan.isi}</p>
+                  <p className="text-xs text-gray-500 mt-2">Oleh: {deletingLaporan.nama || 'Anonim'}</p>
                 </div>
               </div>
 
