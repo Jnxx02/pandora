@@ -8,6 +8,9 @@ const sharp = require('sharp');
 // Load environment variables from .env file for local development
 require('dotenv').config();
 
+// Import email configuration
+const { sendPengaduanNotification, sendPengaduanNotificationToMultiple } = require('./emailConfig');
+
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -258,6 +261,50 @@ app.get('/api/health', (req, res) => {
     supabase: supabaseStatus,
     message: 'Backend server is running'
   });
+});
+
+// Test email endpoint
+app.post('/api/test-email', async (req, res) => {
+  try {
+    const { recipientEmail } = req.body;
+    
+    if (!recipientEmail) {
+      return res.status(400).json({ error: 'Recipient email is required' });
+    }
+    
+    // Data test untuk email
+    const testPengaduanData = {
+      nama: 'Test User',
+      email: 'test@example.com',
+      whatsapp: '081234567890',
+      klasifikasi: 'pengaduan',
+      judul: 'Test Pengaduan - Sistem Email',
+      isi: 'Ini adalah test pengaduan untuk memverifikasi sistem email berfungsi dengan baik.',
+      tanggal_kejadian: new Date().toISOString(),
+      kategori: 'Infrastruktur (Jalan, Jembatan, dll.)',
+      lampiran_info: 'test-document.pdf',
+      tanggal_pengaduan: new Date().toISOString()
+    };
+    
+    console.log('🧪 Testing email notification to:', recipientEmail);
+    
+    const emailResult = await sendPengaduanNotification(testPengaduanData, recipientEmail);
+    
+    if (emailResult.success) {
+      res.status(200).json({ 
+        message: 'Test email sent successfully!', 
+        messageId: emailResult.messageId 
+      });
+    } else {
+      res.status(500).json({ 
+        error: 'Failed to send test email', 
+        details: emailResult.error 
+      });
+    }
+  } catch (error) {
+    console.error('Error in test email endpoint:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
 });
 
 // Upload image endpoint
@@ -1007,6 +1054,28 @@ app.post('/api/pengaduan', async (req, res) => {
       }
       
       console.log('✅ Data saved to Supabase successfully');
+      
+      // Kirim notifikasi email ke desa
+      try {
+        const desaEmails = process.env.DESA_EMAIL_RECIPIENTS 
+          ? process.env.DESA_EMAIL_RECIPIENTS.split(',').map(email => email.trim())
+          : ['desa.moncongloebulu@gmail.com']; // Default email
+        
+        console.log('📧 Sending email notification to:', desaEmails);
+        
+        // Kirim notifikasi email
+        const emailResult = await sendPengaduanNotificationToMultiple(data[0], desaEmails);
+        
+        if (emailResult.success) {
+          console.log('✅ Email notification sent successfully');
+        } else {
+          console.warn('⚠️ Failed to send email notification:', emailResult.error);
+        }
+      } catch (emailError) {
+        console.warn('⚠️ Error sending email notification:', emailError.message);
+        // Jangan gagalkan response jika email gagal
+      }
+      
       res.status(201).json({ 
         message: 'Pengaduan berhasil disimpan', 
         data: data[0] 
@@ -1039,6 +1108,28 @@ app.post('/api/pengaduan', async (req, res) => {
       };
       
       console.log('✅ Data processed successfully (fallback mode)');
+      
+      // Kirim notifikasi email ke desa (fallback mode)
+      try {
+        const desaEmails = process.env.DESA_EMAIL_RECIPIENTS 
+          ? process.env.DESA_EMAIL_RECIPIENTS.split(',').map(email => email.trim())
+          : ['desa.moncongloebulu@gmail.com']; // Default email
+        
+        console.log('📧 Sending email notification (fallback mode) to:', desaEmails);
+        
+        // Kirim notifikasi email
+        const emailResult = await sendPengaduanNotificationToMultiple(pengaduanData, desaEmails);
+        
+        if (emailResult.success) {
+          console.log('✅ Email notification sent successfully (fallback mode)');
+        } else {
+          console.warn('⚠️ Failed to send email notification (fallback mode):', emailResult.error);
+        }
+      } catch (emailError) {
+        console.warn('⚠️ Error sending email notification (fallback mode):', emailResult.error);
+        // Jangan gagalkan response jika email gagal
+      }
+      
       res.status(201).json({ 
         message: 'Pengaduan berhasil diproses (database tidak tersedia)', 
         data: pengaduanData 
@@ -1631,6 +1722,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
   console.log(`📊 API endpoints:`);
   console.log(`   GET  /api/health - Health check`);
+  console.log(`   POST /api/test-email - Test email notification`);
   console.log(`   GET  /api/statistik - Get statistik data`);
   console.log(`   POST /api/statistik - Save statistik data`);
   console.log(`   GET  /api/dokumentasi - Get dokumentasi data`);
@@ -1638,6 +1730,7 @@ app.listen(PORT, () => {
   console.log(`   PUT  /api/dokumentasi/:id - Update dokumentasi`);
   console.log(`   DELETE /api/dokumentasi/:id - Delete dokumentasi`);
   console.log(`   POST /api/dokumentasi/download - Increment download count`);
+  console.log(`📧 Email System: ${process.env.EMAIL_USER ? 'Configured' : 'Not configured'}`);
   console.log(`🔧 Supabase Status: ${supabaseStatus}`);
 });
 
