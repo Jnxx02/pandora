@@ -148,7 +148,7 @@ const galleryData = [
   },
   {
     id: 3,
-    imageSrc: "/images/gallery/potensi-pertanian.JPG",
+    imageSrc: "/images/gallery/potensi-pertanian.jpg",
     alt: "Potensi Pertanian",
     title: "Potensi Pertanian",
     description: "Lahan pertanian yang subur dan produktif",
