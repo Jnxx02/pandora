@@ -185,20 +185,34 @@ const TambahEditBerita = () => {
       const formDataToSubmit = { ...form, gambar: imageUrl };
       
       if (id) {
-        await updateBerita(id, formDataToSubmit);
-        showNotification('success', 'Berita berhasil diupdate!');
+        const result = await updateBerita(id, formDataToSubmit);
+        if (result.warning) {
+          showNotification('warning', `Berita berhasil diupdate! ${result.warning}`);
+        } else {
+          showNotification('success', 'Berita berhasil diupdate!');
+        }
       } else {
-        await addBerita(formDataToSubmit);
-        showNotification('success', 'Berita berhasil dipublikasikan!');
+        const result = await addBerita(formDataToSubmit);
+        if (result.warning) {
+          showNotification('warning', `Berita berhasil dipublikasikan! ${result.warning}`);
+        } else {
+          showNotification('success', 'Berita berhasil dipublikasikan!');
+        }
       }
       
       // Navigate back to list after short delay
       setTimeout(() => {
         navigate('/admin/berita');
-      }, 1500);
+      }, 2000); // Increased delay to show warning message
     } catch (error) {
       console.error("Gagal menyimpan berita:", error);
-      showNotification('error', `Gagal menyimpan berita: ${error.message}`);
+      
+      // Handle specific error cases
+      if (error.message.includes('Database tidak tersedia')) {
+        showNotification('warning', 'Data berhasil disimpan secara lokal karena database tidak tersedia. Data akan hilang jika server restart.');
+      } else {
+        showNotification('error', `Gagal menyimpan berita: ${error.message}`);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -417,10 +431,8 @@ const TambahEditBerita = () => {
 
       {/* Notification */}
       <CustomNotification
-        show={notification.show}
-        type={notification.type}
-        message={notification.message}
-        onClose={() => setNotification({ show: false, type: '', message: '' })}
+        notification={notification}
+        setNotification={setNotification}
       />
     </motion.div>
   );
