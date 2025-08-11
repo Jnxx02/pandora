@@ -12,7 +12,7 @@ const TambahEditBerita = () => {
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageDataUrl, setImageDataUrl] = useState('');
   const navigate = useNavigate();
 
   const showNotification = (type, message) => {
@@ -57,11 +57,73 @@ const TambahEditBerita = () => {
       
       setImageFile(file);
       
-      // Create preview
+      // Create preview and data URL
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target.result);
+        try {
+          // Kompresi gambar jika terlalu besar
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Resize jika terlalu besar
+            let { width, height } = img;
+            const maxDimension = 1200; // Lebih besar untuk berita
+            
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = (height * maxDimension) / width;
+                width = maxDimension;
+              } else {
+                width = (width * maxDimension) / height;
+                height = maxDimension;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Kompresi dengan kualitas 0.8 untuk berita
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            if (compressedDataUrl && compressedDataUrl.length > 100) {
+              setImageDataUrl(compressedDataUrl);
+              setImagePreview(compressedDataUrl);
+              console.log('✅ Gambar berhasil dikompresi:', {
+                originalSize: file.size,
+                compressedSize: compressedDataUrl.length,
+                dimensions: `${width}x${height}`
+              });
+            } else {
+              throw new Error('Kompresi gambar gagal');
+            }
+          };
+          
+          img.onerror = () => {
+            throw new Error('Gagal memuat gambar untuk kompresi');
+          };
+          
+          img.src = e.target.result;
+        } catch (error) {
+          console.error('Error processing image:', error);
+          showNotification('error', 'Gagal memproses gambar. Silakan coba lagi.');
+          e.target.value = '';
+          setImageFile(null);
+          setImageDataUrl('');
+          setImagePreview('');
+        }
       };
+      
+      reader.onerror = () => {
+        showNotification('error', 'Gagal membaca file. Silakan coba lagi.');
+        e.target.value = '';
+        setImageFile(null);
+        setImageDataUrl('');
+        setImagePreview('');
+      };
+      
       reader.readAsDataURL(file);
       
       // Clear URL field if user uploads file
@@ -69,37 +131,10 @@ const TambahEditBerita = () => {
     }
   };
 
-  const uploadImage = async () => {
-    if (!imageFile) return null;
-    
-    setIsUploadingImage(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', imageFile);
-      
-      const response = await fetch('http://localhost:3001/api/upload-image', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-      
-      const data = await response.json();
-      return data.imageUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      showNotification('error', 'Gagal mengupload gambar!');
-      return null;
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
-
   const removeImage = () => {
     setImageFile(null);
     setImagePreview('');
+    setImageDataUrl('');
     setForm({ ...form, gambar: '' });
   };
 
@@ -142,14 +177,9 @@ const TambahEditBerita = () => {
     try {
       let imageUrl = form.gambar;
       
-      // Upload image if user selected a file
-      if (imageFile) {
-        imageUrl = await uploadImage();
-        if (!imageUrl) {
-          // If upload failed, stop the process
-          setIsSaving(false);
-          return;
-        }
+      // Use data URL if user selected a file
+      if (imageFile && imageDataUrl) {
+        imageUrl = imageDataUrl;
       }
       
       const formDataToSubmit = { ...form, gambar: imageUrl };
@@ -187,59 +217,60 @@ const TambahEditBerita = () => {
     duration: 0.5
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1
-      }
-    }
+  const itemVariants = {
+    initial: { opacity: 0, y: 20 },
+    in: { opacity: 1, y: 0 },
+    out: { opacity: 0, y: -20 }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-text-main">Memuat data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <motion.div 
-      className="py-10 max-w-4xl mx-auto bg-neutral min-h-screen px-4"
+    <motion.div
+      className="min-h-screen bg-neutral"
       initial="initial"
       animate="in"
       exit="out"
       variants={pageVariants}
       transition={pageTransition}
     >
-      {/* Custom Notification */}
-      <CustomNotification notification={notification} setNotification={setNotification} />
+      {/* Header */}
+      <div className="bg-primary text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">
+                {id ? 'Edit Berita' : 'Tambah Berita Baru'}
+              </h1>
+              <p className="text-primary-light mt-1">
+                {id ? 'Edit berita yang sudah ada' : 'Publikasikan berita baru untuk warga'}
+              </p>
+            </div>
+            <Link
+              to="/admin/berita"
+              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Kembali
+            </Link>
+          </div>
+        </div>
+      </div>
 
-      <motion.div 
-        className="mb-6 flex justify-between items-center"
-        variants={itemVariants}
-      >
-        <h2 className="text-2xl font-bold text-secondary">
-          {id ? 'Edit Berita' : 'Tambah Berita Baru'}
-        </h2>
-        <Link
-          to="/admin/berita"
-          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium flex items-center gap-2"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Kembali ke Daftar
-        </Link>
-      </motion.div>
-
-      <motion.div 
-        className="bg-white rounded-xl shadow p-6 border border-neutral/50"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.form onSubmit={handleSubmit} className="space-y-6" variants={itemVariants}>
           <motion.div variants={itemVariants}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Judul Berita <span className="text-red-500">*</span>
@@ -250,9 +281,23 @@ const TambahEditBerita = () => {
               value={form.judul}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
-              placeholder="Contoh: Pembangunan Jalan Desa Moncongloe Bulu"
+              placeholder="Masukkan judul berita yang menarik dan informatif..."
               required
             />
+            <p className="text-xs text-gray-500 mt-1">Minimal 10 karakter. Buat judul yang menarik dan mudah dipahami.</p>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Penulis</label>
+            <input
+              type="text"
+              name="penulis"
+              value={form.penulis}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
+              placeholder="Nama penulis berita"
+            />
+            <p className="text-xs text-gray-500 mt-1">Kosongkan untuk menggunakan default 'Admin Desa'</p>
           </motion.div>
 
           <motion.div variants={itemVariants}>
@@ -282,15 +327,15 @@ const TambahEditBerita = () => {
               {/* Image Preview */}
               {imagePreview && (
                 <div className="relative">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    className="w-full h-48 object-cover rounded-lg border"
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full max-w-md mx-auto rounded-lg shadow-lg"
                   />
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -298,13 +343,6 @@ const TambahEditBerita = () => {
                   </button>
                 </div>
               )}
-              
-              {/* OR Divider */}
-              <div className="flex items-center">
-                <div className="flex-1 border-t border-gray-300"></div>
-                <span className="px-3 text-sm text-gray-500">ATAU</span>
-                <div className="flex-1 border-t border-gray-300"></div>
-              </div>
               
               {/* URL Input */}
               <div>
@@ -342,56 +380,48 @@ const TambahEditBerita = () => {
             <p className="text-xs text-gray-500 mt-1">Minimal 50 karakter. Gunakan paragraf untuk memisahkan bagian berita.</p>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Penulis</label>
-            <input
-              type="text"
-              name="penulis"
-              value={form.penulis}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-neutral rounded bg-white text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition"
-              placeholder="Admin Desa"
-            />
-            <p className="text-xs text-gray-500 mt-1">Jika tidak diisi, akan menggunakan "Admin Desa"</p>
-          </motion.div>
-
-          <motion.div 
-            className="flex gap-4"
-            variants={itemVariants}
-          >
-            <motion.button
-              type="submit"
-              disabled={isSaving || isUploadingImage}
-              className={`px-6 py-2 rounded-md font-semibold transition ${
-                (isSaving || isUploadingImage)
-                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                  : 'bg-secondary text-white hover:bg-primary'
-              }`}
-              whileHover={!(isSaving || isUploadingImage) ? { scale: 1.02 } : {}}
-              whileTap={!(isSaving || isUploadingImage) ? { scale: 0.98 } : {}}
-            >
-              {(isSaving || isUploadingImage) ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {isUploadingImage ? 'Mengupload gambar...' : 'Menyimpan...'}
-                </span>
-              ) : (
-                id ? 'Update Berita' : 'Publikasikan Berita'
-              )}
-            </motion.button>
-
+          <motion.div variants={itemVariants} className="flex justify-end space-x-4">
             <Link
               to="/admin/berita"
-              className="px-6 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 transition font-semibold"
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Batal
             </Link>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className={`px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors flex items-center ${
+                isSaving ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              {isSaving ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {id ? 'Update Berita' : 'Publikasikan Berita'}
+                </>
+              )}
+            </button>
           </motion.div>
-        </form>
-      </motion.div>
+        </motion.form>
+      </div>
+
+      {/* Notification */}
+      <CustomNotification
+        show={notification.show}
+        type={notification.type}
+        message={notification.message}
+        onClose={() => setNotification({ show: false, type: '', message: '' })}
+      />
     </motion.div>
   );
 };
