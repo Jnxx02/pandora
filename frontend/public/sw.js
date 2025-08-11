@@ -2,8 +2,7 @@ const CACHE_NAME = 'pandora-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
+  // Vite will handle asset caching automatically
 ];
 
 // Install event
@@ -18,6 +17,11 @@ self.addEventListener('install', (event) => {
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
+  // Skip caching for API calls and dynamic content
+  if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {

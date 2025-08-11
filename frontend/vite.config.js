@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/',
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -25,25 +25,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          motion: ['framer-motion'],
-          admin: [
-            './src/pages/admin/Dashboard.jsx',
-            './src/pages/admin/LaporanPengaduan.jsx',
-            './src/pages/admin/TambahEditBerita.jsx',
-            './src/pages/admin/DaftarBerita.jsx',
-            './src/pages/admin/EditStatistik.jsx',
-            './src/pages/admin/EditPrasarana.jsx',
-            './src/pages/admin/Login.jsx'
-          ],
-          public: [
-            './src/pages/Home.jsx',
-            './src/pages/Berita.jsx',
-            './src/pages/Profil.jsx',
-            './src/pages/Pengaduan.jsx',
-            './src/pages/FormulirPengaduan.jsx',
-            './src/pages/Sejarah.jsx',
-            './src/pages/DetailBerita.jsx'
-          ]
+          motion: ['framer-motion']
         },
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.');
@@ -56,13 +38,16 @@ export default defineConfig({
           }
           return `assets/[name]-[hash][extname]`;
         },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+        chunkFileNames: '[name]-[hash].js',
+        entryFileNames: '[name]-[hash].js',
       }
     },
     chunkSizeWarningLimit: 1000,
     target: 'es2015',
     cssCodeSplit: true,
+    assetsInlineLimit: 4096,
+    emptyOutDir: true,
+    copyPublicDir: true,
   },
   server: {
     port: 5173,
