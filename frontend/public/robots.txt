@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.moncongloebulu.com/sitemap.xml
+
+# Disallow admin pages from being indexed
+Disallow: /admin/
+Disallow: /login
+
+# Allow important pages
+Allow: /profil
+Allow: /sejarah
+Allow: /berita
+Allow: /pengaduan
+Allow: /dokumentasi-kkn
+Allow: /kategori
+
+# Crawl delay (optional)
+Crawl-delay: 1
