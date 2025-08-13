@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const USERNAME = 'admin';
 const PASSWORD = 'admin123';
@@ -242,6 +242,15 @@ const Login = () => {
         <div className="mt-4 text-xs text-gray-500">
           <p>• Session akan berakhir setelah 30 menit tidak aktif</p>
           <p>• Maksimal 5 percobaan login</p>
+        </div>
+        
+        <div className="mt-4 text-center">
+          <Link 
+            to="/admin/forgot-password" 
+            className="text-secondary hover:text-primary text-sm font-medium transition"
+          >
+            Lupa Password?
+          </Link>
         </div>
       </div>
     </div>

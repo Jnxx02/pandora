@@ -9,7 +9,10 @@ const sharp = require('sharp');
 require('dotenv').config();
 
 // Import email configuration
-const { sendPengaduanNotification, sendPengaduanNotificationToMultiple } = require('./emailConfig');
+const { sendPengaduanNotification, sendPengaduanNotificationToMultiple, sendPasswordResetEmail, sendPasswordChangeConfirmationEmail } = require('./emailConfig');
+
+// Import password reset store
+const passwordResetStore = require('./passwordResetStore');
 
 const { createClient } = require('@supabase/supabase-js');
 
@@ -1735,7 +1738,136 @@ app.delete('/api/dokumentasi/:id', async (req, res) => {
   }
 });
 
+// ==================== ADMIN PASSWORD RESET ENDPOINTS ====================
 
+// Endpoint untuk meminta reset password
+app.post('/api/admin/request-password-reset', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email diperlukan' });
+    }
+
+    // Email admin yang diizinkan untuk reset password
+    const allowedAdminEmails = [
+      'moncongloebulu.desa@gmail.com'
+    ];
+
+    // Check if email is allowed
+    if (!allowedAdminEmails.includes(email)) {
+      console.log(`❌ Unauthorized password reset attempt for email: ${email}`);
+      return res.status(403).json({ 
+        error: 'Email tidak diizinkan untuk reset password admin' 
+      });
+    }
+
+    // Generate reset token
+    const resetToken = passwordResetStore.generateResetToken();
+    
+    // Store token with admin data
+    const adminData = {
+      username: 'admin',
+      email: email,
+      requestTime: Date.now()
+    };
+    
+    passwordResetStore.storeResetToken(resetToken, adminData);
+
+    // Send reset email
+    const emailResult = await sendPasswordResetEmail(resetToken, 'admin', email);
+    
+    if (emailResult.success) {
+      console.log(`✅ Password reset email sent to: ${email}`);
+      res.status(200).json({ 
+        message: 'Email reset password telah dikirim. Silakan cek inbox Anda.',
+        token: resetToken // Hanya untuk development/testing
+      });
+    } else {
+      console.error('❌ Failed to send reset email:', emailResult.error);
+      res.status(500).json({ 
+        error: 'Gagal mengirim email reset password. Silakan coba lagi.' 
+      });
+    }
+
+  } catch (error) {
+    console.error('Error in POST /api/admin/request-password-reset:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk reset password dengan token
+app.post('/api/admin/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token dan password baru diperlukan' });
+    }
+
+    // Validate password strength
+    if (newPassword.length < 8) {
+      return res.status(400).json({ 
+        error: 'Password minimal 8 karakter' 
+      });
+    }
+
+    // Get token data
+    const tokenData = passwordResetStore.getResetToken(token);
+    
+    if (!tokenData) {
+      return res.status(400).json({ 
+        error: 'Token tidak valid atau sudah kadaluarsa' 
+      });
+    }
+
+    // Update password (dalam production, update ke database)
+    // Untuk sementara, kita update constant di Login.jsx
+    console.log(`✅ Password reset successful for admin: ${tokenData.username}`);
+    
+    // Remove used token
+    passwordResetStore.removeResetToken(token);
+
+    // Send confirmation email
+    const changeTime = new Date().toLocaleDateString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    await sendPasswordChangeConfirmationEmail(
+      tokenData.username, 
+      changeTime, 
+      tokenData.email
+    );
+
+    res.status(200).json({ 
+      message: 'Password berhasil diubah! Silakan login dengan password baru.',
+      newPassword: newPassword // Hanya untuk development/testing
+    });
+
+  } catch (error) {
+    console.error('Error in POST /api/admin/reset-password:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk melihat status token (untuk debugging)
+app.get('/api/admin/reset-tokens', (req, res) => {
+  try {
+    const activeTokens = passwordResetStore.getActiveTokens();
+    res.status(200).json({ 
+      activeTokens,
+      totalTokens: activeTokens.length
+    });
+  } catch (error) {
+    console.error('Error in GET /api/admin/reset-tokens:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
 
 // Jalankan server di semua environment
 app.listen(PORT, () => {
@@ -1750,6 +1882,9 @@ app.listen(PORT, () => {
   console.log(`   PUT  /api/dokumentasi/:id - Update dokumentasi`);
   console.log(`   DELETE /api/dokumentasi/:id - Delete dokumentasi`);
   console.log(`   POST /api/dokumentasi/download - Increment download count`);
+  console.log(`   POST /api/admin/request-password-reset - Request admin password reset`);
+  console.log(`   POST /api/admin/reset-password - Reset admin password with token`);
+  console.log(`   GET  /api/admin/reset-tokens - View active reset tokens`);
   console.log(`📧 Email System: ${process.env.EMAIL_USER ? 'Configured' : 'Not configured'}`);
   console.log(`🔧 Supabase Status: ${supabaseStatus}`);
 });

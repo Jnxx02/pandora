@@ -17,6 +17,8 @@ const Profil = lazy(() => import('./pages/Profil'));
 const Berita = lazy(() => import('./pages/Berita'));
 const Sejarah = lazy(() => import('./pages/Sejarah'));
 const Login = lazy(() => import('./pages/admin/Login'));
+const ForgotPassword = lazy(() => import('./pages/admin/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/admin/ResetPassword'));
 const Pengaduan = lazy(() => import('./pages/Pengaduan'));
 const FormulirPengaduan = lazy(() => import('./pages/FormulirPengaduan'));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -784,6 +786,8 @@ function App() {
                         <Route path="/pengaduan/formulir" element={<FormulirPengaduan />} />
                         <Route path="/sejarah" element={<Sejarah />} />
                         <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/reset-password" element={<ResetPassword />} />
                         <Route path="/admin/dashboard" element={
                           <RequireAdmin>
                             <Dashboard />
