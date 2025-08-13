@@ -15,11 +15,13 @@ const ResetPassword = () => {
 
   useEffect(() => {
     const tokenFromUrl = searchParams.get('token');
+    console.log('🔍 DEBUG: Token from URL:', tokenFromUrl);
     if (!tokenFromUrl) {
       setError('Token reset password tidak ditemukan');
       return;
     }
     setToken(tokenFromUrl);
+    console.log('🔍 DEBUG: Token set to state:', tokenFromUrl);
   }, [searchParams]);
 
   const handleChange = (e) => {
@@ -67,18 +69,23 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
+      const requestBody = { 
+        token: token,
+        newPassword: form.newPassword 
+      };
+      console.log('🔍 DEBUG: Sending request body:', requestBody);
+      
       const response = await fetch('/api/admin/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          token: token,
-          newPassword: form.newPassword 
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
+      console.log('🔍 DEBUG: Response status:', response.status);
+      console.log('🔍 DEBUG: Response data:', data);
 
       if (response.ok) {
         setMessage(data.message);

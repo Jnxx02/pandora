@@ -1773,6 +1773,15 @@ app.post('/api/admin/request-password-reset', async (req, res) => {
     };
     
     passwordResetStore.storeResetToken(resetToken, adminData);
+    
+    // Debug: Check if token was stored correctly
+    console.log('🔍 DEBUG: Token generated:', resetToken);
+    console.log('🔍 DEBUG: Admin data stored:', adminData);
+    
+    // Verify token was stored
+    const storedToken = passwordResetStore.getResetToken(resetToken);
+    console.log('🔍 DEBUG: Token retrieved after storage:', storedToken);
+    console.log('🔍 DEBUG: Active tokens count:', passwordResetStore.getActiveTokens().length);
 
     // Send reset email
     const emailResult = await sendPasswordResetEmail(resetToken, 'admin', email);
