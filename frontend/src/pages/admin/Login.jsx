@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const USERNAME = 'admin';
-const PASSWORD = 'admin123';
+// Password sekarang divalidasi melalui backend
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 menit
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 menit
@@ -83,39 +83,55 @@ const Login = () => {
     setIsLoading(true);
     setError('');
 
-    // Simulate network delay for security
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Validate password through backend
+      const response = await fetch('/api/admin/validate-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: form.username,
+          password: form.password
+        }),
+      });
 
-    if (form.username === USERNAME && form.password === PASSWORD) {
-      // Reset login attempts on successful login
-      setLoginAttempts(0);
-      localStorage.removeItem('adminLoginAttempts');
-      localStorage.removeItem('adminLockoutTime');
-      
-      // Create secure session
-      createSecureSession();
-      
-      // Set up activity monitoring
-      setupActivityMonitoring();
-      
-      navigate('/admin/dashboard');
-    } else {
-      const newAttempts = loginAttempts + 1;
-      setLoginAttempts(newAttempts);
-      localStorage.setItem('adminLoginAttempts', newAttempts.toString());
-      
-      if (newAttempts >= MAX_LOGIN_ATTEMPTS) {
-        const lockoutEnd = Date.now() + LOCKOUT_DURATION;
-        setIsLocked(true);
-        setLockoutTime(lockoutEnd);
-        localStorage.setItem('adminLockoutTime', lockoutEnd.toString());
-        setError(`Terlalu banyak percobaan login. Akun terkunci selama 15 menit.`);
+      const data = await response.json();
+
+      if (form.username === USERNAME && data.isValid) {
+        // Reset login attempts on successful login
+        setLoginAttempts(0);
+        localStorage.removeItem('adminLoginAttempts');
+        localStorage.removeItem('adminLockoutTime');
+        
+        // Create secure session
+        createSecureSession();
+        
+        // Set up activity monitoring
+        setupActivityMonitoring();
+        
+        navigate('/admin/dashboard');
       } else {
-        setError(`Username atau password salah! (${MAX_LOGIN_ATTEMPTS - newAttempts} percobaan tersisa)`);
+        const newAttempts = loginAttempts + 1;
+        setLoginAttempts(newAttempts);
+        localStorage.setItem('adminLoginAttempts', newAttempts.toString());
+        
+        if (newAttempts >= MAX_LOGIN_ATTEMPTS) {
+          const lockoutEnd = Date.now() + LOCKOUT_DURATION;
+          setIsLocked(true);
+          setLockoutTime(lockoutEnd);
+          localStorage.setItem('adminLockoutTime', lockoutEnd.toString());
+          setError(`Terlalu banyak percobaan login. Akun terkunci selama 15 menit.`);
+        } else {
+          setError(`Username atau password salah! (${MAX_LOGIN_ATTEMPTS - newAttempts} percobaan tersisa)`);
+        }
       }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('Terjadi kesalahan saat login. Silakan coba lagi.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const setupActivityMonitoring = () => {

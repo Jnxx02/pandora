@@ -13,6 +13,7 @@ const { sendPengaduanNotification, sendPengaduanNotificationToMultiple, sendPass
 
 // Import password reset store
 const passwordResetStore = require('./passwordResetStore');
+const { setAdminPassword, validateAdminPassword } = require('./adminPassword');
 
 const { createClient } = require('@supabase/supabase-js');
 
@@ -1822,16 +1823,25 @@ app.post('/api/admin/reset-password', async (req, res) => {
     }
 
     // Get token data
+    console.log('🔍 DEBUG: Attempting to reset password with token:', token);
+    console.log('🔍 DEBUG: Active tokens before lookup:', passwordResetStore.getActiveTokens().length);
+    
     const tokenData = passwordResetStore.getResetToken(token);
+    console.log('🔍 DEBUG: Token data retrieved:', tokenData);
     
     if (!tokenData) {
+      console.log('🔍 DEBUG: Token not found or expired');
       return res.status(400).json({ 
         error: 'Token tidak valid atau sudah kadaluarsa' 
       });
     }
 
-    // Update password (dalam production, update ke database)
-    // Untuk sementara, kita update constant di Login.jsx
+    // Update password menggunakan adminPassword module
+    const passwordUpdated = setAdminPassword(newPassword);
+    if (!passwordUpdated) {
+      return res.status(500).json({ error: 'Gagal mengupdate password' });
+    }
+    
     console.log(`✅ Password reset successful for admin: ${tokenData.username}`);
     
     // Remove used token
@@ -1874,6 +1884,27 @@ app.get('/api/admin/reset-tokens', (req, res) => {
     });
   } catch (error) {
     console.error('Error in GET /api/admin/reset-tokens:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Endpoint untuk validasi password admin
+app.post('/api/admin/validate-password', (req, res) => {
+  try {
+    const { password } = req.body;
+    
+    if (!password) {
+      return res.status(400).json({ error: 'Password diperlukan' });
+    }
+
+    const isValid = validateAdminPassword(password);
+    
+    res.status(200).json({ 
+      isValid,
+      message: isValid ? 'Password valid' : 'Password tidak valid'
+    });
+  } catch (error) {
+    console.error('Error in POST /api/admin/validate-password:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });
