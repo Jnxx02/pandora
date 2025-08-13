@@ -8,22 +8,22 @@
   "theme_color": "#167347",
   "icons": [
     {
-      "src": "/favicon-16x16.png",
+      "src": "https://images.icon-icons.com/1715/PNG/512/2730367-box-inkcontober-pandora-shattered-square_112695.png",
       "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "/favicon-32x32.png",
+      "src": "https://images.icon-icons.com/1715/PNG/512/2730367-box-inkcontober-pandora-shattered-square_112695.png",
       "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/favicon-48x48.png",
+      "src": "https://images.icon-icons.com/1715/PNG/512/2730367-box-inkcontober-pandora-shattered-square_112695.png",
       "sizes": "48x48",
       "type": "image/png"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "https://images.icon-icons.com/1715/PNG/512/2730367-box-inkcontober-pandora-shattered-square_112695.png",
       "sizes": "180x180",
       "type": "image/png"
     }
