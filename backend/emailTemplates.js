@@ -585,7 +585,7 @@ const formatDate = (dateString) => {
 
 // Template email untuk reset password admin
 const createPasswordResetTemplate = (resetToken, adminUsername) => {
-  const resetLink = `${process.env.FRONTEND_URL || 'https://moncongloebulu.com'}/admin/reset-password?token=${resetToken}`;
+  const resetLink = `${process.env.FRONTEND_URL || 'https://moncongloebulu.com'}/#/admin/reset-password?token=${resetToken}`;
   
   const subject = '🔐 Reset Password Admin - Sistem PANDORA Desa Moncongloe Bulu';
   
